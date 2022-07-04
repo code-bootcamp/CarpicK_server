@@ -16,8 +16,8 @@ steps:
     args:
       - set
       - image
-      - deployment/mybackend
-      - mybackend-sha256-1=asia.gcr.io/abstract-arc-352601/mybackend:8
+      - deployment/carpick
+      - carpick-backend-sha256-1=asia.gcr.io/carpick-355305/carpick-backend:2
     env:
       - CLOUDSDK_COMPUTE_ZONE=asia-northeast3
       - CLOUDSDK_CONTAINER_CLUSTER=autopilot-cluster-1
