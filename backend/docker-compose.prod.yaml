@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  my-backend:
+    image: asia.gcr.io/carpick-355305/main:1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/carpick/src
+    ports:
+      - 3000:3000

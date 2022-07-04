@@ -1,0 +1,23 @@
+steps:
+  # step1 => docker-compose -f docker-compose.prod.yaml build
+  - name: docker/compose:1.29.0
+    args:
+      - -f
+      - backend/docker-compose.prod.yaml
+      - build
+  # step2 => docker-compose -f docker-compose.prod.yaml push
+  - name: docker/compose:1.29.0
+    args:
+      - -f
+      - backend/docker-compose.prod.yaml
+      - push
+  # step3 => kubectl set image deployment/mybackend mybackend-sha256-1=asia.gcr.io/abstract-arc-352601/mybackend:7
+  - name: gcr.io/cloud-builders/kubectl
+    args:
+      - set
+      - image
+      - deployment/mybackend
+      - mybackend-sha256-1=asia.gcr.io/abstract-arc-352601/mybackend:8
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=asia-northeast3
+      - CLOUDSDK_CONTAINER_CLUSTER=autopilot-cluster-1
