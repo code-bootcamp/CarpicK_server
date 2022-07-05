@@ -1,15 +1,23 @@
-import { UnprocessableEntityException, UseGuards } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  Inject,
+  UnprocessableEntityException,
+  UseGuards,
+} from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CreateUserInput } from './dto/createUser.input';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
-import { CurrentUser } from 'src/commons/auth/gql-user.param';
+import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
+import { Cache } from 'cache-manager';
 
 @Resolver()
 export class UserResolver {
   constructor(
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     private readonly userService: UserService, //
   ) {}
 
@@ -24,10 +32,21 @@ export class UserResolver {
     return this.userService.checkValidationEmail({ email });
   }
 
-  //   @Mutation(() => Boolean)
-  //   checkPhone(@Args('phone') phone: string) {
-  //     return phone;
-  //   }
+  @Mutation(() => String)
+  async sendTokenToSMS(@Args('phone') phone: string) {
+    const token = this.userService.getToken();
+    this.userService.sendToken({ phone, token });
+    await this.cacheManager.set(token, phone, {
+      ttl: 180,
+    });
+    return `${phone}으로 인증번호 ${token}을 전송하였습니다`;
+  }
+
+  @Mutation(() => Boolean)
+  async checkToken(@Args('token') token: string) {
+    const tokenCache = await this.cacheManager.get(token);
+    return tokenCache ? true : false;
+  }
 
   @Mutation(() => User)
   async createUser(
@@ -41,7 +60,7 @@ export class UserResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async updateUserPwd(
-    @CurrentUser() currentUser: any, //
+    @CurrentUser() currentUser: ICurrentUser, //
     @Args('password') password: string,
   ) {
     const user = await this.userService.findOne({ email: currentUser.email });
@@ -49,6 +68,19 @@ export class UserResolver {
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
     const hashedPassword = await bcrypt.hash(password, 10);
     this.userService.updatePwd({ hashedPassword, currentUser });
-    return 'password가 변경되었습니다.';
+    return '비밀번호가 변경되었습니다.';
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => String)
+  async updateUserPhone(
+    @CurrentUser() currentUser: ICurrentUser, //
+    @Args('phone') phone: string,
+  ) {
+    const user = await this.userService.findOne({ email: currentUser.email });
+    if (phone === user.phone)
+      throw new UnprocessableEntityException('기존 비밀번호 입니다');
+    this.userService.updatePhone({ phone, currentUser });
+    return '핸드폰 번호가 변경되었습니다.';
   }
 }
