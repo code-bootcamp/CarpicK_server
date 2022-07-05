@@ -20,6 +20,8 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   checkEmail(email: String!): Boolean!
+  sendTokenToSMS(phone: String!): String!
+  checkToken(token: String!): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
   updateUserPwd(password: String!): String!
 }
