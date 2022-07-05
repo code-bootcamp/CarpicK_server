@@ -4,11 +4,15 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
+import { AuthModule } from './apis/auth/auth.module';
 import { CarModule } from './apis/cars/car.module';
+import { UserModule } from './apis/users/user.module';
 
 @Module({
   imports: [
+    AuthModule,
     CarModule,
+    UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
