@@ -31,8 +31,6 @@ export class AuthService {
         address: req.user.address,
       });
     }
-    res.redirect(
-      'http://localhost:5500/main-project/frontend/login/index.html',
-    );
+    res.redirect('redirect');
   }
 }

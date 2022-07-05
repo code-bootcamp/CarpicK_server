@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   my-backend:
-    image: asia.gcr.io/carpick-355305/carpick-backend:3
+    image: asia.gcr.io/carpick-355305/carpick-backend:4
     build:
       context: .
       dockerfile: Dockerfile
