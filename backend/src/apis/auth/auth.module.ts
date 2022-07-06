@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtRefreshStrategy } from 'src/commons/auth/jwt-refresh.strategy';
 import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy';
 import { User } from '../users/entities/user.entity';
 import { UserService } from '../users/user.service';
@@ -14,7 +15,8 @@ import { AuthService } from './auth.service';
     TypeOrmModule.forFeature([User]),
   ],
   providers: [
-    JwtGoogleStrategy, //
+    JwtRefreshStrategy,
+    JwtGoogleStrategy,
     AuthResolver,
     AuthService,
     UserService,
