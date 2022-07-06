@@ -18,7 +18,7 @@ export class AuthService {
     );
   }
 
-  async socialLogin(req, res) {
+  async socialLogin(req) {
     let user = await this.userService.findOne({ email: req.user.email });
     const hashedPassword = await bcrypt.hash(req.user.password, 10);
     if (!user) {
@@ -29,6 +29,5 @@ export class AuthService {
         phone: req.user.phone,
       });
     }
-    res.redirect('redirect');
   }
 }
