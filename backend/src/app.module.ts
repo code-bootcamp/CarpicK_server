@@ -7,6 +7,7 @@ import { RedisClientOptions } from 'redis';
 import { AuthModule } from './apis/auth/auth.module';
 import { CarModule } from './apis/cars/car.module';
 import { UserModule } from './apis/users/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -35,5 +36,6 @@ import { UserModule } from './apis/users/user.module';
       isGlobal: true,
     }),
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
