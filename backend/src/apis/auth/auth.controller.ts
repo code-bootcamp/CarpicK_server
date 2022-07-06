@@ -22,22 +22,4 @@ export class AuthController {
   ) {
     this.authService.socialLogin(req, res);
   }
-
-  @Get('/login/naver')
-  @UseGuards(AuthGuard('naver'))
-  async loginNaver(
-    @Req() req: Request & IOAuthUser, //
-    @Res() res: Response,
-  ) {
-    this.authService.socialLogin(req, res);
-  }
-
-  @Get('/login/kakao')
-  @UseGuards(AuthGuard('kakao'))
-  async loginKakao(
-    @Req() req: Request & IOAuthUser, //
-    @Res() res: Response,
-  ) {
-    this.authService.socialLogin(req, res);
-  }
 }

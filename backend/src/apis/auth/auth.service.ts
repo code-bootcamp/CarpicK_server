@@ -14,7 +14,7 @@ export class AuthService {
   getAccessToken({ user }) {
     return this.jwtService.sign(
       { email: user.email, id: user.id },
-      { secret: process.env.ACCESS_TOKEN_KEY, expiresIn: '1m' },
+      { secret: process.env.ACCESS_TOKEN_KEY, expiresIn: '1h' },
     );
   }
 
@@ -27,8 +27,6 @@ export class AuthService {
         hashedPassword,
         name: req.user.name,
         phone: req.user.phone,
-        dob: req.user.dob,
-        address: req.user.address,
       });
     }
     res.redirect('redirect');
