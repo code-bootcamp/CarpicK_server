@@ -7,15 +7,11 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { UserService } from '../users/user.service';
 import { AuthService } from './auth.service';
 import * as bcrpypt from 'bcrypt';
-import {
-  GqlAuthAccessGuard,
-  GqlAuthRefreshGuard,
-} from 'src/commons/auth/gql-auth.guard';
+import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import 'dotenv/config';
-import { CurrentUser } from 'src/commons/auth/gql-user.param';
 
 @Resolver()
 export class AuthResolver {
@@ -38,14 +34,6 @@ export class AuthResolver {
     return this.authService.getAccessToken({ user });
   }
 
-  @UseGuards(GqlAuthRefreshGuard)
-  @Mutation(() => String)
-  restoreAccessToken(
-    @CurrentUser() currentUser: any, //
-  ) {
-    return this.authService.getAccessToken({ user: currentUser });
-  }
-
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async logout(
@@ -55,24 +43,13 @@ export class AuthResolver {
       'Bearer ',
       '',
     );
-    const refreshToken = context.req.headers.cookie.replace(
-      'refreshToken=',
-      '',
-    );
     try {
       const verifiedAccessToken = jwt.verify(
         accessToken,
         process.env.ACCESS_TOKEN_KEY,
       );
-      const verifiedrefreshToken = jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_KEY,
-      );
       await this.cacheManager.set(`accessToken:${accessToken}`, 'blacklist', {
         ttl: verifiedAccessToken['exp'],
-      });
-      await this.cacheManager.set(`refreshToken:${refreshToken}`, 'blacklist', {
-        ttl: verifiedrefreshToken['exp'],
       });
     } catch {
       throw new UnauthorizedException();
