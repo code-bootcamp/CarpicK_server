@@ -20,6 +20,7 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    this.authService.socialLogin(req, res);
+    await this.authService.socialLogin(req);
+    res.redirect('https://carpick.shop');
   }
 }
