@@ -5,14 +5,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
 import { AuthModule } from './apis/auth/auth.module';
+import { CarRegistrationModule } from './apis/carsRegistration/carRegistration.module';
 import { CarModule } from './apis/cars/car.module';
 import { UserModule } from './apis/users/user.module';
 import { AppController } from './app.controller';
+import { Administrator } from './apis/administrator/entities/administrator.entity';
+import { CarCategoryModule } from './apis/carsCategory/carCategory.module';
+import { PaymentModule } from './apis/payments/payment.module';
+import { ReservationModule } from './apis/reservations/reservation.module';
+import { CarModelModule } from './apis/carsModel/carModel.module';
+import { FileModule } from './apis/file/file.module';
 
 @Module({
   imports: [
+    Administrator,
     AuthModule,
     CarModule,
+    CarCategoryModule,
+    CarModelModule,
+    CarRegistrationModule,
+    FileModule,
+    PaymentModule,
+    ReservationModule,
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

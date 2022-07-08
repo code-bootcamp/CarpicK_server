@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CarCategory } from 'src/apis/carsCategory/entities/carCategory.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -8,7 +9,11 @@ export class CarModel {
   @Field(() => String)
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field(() => String)
   name: string;
+
+  @ManyToOne(() => CarCategory)
+  @Field(() => CarCategory)
+  carCategory: CarCategory;
 }

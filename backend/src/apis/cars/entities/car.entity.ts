@@ -1,12 +1,27 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Min } from 'class-validator';
+import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
+import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+export enum OIL_ENUM {
+  GASOLINE = '휘발유',
+  LIGHT_OIL = '경유',
+  LPG = 'LPG',
+  ELECTRIC = '전기',
+}
+
+registerEnumType(OIL_ENUM, {
+  name: 'OIL_ENUM',
+});
 
 @Entity()
 @ObjectType()
@@ -15,7 +30,7 @@ export class Car {
   @Field(() => String)
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field(() => String)
   carNumber: string;
 
@@ -24,12 +39,13 @@ export class Car {
   isHipass: boolean;
 
   @Column()
-  @Field(() => String)
-  registration: string;
-
-  @Column()
+  @Min(0)
   @Field(() => Int)
   price: number;
+
+  @Column({ type: 'enum', enum: OIL_ENUM })
+  @Field(() => OIL_ENUM)
+  oil: string;
 
   @Column()
   @Field(() => String)
@@ -43,4 +59,12 @@ export class Car {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @ManyToOne(() => CarModel)
+  @Field(() => CarModel)
+  carModel: CarModel;
+
+  @ManyToOne(() => CarLocation)
+  @Field(() => CarLocation)
+  carLocation: CarLocation;
 }
