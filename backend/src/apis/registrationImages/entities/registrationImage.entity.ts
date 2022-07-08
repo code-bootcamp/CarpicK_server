@@ -15,4 +15,8 @@ export class RegistrationImage {
   @Column()
   @Field(() => Boolean)
   isMain: boolean;
+
+  @Column()
+  @Field(() => String)
+  registrationUrl: string;
 }

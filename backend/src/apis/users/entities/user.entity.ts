@@ -1,5 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Min } from 'class-validator';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -12,7 +20,7 @@ export class User {
   @Field(() => String)
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field(() => String)
   email: string;
 
@@ -20,7 +28,7 @@ export class User {
   @Field(() => String)
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field(() => String)
   phone: string;
 
@@ -28,7 +36,17 @@ export class User {
   @Field(() => Boolean)
   isAuth: boolean;
 
-  @Column()
+  @Column({ default: 0 })
+  @Min(0)
   @Field(() => Int)
   revenue: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

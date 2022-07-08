@@ -44,4 +44,8 @@ export class Payment {
   @Column()
   @Field(() => String)
   paymentMethod: string;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

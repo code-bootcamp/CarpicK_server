@@ -46,6 +46,13 @@ export class UserService {
     });
   }
 
+  async reset({ hashedPassword: password, user }) {
+    return await this.userRepository.save({
+      ...user,
+      password,
+    });
+  }
+
   async updatePwd({ hashedPassword: password, currentUser }) {
     return await this.userRepository.save({
       password,

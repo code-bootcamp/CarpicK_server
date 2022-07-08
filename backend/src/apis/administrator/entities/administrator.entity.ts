@@ -3,12 +3,16 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
-export class CarOil {
+export class Administrator {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;
 
   @Column()
   @Field(() => String)
-  name: string;
+  adminId: string;
+
+  @Column()
+  @Field(() => String)
+  password: string;
 }
