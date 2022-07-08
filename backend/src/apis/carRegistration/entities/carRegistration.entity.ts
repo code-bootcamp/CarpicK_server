@@ -1,8 +1,7 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,7 +9,7 @@ import {
 
 @Entity()
 @ObjectType()
-export class Car {
+export class CarRegistration {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;
@@ -28,19 +27,20 @@ export class Car {
   registration: string;
 
   @Column()
-  @Field(() => Int)
-  price: number;
+  @Field(() => String)
+  model: string;
 
   @Column()
-  @Field(() => String)
-  contractPeriod: string;
+  @Field(() => Boolean)
+  oil: boolean;
+
+  @Column()
+  @Field(() => Boolean)
+  status: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
 }

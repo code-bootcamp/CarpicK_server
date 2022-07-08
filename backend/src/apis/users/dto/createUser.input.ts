@@ -13,4 +13,7 @@ export class CreateUserInput {
 
   @Field(() => String)
   phone: string;
+
+  @Field(() => Boolean)
+  isAuth: boolean;
 }
