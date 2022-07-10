@@ -4,7 +4,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
-import { Administrator } from './apis/administrator/entities/administrator.entity';
 import { AuthModule } from './apis/auth/auth.module';
 import { CarRegistrationModule } from './apis/carsRegistration/carRegistration.module';
 import { CarModule } from './apis/cars/car.module';
@@ -13,17 +12,20 @@ import { CarCategoryModule } from './apis/carsCategory/carCategory.module';
 import { PaymentModule } from './apis/payments/payment.module';
 import { ReservationModule } from './apis/reservations/reservation.module';
 import { CarModelModule } from './apis/carsModel/carModel.module';
-import { FileModule } from './apis/file/file.module';
+import { ImageFileModule } from './apis/imageFile/imageFile.module';
+import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
+import { AdministratorModule } from './apis/administrator/administrator.module';
 
 @Module({
   imports: [
-    Administrator,
+    AdministratorModule,
     AuthModule,
     CarModule,
     CarCategoryModule,
     CarModelModule,
     CarRegistrationModule,
-    FileModule,
+    ImageFileModule,
+    LicenTruthModule,
     PaymentModule,
     ReservationModule,
     UserModule,

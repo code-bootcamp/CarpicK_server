@@ -9,22 +9,24 @@ import { CarRegistrationModule } from './apis/carsRegistration/carRegistration.m
 import { CarModule } from './apis/cars/car.module';
 import { UserModule } from './apis/users/user.module';
 import { AppController } from './app.controller';
-import { Administrator } from './apis/administrator/entities/administrator.entity';
 import { CarCategoryModule } from './apis/carsCategory/carCategory.module';
 import { PaymentModule } from './apis/payments/payment.module';
 import { ReservationModule } from './apis/reservations/reservation.module';
 import { CarModelModule } from './apis/carsModel/carModel.module';
-import { FileModule } from './apis/file/file.module';
+import { ImageFileModule } from './apis/imageFile/imageFile.module';
+import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
+import { AdministratorModule } from './apis/administrator/administrator.module';
 
 @Module({
   imports: [
-    Administrator,
+    AdministratorModule,
     AuthModule,
     CarModule,
     CarCategoryModule,
     CarModelModule,
     CarRegistrationModule,
-    FileModule,
+    ImageFileModule,
+    LicenTruthModule,
     PaymentModule,
     ReservationModule,
     UserModule,

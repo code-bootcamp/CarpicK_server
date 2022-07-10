@@ -14,5 +14,5 @@ export class Review {
 
   @Column()
   @Field(() => Float)
-  star: number;
+  rating: number;
 }

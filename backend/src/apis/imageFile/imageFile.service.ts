@@ -1,29 +1,33 @@
 import { Storage } from '@google-cloud/storage';
 import { Injectable } from '@nestjs/common';
+import { FileUpload } from 'graphql-upload';
 import 'dotenv/config';
 
-const PROJECT_ID = process.env.PROJECT_ID;
-const JOSON_KEY = process.env.JOSON_KEY;
+interface IImageFile {
+  files: FileUpload[];
+}
 
 @Injectable()
-export class FileService {
-  async upload({ files }) {
+export class ImageFileService {
+  async upload({ files }: IImageFile) {
     const waitedFiles = await Promise.all(files);
     const storage = new Storage({
-      projectId: PROJECT_ID,
-      keyFilename: JOSON_KEY,
-    }).bucket('k-bucket01');
-    const result = await Promise.all(
+      projectId: process.env.STORAGE_PROJECT_ID,
+      keyFilename: process.env.STORAGE_KEY_FILENAME,
+    }).bucket(process.env.STORAGE_BUCKET);
+    const url = await Promise.all(
       waitedFiles.map((file) => {
         return new Promise((resolve, reject) => {
           file
             .createReadStream()
             .pipe(storage.file(file.filename).createWriteStream())
-            .on('finish', () => resolve(`k-bucket01/${file.filename}`))
+            .on('finish', () =>
+              resolve(`${process.env.STORAGE_BUCKET}/${file.filename}`),
+            )
             .on('error', () => reject());
         });
       }),
     );
-    return result;
+    return url;
   }
 }
