@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Administrator {
+  id: String!
+  adminId: String!
+  password: String!
+}
+
 type User {
   id: String!
   name: String!
@@ -100,17 +106,22 @@ enum RESERVATION_STATUS_ENUM {
 }
 
 type Query {
-  fetchUser(email: String!): User!
+  fetchLoginUser(email: String!): User!
 }
 
 type Mutation {
+  createAdministrator(createAdministratorInput: CreateAdministratorInput!): Administrator!
   login(email: String!, password: String!): String!
+  adminLogin(adminId: String!, password: String!): String!
+  restoreAccessToken: String!
   logout: String!
+  adminLogout: String!
   createCar(createCarInput: CreateCarInput!): Car!
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
   uploadFile(files: [Upload!]!): [String!]!
+  checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
@@ -123,6 +134,11 @@ type Mutation {
   updateUserPhone(phone: String!): String!
 }
 
+input CreateAdministratorInput {
+  adminId: String!
+  password: String!
+}
+
 input CreateCarInput {
   carNumber: String!
   isHipass: Boolean!
@@ -131,6 +147,8 @@ input CreateCarInput {
   contractPeriod: String!
   carModelName: String!
   carLocation: CarLocationInput!
+  carUrl: [String!]!
+  registrationUrl: String!
 }
 
 input CarLocationInput {
@@ -154,6 +172,8 @@ input CreateCarRegistrationInput {
   isHipass: Boolean!
   model: String!
   oil: OIL_ENUM!
+  carUrl: [String!]!
+  registrationUrl: String!
 }
 
 """The `Upload` scalar type represents a file upload."""

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Request from 'sync-request';
-import Crypto from 'crypto';
-import NodeRSA from 'node-rsa';
+import * as Crypto from 'crypto';
+import * as NodeRSA from 'node-rsa';
 
 @Injectable()
 export class LicenTruthService {
@@ -16,7 +16,7 @@ export class LicenTruthService {
     return ret;
   }
 
-  rsaEncrypt(publicKey: string, aesKey: Buffer) {
+  rsaEncrypt(publicKey: string, aesKey): any {
     const key = new NodeRSA(
       '-----BEGIN PUBLIC KEY-----\n' + publicKey + '\n-----END PUBLIC KEY-----',
     );

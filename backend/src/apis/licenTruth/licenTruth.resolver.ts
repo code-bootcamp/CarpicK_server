@@ -1,7 +1,7 @@
-import { Args, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { LicenTruthService } from './licenTruth.service';
 import Request from 'sync-request';
-import Crypto from 'crypto';
+import * as Crypto from 'crypto';
 
 @Resolver()
 export class LicenTruthResolver {
@@ -9,6 +9,7 @@ export class LicenTruthResolver {
     private readonly licenTruthService: LicenTruthService, //
   ) {}
 
+  @Mutation(() => String)
   checkLicense(
     @Args('BirthDate') BirthDate: string,
     @Args('Name') Name: string,
@@ -24,9 +25,7 @@ export class LicenTruthResolver {
       0x00, 0x00, 0x00, 0x00,
     ]);
     let aesCipherKey = Buffer.alloc(0);
-    aesCipherKey = JSON.parse(
-      this.licenTruthService.rsaEncrypt(rsaPublicKey, aesKey).toString(),
-    );
+    aesCipherKey = this.licenTruthService.rsaEncrypt(rsaPublicKey, aesKey);
     console.log('aesCipherKey:', aesCipherKey);
     const url = process.env.LICENTRUTH_API_HOST + 'api/v1.0/Efine/LicenTruth';
     const res = Request('POST', url, {

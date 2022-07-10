@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
+import { ImageCar } from '../imagesCar/entities/imageCar.entity';
+import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
 import { Car } from './entities/car.entity';
 
 @Injectable()
@@ -14,31 +16,53 @@ export class CarService {
     private readonly carLocationRepository: Repository<CarLocation>,
     @InjectRepository(CarModel)
     private readonly carModelRepository: Repository<CarModel>,
+    @InjectRepository(ImageRegistration)
+    private readonly imageRegistrationRepository: Repository<ImageRegistration>,
+    @InjectRepository(ImageCar)
+    private readonly imageCarRepository: Repository<ImageCar>,
   ) {}
 
   async create({ createCarInput }) {
-    const { carLocation, carModelName, ...car } = createCarInput;
-    const prevLocation = await this.carLocationRepository.findOne({
+    const { carLocation, carModelName, carUrl, registrationUrl, ...car } =
+      createCarInput;
+    let location: CarLocation;
+    const savedLocation = await this.carLocationRepository.findOne({
       address: carLocation.address,
     });
     const carModel = await this.carModelRepository.findOne({
       name: carModelName,
     });
-    if (!prevLocation) {
+    if (!savedLocation) {
       const newlocation = await this.carLocationRepository.save({
         ...carLocation,
       });
-      return await this.carRepository.save({
-        carLocation: newlocation,
-        carModel: { id: carModel.id },
-        ...car,
-      });
+      location = newlocation;
     } else {
-      return await this.carRepository.save({
-        carLocation: prevLocation,
-        carModel: { id: carModel.id },
-        ...car,
-      });
+      location = savedLocation;
     }
+    const result = await this.carRepository.save({
+      carLocation: location,
+      carModel: { id: carModel.id },
+      ...car,
+    });
+    await Promise.all(
+      carUrl.map(async (address: string) => {
+        const url = await this.imageCarRepository.findOne({
+          url: address,
+        });
+        return this.imageCarRepository.save({
+          ...url,
+          car: { id: result.id },
+        });
+      }),
+    );
+    const url = await this.imageRegistrationRepository.findOne({
+      url: registrationUrl,
+    });
+    this.imageRegistrationRepository.save({
+      ...url,
+      car: { id: result.id },
+    });
+    return result;
   }
 }

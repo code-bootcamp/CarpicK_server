@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
 import 'dotenv/config';
 
-interface IImageFile {
+interface IFile {
   files: FileUpload[];
 }
 
 @Injectable()
-export class ImageFileService {
-  async upload({ files }: IImageFile) {
+export class FileService {
+  async upload({ files }: IFile) {
     const waitedFiles = await Promise.all(files);
     const storage = new Storage({
       projectId: process.env.STORAGE_PROJECT_ID,
