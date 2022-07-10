@@ -12,7 +12,7 @@ import { CarCategoryModule } from './apis/carsCategory/carCategory.module';
 import { PaymentModule } from './apis/payments/payment.module';
 import { ReservationModule } from './apis/reservations/reservation.module';
 import { CarModelModule } from './apis/carsModel/carModel.module';
-import { ImageFileModule } from './apis/imageFile/imageFile.module';
+import { FileModule } from './apis/file/file.module';
 import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
 import { AdministratorModule } from './apis/administrator/administrator.module';
 
@@ -24,7 +24,7 @@ import { AdministratorModule } from './apis/administrator/administrator.module';
     CarCategoryModule,
     CarModelModule,
     CarRegistrationModule,
-    ImageFileModule,
+    FileModule,
     LicenTruthModule,
     PaymentModule,
     ReservationModule,

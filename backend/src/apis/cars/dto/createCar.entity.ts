@@ -13,4 +13,10 @@ export class CreateCarInput extends PickType(
 
   @Field(() => CarLocationInput)
   carLocation: CarLocationInput;
+
+  @Field(() => [String])
+  carUrl: string;
+
+  @Field(() => String)
+  registrationUrl: string;
 }
