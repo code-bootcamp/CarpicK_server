@@ -10,6 +10,10 @@ export class AdministratorService {
     private readonly administratorRepository: Repository<Administrator>, //
   ) {}
 
+  async findOne({ adminId }) {
+    return await this.administratorRepository.findOne({ adminId });
+  }
+
   async create({ createAdministratorInput }) {
     return await this.administratorRepository.save({
       ...createAdministratorInput,
