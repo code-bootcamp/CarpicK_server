@@ -2,6 +2,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AdministratorService } from './administrator.service';
 import { CreateAdministratorInput } from './dto/createAdministrator.input';
 import { Administrator } from './entities/administrator.entity';
+import * as bcrypt from 'bcrypt';
 
 @Resolver()
 export class AdministratorResolver {
@@ -10,10 +11,12 @@ export class AdministratorResolver {
   ) {}
 
   @Mutation(() => Administrator)
-  createAdministrator(
+  async createAdministrator(
     @Args('createAdministratorInput')
     createAdministratorInput: CreateAdministratorInput, //
   ) {
-    return this.administratorService.create({ createAdministratorInput });
+    const { password, adminId } = createAdministratorInput;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return this.administratorService.create({ hashedPassword, adminId });
   }
 }

@@ -20,7 +20,7 @@ type CarLocation {
 type CarCategory {
   id: String!
   name: String!
-  carModel: CarModel!
+  carModel: [CarModel!]!
 }
 
 type CarModel {
@@ -42,13 +42,28 @@ type ImageRegistration {
   url: String!
 }
 
-type Reservation {
+type Payment {
   id: String!
-  startTime: DateTime!
-  endTime: DateTime!
+  impUid: String!
   amount: Int!
-  status: RESERVATION_STATUS_ENUM!
+  status: PAYMENT_STATUS_ENUM!
+  paymentMethod: String!
+  user: User!
+}
+
+enum PAYMENT_STATUS_ENUM {
+  PAYMENT
+  CANCLE
+}
+
+type Reservation {
+  id: String
+  startTime: DateTime
+  endTime: DateTime
+  amount: Int
+  status: RESERVATION_STATUS_ENUM
   car: Car!
+  payment: Payment!
 }
 
 """
@@ -72,7 +87,7 @@ type Car {
   contractPeriod: String!
   carModel: CarModel!
   carLocation: CarLocation!
-  reservation: Reservation!
+  reservation: Reservation
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
 }
@@ -118,21 +133,13 @@ type IsVaildEmail {
   phone: String!
 }
 
-type Payment {
-  id: String!
-  impUid: String!
-  amount: Int!
-  status: PAYMENT_STATUS_ENUM!
-  paymentMethod: String!
-  user: User!
-}
-
-enum PAYMENT_STATUS_ENUM {
-  PAYMENT
-  CANCLE
-}
-
 type Query {
+
+  fetchCar(carId: String!): Car!
+  fetchCars(carLocationId: String!, page: Int): [Car!]!
+
+  fetchCarCategory: [Reservation!]!
+
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
   fetchLoginUser: User!
@@ -222,9 +229,9 @@ input PaymentInput {
 }
 
 input CreateReservationInput {
-  startTime: DateTime!
-  endTime: DateTime!
-  amount: Int!
+  startTime: DateTime
+  endTime: DateTime
+  amount: Int
   carId: String!
 }
 

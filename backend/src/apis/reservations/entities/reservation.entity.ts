@@ -1,10 +1,13 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
+import { Payment } from 'src/apis/payments/entities/payment.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -24,23 +27,23 @@ registerEnumType(RESERVATION_STATUS_ENUM, {
 @ObjectType()
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   id: string;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   startTime: Date;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   endTime: Date;
 
   @Column()
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   amount: number;
 
   @Column({ type: 'enum', enum: RESERVATION_STATUS_ENUM })
-  @Field(() => RESERVATION_STATUS_ENUM)
+  @Field(() => RESERVATION_STATUS_ENUM, { nullable: true })
   status: string;
 
   @CreateDateColumn()
@@ -52,4 +55,9 @@ export class Reservation {
   @ManyToOne(() => Car)
   @Field(() => Car)
   car: Car;
+
+  @JoinColumn()
+  @OneToOne(() => Payment)
+  @Field(() => Payment)
+  payment: Payment;
 }
