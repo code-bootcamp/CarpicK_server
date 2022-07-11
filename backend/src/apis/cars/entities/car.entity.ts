@@ -75,10 +75,10 @@ export class Car {
   carLocation: CarLocation;
 
   @OneToMany(() => Reservation, (reservation) => reservation.car)
-  @Field(() => Reservation)
+  @Field(() => Reservation, { nullable: true })
   reservation: Reservation;
 
-  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.car, {
     cascade: true,
   })
   @Field(() => [ImageCar])

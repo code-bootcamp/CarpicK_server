@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
@@ -21,6 +21,43 @@ export class CarService {
     @InjectRepository(ImageCar)
     private readonly imageCarRepository: Repository<ImageCar>,
   ) {}
+
+  async findAll({ carLocationId, page }) {
+    const car = getConnection()
+      .getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .leftJoinAndSelect('car.reservation', 'reservation')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
+      .where('car.carLocationId = :carLocationId', { carLocationId })
+      .orderBy('car.createdAt', 'DESC');
+
+    if (page) {
+      const result = car
+        .take(10)
+        .skip((page - 1) * 10)
+        .getMany();
+      return result;
+    } else {
+      const result = car.getMany();
+      return result;
+    }
+  }
+
+  async findOne({ carId }) {
+    return await this.carRepository.findOne({
+      where: { id: carId },
+      relations: [
+        'reservation',
+        'carModel',
+        'carLocation',
+        'imageCar',
+        'imageRegistration',
+      ],
+    });
+  }
 
   async create({ createCarInput }) {
     const { carLocation, carModelName, carUrl, registrationUrl, ...car } =

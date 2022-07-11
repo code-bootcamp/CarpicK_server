@@ -43,11 +43,11 @@ type ImageRegistration {
 }
 
 type Reservation {
-  id: String!
-  startTime: DateTime!
-  endTime: DateTime!
-  amount: Int!
-  status: RESERVATION_STATUS_ENUM!
+  id: String
+  startTime: DateTime
+  endTime: DateTime
+  amount: Int
+  status: RESERVATION_STATUS_ENUM
   car: Car!
 }
 
@@ -72,7 +72,7 @@ type Car {
   contractPeriod: String!
   carModel: CarModel!
   carLocation: CarLocation!
-  reservation: Reservation!
+  reservation: Reservation
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
 }
@@ -133,6 +133,8 @@ enum PAYMENT_STATUS_ENUM {
 }
 
 type Query {
+  fetchCar(carId: String!): Car!
+  fetchCars(carLocationId: String!, page: Int): [Car!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
   fetchLoginUser: User!
@@ -222,9 +224,9 @@ input PaymentInput {
 }
 
 input CreateReservationInput {
-  startTime: DateTime!
-  endTime: DateTime!
-  amount: Int!
+  startTime: DateTime
+  endTime: DateTime
+  amount: Int
   carId: String!
 }
 

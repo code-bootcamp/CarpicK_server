@@ -10,9 +10,9 @@ export class CarLocationService {
     private readonly carLocationRepository: Repository<CarLocation>, //
   ) {}
 
-  findAll({ fetchCarLocationInput }) {
+  async findAll({ fetchCarLocationInput }) {
     const { lng, lat, filter } = fetchCarLocationInput;
-    const location = getConnection()
+    const location = await getConnection()
       .getRepository(CarLocation)
       .createQueryBuilder('location')
       .leftJoinAndSelect('location.car', 'car')
@@ -20,9 +20,17 @@ export class CarLocationService {
         'car_model',
         'car_model',
         'car_model.id = car.carModelId',
-      )
-      .where('car_model.name IN (:...names)', { names: filter })
-      .getMany();
-    return location;
+      );
+    if (filter) {
+      const result = await location
+        .where('car_model.name IN (:...names)', {
+          names: filter,
+        })
+        .getMany();
+      return result;
+    } else {
+      const result = await location.getMany();
+      return result;
+    }
   }
 }
