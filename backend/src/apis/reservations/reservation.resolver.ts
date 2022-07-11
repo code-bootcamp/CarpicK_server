@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ReservationService } from './reservation.service';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationInput } from './dto/createReservation';
@@ -8,6 +8,11 @@ export class ReservationResolver {
   constructor(
     private readonly carCategoryService: ReservationService, //
   ) {}
+
+  @Query(() => [Reservation])
+  fetchCarCategory() {
+    return this.carCategoryService.findAll();
+  }
 
   @Mutation(() => Reservation)
   createReservation(

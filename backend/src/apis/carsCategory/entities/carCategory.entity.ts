@@ -14,6 +14,6 @@ export class CarCategory {
   name: string;
 
   @OneToMany(() => CarModel, (carModel) => carModel.carCategory)
-  @Field(() => CarModel)
-  carModel: CarModel;
+  @Field(() => [CarModel])
+  carModel: CarModel[];
 }
