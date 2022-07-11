@@ -7,6 +7,7 @@ export interface ICurrentUser {
   password?: string;
   name?: string;
   phone?: number;
+  isAuth?: boolean;
 }
 
 export const CurrentUser = createParamDecorator(
