@@ -16,6 +16,7 @@ import { CarModelModule } from './apis/carsModel/carModel.module';
 import { FileModule } from './apis/file/file.module';
 import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
 import { AdministratorModule } from './apis/administrator/administrator.module';
+import { CarLocationModule } from './apis/carsLocation/carLocation.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AdministratorModule } from './apis/administrator/administrator.module';
     AuthModule,
     CarModule,
     CarCategoryModule,
+    CarLocationModule,
     CarModelModule,
     CarRegistrationModule,
     FileModule,

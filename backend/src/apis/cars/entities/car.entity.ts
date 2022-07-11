@@ -2,12 +2,18 @@ import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
+import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
+import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -58,7 +64,7 @@ export class Car {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt?: Date;
 
   @ManyToOne(() => CarModel)
   @Field(() => CarModel)
@@ -67,4 +73,19 @@ export class Car {
   @ManyToOne(() => CarLocation)
   @Field(() => CarLocation)
   carLocation: CarLocation;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.car)
+  @Field(() => Reservation)
+  reservation: Reservation;
+
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {
+    cascade: true,
+  })
+  @Field(() => [ImageCar])
+  imageCar: ImageCar[];
+
+  @JoinColumn()
+  @OneToOne(() => ImageRegistration)
+  @Field(() => ImageRegistration)
+  imageRegistration: ImageRegistration;
 }

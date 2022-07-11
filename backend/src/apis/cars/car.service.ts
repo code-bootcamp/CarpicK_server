@@ -40,8 +40,14 @@ export class CarService {
     } else {
       location = savedLocation;
     }
-    const result = await this.carRepository.save({
+    const savedRegistrationUrl = await this.imageRegistrationRepository.findOne(
+      {
+        url: registrationUrl,
+      },
+    );
+    const savedCar = await this.carRepository.save({
       carLocation: location,
+      imageRegistration: savedRegistrationUrl,
       carModel: { id: carModel.id },
       ...car,
     });
@@ -52,17 +58,10 @@ export class CarService {
         });
         return this.imageCarRepository.save({
           ...url,
-          car: { id: result.id },
+          car: { id: savedCar.id },
         });
       }),
     );
-    const url = await this.imageRegistrationRepository.findOne({
-      url: registrationUrl,
-    });
-    this.imageRegistrationRepository.save({
-      ...url,
-      car: { id: result.id },
-    });
-    return result;
+    return savedCar;
   }
 }

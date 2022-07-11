@@ -1,5 +1,4 @@
-import { Field, InputType, OmitType } from '@nestjs/graphql';
-import { User } from '../entities/user.entity';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateUserInput {
@@ -18,9 +17,3 @@ export class CreateUserInput {
   @Field(() => Boolean)
   isAuth: boolean;
 }
-@InputType()
-export class CreateCarRegistrationInput extends OmitType(
-  User,
-  ['id', 'revenue', 'createdAt', 'updatedAt', 'deletedAt'],
-  InputType,
-) {}

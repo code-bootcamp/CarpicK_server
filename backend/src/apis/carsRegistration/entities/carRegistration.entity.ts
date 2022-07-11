@@ -1,9 +1,14 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { OIL_ENUM } from 'src/apis/cars/entities/car.entity';
+import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
+import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -40,6 +45,10 @@ export class CarRegistration {
   @Field(() => OIL_ENUM)
   oil: string;
 
+  @Column()
+  @Field(() => String)
+  address: string;
+
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
   @Field(() => REGISTATION_STATUS_ENUM)
   status: string;
@@ -49,4 +58,15 @@ export class CarRegistration {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {
+    cascade: true,
+  })
+  @Field(() => [ImageCar])
+  imageCar: ImageCar[];
+
+  @JoinColumn()
+  @OneToOne(() => ImageRegistration)
+  @Field(() => ImageRegistration)
+  imageRegistration: ImageRegistration;
 }

@@ -12,6 +12,7 @@ import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Cache } from 'cache-manager';
+import { IsVaildEmail } from './dto/isValid.output';
 
 @Resolver()
 export class UserResolver {
@@ -23,12 +24,13 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User)
-  async fetchLoginUser(@Args('email') email: string) {
-    return await this.userService.findOne({ email });
+  async fetchLoginUser(@CurrentUser() currentUser: any) {
+    const user = await this.userService.findOne({ email: currentUser.email });
+    return user;
   }
 
-  @Mutation(() => Boolean)
-  checkEmail(@Args('email') email: string) {
+  @Mutation(() => IsVaildEmail)
+  isValidEmail(@Args('email') email: string) {
     return this.userService.checkValidationEmail({ email });
   }
 
@@ -39,7 +41,7 @@ export class UserResolver {
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
-    return `${phone}으로 인증번호 ${token}을 전송하였습니다`;
+    return `{phone:${phone},token:${token}}`;
   }
 
   @Mutation(() => Boolean)

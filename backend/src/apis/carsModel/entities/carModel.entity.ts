@@ -1,6 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Car } from 'src/apis/cars/entities/car.entity';
 import { CarCategory } from 'src/apis/carsCategory/entities/carCategory.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -16,4 +23,8 @@ export class CarModel {
   @ManyToOne(() => CarCategory)
   @Field(() => CarCategory)
   carCategory: CarCategory;
+
+  @OneToMany(() => Car, (car) => car.carModel)
+  @Field(() => Car)
+  car: Car;
 }
