@@ -14,9 +14,10 @@ export class AdministratorService {
     return await this.administratorRepository.findOne({ adminId });
   }
 
-  async create({ createAdministratorInput }) {
+  async create({ hashedPassword: password, adminId }) {
     return await this.administratorRepository.save({
-      ...createAdministratorInput,
+      password,
+      adminId,
     });
   }
 }

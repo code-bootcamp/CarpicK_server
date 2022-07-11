@@ -21,4 +21,10 @@ export class ReservationService {
       status: RESERVATION_STATUS_ENUM.RESERVATION,
     });
   }
+
+  async findAll() {
+    return await this.reservationRepository.find({
+      relations: ['carModel'],
+    });
+  }
 }
