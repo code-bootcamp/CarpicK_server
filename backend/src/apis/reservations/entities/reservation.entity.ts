@@ -27,23 +27,23 @@ registerEnumType(RESERVATION_STATUS_ENUM, {
 @ObjectType()
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   id: string;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   startTime: Date;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   endTime: Date;
 
   @Column()
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   amount: number;
 
   @Column({ type: 'enum', enum: RESERVATION_STATUS_ENUM })
-  @Field(() => RESERVATION_STATUS_ENUM)
+  @Field(() => RESERVATION_STATUS_ENUM, { nullable: true })
   status: string;
 
   @CreateDateColumn()

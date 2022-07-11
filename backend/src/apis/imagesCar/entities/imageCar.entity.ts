@@ -14,15 +14,11 @@ export class ImageCar {
   @Field(() => String)
   url: string;
 
-  @ManyToOne(() => Car, (car) => car.imageCar, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
   @Field(() => Car)
   car: Car;
 
-  @ManyToOne(
-    () => CarRegistration,
-    (carRegistration) => carRegistration.imageCar,
-    { onDelete: 'CASCADE' },
-  )
+  @ManyToOne(() => CarRegistration, { onDelete: 'CASCADE' })
   @Field(() => CarRegistration)
   carRegistration: CarRegistration;
 }
