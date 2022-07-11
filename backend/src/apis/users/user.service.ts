@@ -70,4 +70,11 @@ export class UserService {
       ...currentUser,
     });
   }
+
+  async updateIsAuth({ isAuth, currentUser }) {
+    return await this.userRepository.save({
+      isAuth,
+      ...currentUser,
+    });
+  }
 }
