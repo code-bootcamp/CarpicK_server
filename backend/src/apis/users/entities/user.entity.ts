@@ -1,10 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
+import { CarRegistration } from 'src/apis/carsRegistration/entities/carRegistration.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -49,4 +52,9 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @JoinColumn()
+  @OneToOne(() => CarRegistration)
+  @Field(() => CarRegistration)
+  carRegistration: CarRegistration;
 }

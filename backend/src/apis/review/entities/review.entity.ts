@@ -1,4 +1,5 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Max, Min } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -12,7 +13,9 @@ export class Review {
   @Field(() => String)
   name: string;
 
+  @Min(0)
+  @Max(5)
   @Column()
-  @Field(() => Float)
+  @Field(() => Int)
   rating: number;
 }
