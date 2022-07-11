@@ -18,6 +18,34 @@ export class AuthService {
     );
   }
 
+  getAppAccessToken({ user }) {
+    return this.jwtService.sign(
+      { email: user.email, id: user.id },
+      { secret: process.env.ACCESS_TOKEN_KEY, expiresIn: '1h' },
+    );
+  }
+
+  setRefreshToken({ user, res }) {
+    const refreshToken = this.jwtService.sign(
+      { email: user.email, sub: user.id },
+      { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
+    );
+
+    // res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/`);
+
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
+    );
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken}; path=/; domain=.carpick.shop; SameSite=None; Secure; httpOnly;`,
+    );
+  }
+
   async socialLogin(req) {
     let user = await this.userService.findOne({ email: req.user.email });
     const hashedPassword = await bcrypt.hash(req.user.password, 10);

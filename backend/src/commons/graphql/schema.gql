@@ -2,28 +2,230 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Administrator {
+  id: String!
+  adminId: String!
+  password: String!
+}
+
+type CarLocation {
+  id: String!
+  address: String!
+  addressDetail: String!
+  lat: Float!
+  lng: Float!
+  car: [Car!]!
+}
+
+type CarCategory {
+  id: String!
+  name: String!
+  carModel: CarModel!
+}
+
+type CarModel {
+  id: String!
+  name: String!
+  carCategory: CarCategory!
+  car: Car!
+}
+
+type ImageCar {
+  id: String!
+  url: String!
+  car: Car!
+  carRegistration: CarRegistration!
+}
+
+type ImageRegistration {
+  id: String!
+  url: String!
+}
+
+type Reservation {
+  id: String!
+  startTime: DateTime!
+  endTime: DateTime!
+  amount: Int!
+  status: RESERVATION_STATUS_ENUM!
+  car: Car!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum RESERVATION_STATUS_ENUM {
+  RESERVATION
+  CANCEL
+  RETURN
+  USING
+}
+
+type Car {
+  id: String!
+  carNumber: String!
+  isHipass: Boolean!
+  price: Int!
+  oil: OIL_ENUM!
+  contractPeriod: String!
+  carModel: CarModel!
+  carLocation: CarLocation!
+  reservation: Reservation!
+  imageCar: [ImageCar!]!
+  imageRegistration: ImageRegistration!
+}
+
+enum OIL_ENUM {
+  GASOLINE
+  LIGHT_OIL
+  LPG
+  ELECTRIC
+}
+
+type CarRegistration {
+  id: String!
+  carNumber: String!
+  isHipass: Boolean!
+  model: String!
+  oil: OIL_ENUM!
+  address: String!
+  status: REGISTATION_STATUS_ENUM!
+  imageCar: [ImageCar!]!
+  imageRegistration: ImageRegistration!
+}
+
+enum REGISTATION_STATUS_ENUM {
+  IN_PROCESS
+  PASS
+  FAIL
+}
+
 type User {
   id: String!
-  email: String!
   name: String!
+  email: String!
   password: String!
   phone: String!
   isAuth: Boolean!
+  revenue: Int!
+  carRegistration: CarRegistration!
+}
+
+type IsVaildEmail {
+  isValid: Boolean!
+  phone: String!
+}
+
+type Payment {
+  id: String!
+  impUid: String!
+  amount: Int!
+  status: PAYMENT_STATUS_ENUM!
+  paymentMethod: String!
+  user: User!
+}
+
+enum PAYMENT_STATUS_ENUM {
+  PAYMENT
+  CANCLE
 }
 
 type Query {
-  getTest: String!
-  fetchUser(email: String!): User!
+  fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
+  fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchLoginUser: User!
+}
+
+input FetchCarLocationInput {
+  lat: Float!
+  lng: Float!
+  filter: [String!]!
 }
 
 type Mutation {
+  createAdministrator(createAdministratorInput: CreateAdministratorInput!): Administrator!
   login(email: String!, password: String!): String!
+  adminLogin(adminId: String!, password: String!): String!
+  restoreAccessToken: String!
   logout: String!
-  checkEmail(email: String!): Boolean!
+  adminLogout: String!
+  createCar(createCarInput: CreateCarInput!): Car!
+  createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
+  createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
+  createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
+  uploadFile(files: [Upload!]!): [String!]!
+  checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
+  createPayment(paymentInput: PaymentInput!): Payment!
+  cancelPayment(paymentInput: PaymentInput!): Payment!
+  createReservation(createReservationInput: CreateReservationInput!): Reservation!
+  isValidEmail(email: String!): IsVaildEmail!
   sendTokenToSMS(phone: String!): String!
   checkToken(token: String!): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
+  resetPwd(email: String!, password: String!): String!
   updateUserPwd(password: String!): String!
+  updateUserPhone(phone: String!): String!
+}
+
+input CreateAdministratorInput {
+  adminId: String!
+  password: String!
+}
+
+input CreateCarInput {
+  carNumber: String!
+  isHipass: Boolean!
+  price: Int!
+  oil: OIL_ENUM!
+  contractPeriod: String!
+  carModelName: String!
+  carLocation: CarLocationInput!
+  carUrl: [String!]!
+  registrationUrl: String!
+}
+
+input CarLocationInput {
+  address: String!
+  addressDetail: String!
+  lat: Float!
+  lng: Float!
+}
+
+input CreateCarCategoryInput {
+  name: String!
+}
+
+input CreateCarModelInput {
+  name: String!
+  carCategoryName: String!
+}
+
+input CreateCarRegistrationInput {
+  carNumber: String!
+  isHipass: Boolean!
+  model: String!
+  oil: OIL_ENUM!
+  address: String!
+  carUrl: [String!]!
+  registrationUrl: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input PaymentInput {
+  impUid: String!
+  amount: Int!
+  paymentMethod: String!
+}
+
+input CreateReservationInput {
+  startTime: DateTime!
+  endTime: DateTime!
+  amount: Int!
+  carId: String!
 }
 
 input CreateUserInput {
@@ -31,4 +233,5 @@ input CreateUserInput {
   name: String!
   password: String!
   phone: String!
+  isAuth: Boolean!
 }

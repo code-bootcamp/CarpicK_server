@@ -12,6 +12,7 @@ import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Cache } from 'cache-manager';
+import { IsVaildEmail } from './dto/isValid.output';
 
 @Resolver()
 export class UserResolver {
@@ -23,12 +24,13 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User)
-  fetchUser(@Args('email') email: string) {
-    return this.userService.findOne({ email });
+  async fetchLoginUser(@CurrentUser() currentUser: any) {
+    const user = await this.userService.findOne({ email: currentUser.email });
+    return user;
   }
 
-  @Mutation(() => Boolean)
-  checkEmail(@Args('email') email: string) {
+  @Mutation(() => IsVaildEmail)
+  isValidEmail(@Args('email') email: string) {
     return this.userService.checkValidationEmail({ email });
   }
 
@@ -39,7 +41,7 @@ export class UserResolver {
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
-    return `${phone}으로 인증번호 ${token}을 전송하였습니다`;
+    return `{phone:${phone},token:${token}}`;
   }
 
   @Mutation(() => Boolean)
@@ -57,6 +59,19 @@ export class UserResolver {
     return this.userService.create({ hashedPassword, ...info });
   }
 
+  @Mutation(() => String)
+  async resetPwd(
+    @Args('email') email: string, //
+    @Args('password') password: string,
+  ) {
+    const user = await this.userService.findOne({ email });
+    const isAuth = await bcrypt.compare(password, user.password);
+    if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    this.userService.reset({ hashedPassword, user });
+    return '비밀번호가 변경되었습니다';
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async updateUserPwd(
@@ -68,7 +83,7 @@ export class UserResolver {
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
     const hashedPassword = await bcrypt.hash(password, 10);
     this.userService.updatePwd({ hashedPassword, currentUser });
-    return '비밀번호가 변경되었습니다.';
+    return '비밀번호가 변경되었습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -81,6 +96,6 @@ export class UserResolver {
     if (phone === user.phone)
       throw new UnprocessableEntityException('기존 비밀번호 입니다');
     this.userService.updatePhone({ phone, currentUser });
-    return '핸드폰 번호가 변경되었습니다.';
+    return '핸드폰 번호가 변경되었습니다';
   }
 }

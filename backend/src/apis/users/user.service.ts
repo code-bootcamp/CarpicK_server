@@ -17,7 +17,11 @@ export class UserService {
 
   async checkValidationEmail({ email }) {
     const userEmail = await this.userRepository.findOne({ email });
-    return userEmail ? false : true;
+    const result = {
+      isValid: userEmail ? false : true,
+      phone: userEmail ? userEmail.phone : '',
+    };
+    return result;
   }
 
   getToken() {
@@ -43,6 +47,13 @@ export class UserService {
     return await this.userRepository.save({
       password,
       ...info,
+    });
+  }
+
+  async reset({ hashedPassword: password, user }) {
+    return await this.userRepository.save({
+      ...user,
+      password,
     });
   }
 
