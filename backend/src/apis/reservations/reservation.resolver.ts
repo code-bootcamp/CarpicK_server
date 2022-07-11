@@ -6,12 +6,12 @@ import { CreateReservationInput } from './dto/createReservation';
 @Resolver()
 export class ReservationResolver {
   constructor(
-    private readonly carCategoryService: ReservationService, //
+    private readonly reservationService: ReservationService, //
   ) {}
 
   @Query(() => [Reservation])
-  fetchCarCategory() {
-    return this.carCategoryService.findAll();
+  fetchReservation() {
+    return this.reservationService.findAll();
   }
 
   @Mutation(() => Reservation)
@@ -19,6 +19,6 @@ export class ReservationResolver {
     @Args('createReservationInput')
     createReservationInput: CreateReservationInput, //
   ) {
-    return this.carCategoryService.create({ createReservationInput });
+    return this.reservationService.create({ createReservationInput });
   }
 }

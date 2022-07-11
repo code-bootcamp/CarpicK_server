@@ -38,7 +38,7 @@ export class Payment {
   amount: number;
 
   @Column({ type: 'enum', enum: PAYMENT_STATUS_ENUM })
-  @Field(() => PAYMENT_STATUS_ENUM)
+  @Field(() => PAYMENT_STATUS_ENUM, { nullable: true })
   status: string;
 
   @Column()
