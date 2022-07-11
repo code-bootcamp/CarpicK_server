@@ -50,7 +50,7 @@ export class CarRegistration {
   address: string;
 
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
-  @Field(() => REGISTATION_STATUS_ENUM)
+  @Field(() => REGISTATION_STATUS_ENUM, { nullable: true })
   status: string;
 
   @CreateDateColumn()

@@ -23,8 +23,6 @@ export class ReservationService {
   }
 
   async findAll() {
-    return await this.reservationRepository.find({
-      relations: ['carModel'],
-    });
+    return await this.reservationRepository.find();
   }
 }
