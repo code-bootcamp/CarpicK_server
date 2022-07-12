@@ -16,6 +16,7 @@ import { FileModule } from './apis/file/file.module';
 import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
 import { AdministratorModule } from './apis/administrator/administrator.module';
 import { CarLocationModule } from './apis/carsLocation/carLocation.module';
+import { ReviewModule } from './apis/review/review.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CarLocationModule } from './apis/carsLocation/carLocation.module';
     FileModule,
     LicenTruthModule,
     PaymentModule,
+    ReviewModule,
     ReservationModule,
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
