@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Max, Min } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Car } from 'src/apis/cars/entities/car.entity';
+import { User } from 'src/apis/users/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -9,13 +11,17 @@ export class Review {
   @Field(() => String)
   id: string;
 
-  @Column()
-  @Field(() => String)
-  name: string;
-
   @Min(0)
   @Max(5)
   @Column()
   @Field(() => Int)
   rating: number;
+
+  @ManyToOne(() => Car)
+  @Field(() => Car)
+  car: Car;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

@@ -46,7 +46,7 @@ type Payment {
   id: String!
   impUid: String!
   amount: Int!
-  status: PAYMENT_STATUS_ENUM!
+  status: PAYMENT_STATUS_ENUM
   paymentMethod: String!
   user: User!
 }
@@ -106,7 +106,7 @@ type CarRegistration {
   model: String!
   oil: OIL_ENUM!
   address: String!
-  status: REGISTATION_STATUS_ENUM!
+  status: REGISTATION_STATUS_ENUM
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
 }
@@ -134,15 +134,14 @@ type IsVaildEmail {
 }
 
 type Query {
-
   fetchCar(carId: String!): Car!
   fetchCars(carLocationId: String!, page: Int): [Car!]!
-
-  fetchCarCategory: [Reservation!]!
-
+  fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchReservation: [Reservation!]!
   fetchLoginUser: User!
+  updateUserIsAuth(isAuth: Boolean!): String!
 }
 
 input FetchCarLocationInput {
@@ -166,6 +165,7 @@ type Mutation {
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
+  createRivew(carId: String!, rating: Float!): String!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
   isValidEmail(email: String!): IsVaildEmail!
   sendTokenToSMS(phone: String!): String!
