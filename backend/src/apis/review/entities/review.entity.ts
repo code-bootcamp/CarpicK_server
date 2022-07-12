@@ -9,10 +9,6 @@ export class Review {
   @Field(() => String)
   id: string;
 
-  @Column()
-  @Field(() => String)
-  name: string;
-
   @Min(0)
   @Max(5)
   @Column()

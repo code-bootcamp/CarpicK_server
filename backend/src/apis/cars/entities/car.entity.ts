@@ -4,7 +4,6 @@ import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
-import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
   CreateDateColumn,
@@ -66,17 +65,13 @@ export class Car {
   @DeleteDateColumn()
   deletedAt?: Date;
 
-  @ManyToOne(() => CarModel)
+  @ManyToOne(() => CarModel, (carmodel) => carmodel.car)
   @Field(() => CarModel)
   carModel: CarModel;
 
   @ManyToOne(() => CarLocation)
   @Field(() => CarLocation)
   carLocation: CarLocation;
-
-  @OneToMany(() => Reservation, (reservation) => reservation.car)
-  @Field(() => Reservation, { nullable: true })
-  reservation: Reservation;
 
   @OneToMany(() => ImageCar, (imageCar) => imageCar.car, {
     cascade: true,
