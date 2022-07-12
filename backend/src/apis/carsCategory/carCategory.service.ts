@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
-import { CarModel } from '../carsModel/entities/carModel.entity';
+import { Repository } from 'typeorm';
 import { CarCategory } from './entities/carCategory.entity';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class CarCategoryService {
 
   async findAll() {
     return await this.carCategoryRepository.find({
-      relations: ['carModel'], //CarCategory??
+      relations: ['carModel'],
     });
   }
 }

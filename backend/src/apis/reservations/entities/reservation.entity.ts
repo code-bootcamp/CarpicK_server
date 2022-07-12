@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
 import { Payment } from 'src/apis/payments/entities/payment.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -55,6 +56,10 @@ export class Reservation {
   @ManyToOne(() => Car)
   @Field(() => Car)
   car: Car;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  user: User;
 
   @JoinColumn()
   @OneToOne(() => Payment)

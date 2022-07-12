@@ -28,20 +28,19 @@ export class CarService {
       .createQueryBuilder('car')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
-      .leftJoinAndSelect('car.reservation', 'reservation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('car.carLocationId = :carLocationId', { carLocationId })
       .orderBy('car.createdAt', 'DESC');
 
     if (page) {
-      const result = car
+      const result = await car
         .take(10)
         .skip((page - 1) * 10)
         .getMany();
       return result;
     } else {
-      const result = car.getMany();
+      const result = await car.getMany();
       return result;
     }
   }
@@ -49,13 +48,7 @@ export class CarService {
   async findOne({ carId }) {
     return await this.carRepository.findOne({
       where: { id: carId },
-      relations: [
-        'reservation',
-        'carModel',
-        'carLocation',
-        'imageCar',
-        'imageRegistration',
-      ],
+      relations: ['carModel', 'carLocation', 'imageCar', 'imageRegistration'],
     });
   }
 

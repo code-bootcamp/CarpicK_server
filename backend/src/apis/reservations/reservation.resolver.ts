@@ -1,7 +1,10 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ReservationService } from './reservation.service';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationInput } from './dto/createReservation';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
+import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
 
 @Resolver()
 export class ReservationResolver {
@@ -10,15 +13,22 @@ export class ReservationResolver {
   ) {}
 
   @Query(() => [Reservation])
-  fetchReservation() {
-    return this.reservationService.findAll();
+  fetchReservations(
+    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
+  ) {
+    return this.reservationService.findAll(page);
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Reservation)
-  createReservation(
+  async createReservation(
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args('createReservationInput')
     createReservationInput: CreateReservationInput, //
   ) {
-    return this.reservationService.create({ createReservationInput });
+    return await this.reservationService.create({
+      currentUser,
+      createReservationInput,
+    });
   }
 }

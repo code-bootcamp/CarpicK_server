@@ -8,6 +8,16 @@ type Administrator {
   password: String!
 }
 
+type User {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+  phone: String!
+  isAuth: Boolean!
+  revenue: Int!
+}
+
 type CarLocation {
   id: String!
   address: String!
@@ -30,6 +40,49 @@ type CarModel {
   car: Car!
 }
 
+type ImageRegistration {
+  id: String!
+  url: String!
+}
+type Car {
+  id: String!
+  carNumber: String!
+  isHipass: Boolean!
+  price: Int!
+  oil: OIL_ENUM!
+  contractPeriod: String!
+  carModel: CarModel!
+  carLocation: CarLocation!
+  imageCar: [ImageCar!]!
+  imageRegistration: ImageRegistration!
+}
+
+enum OIL_ENUM {
+  GASOLINE
+  LIGHT_OIL
+  LPG
+  ELECTRIC
+}
+
+type CarRegistration {
+  id: String!
+  carNumber: String!
+  isHipass: Boolean!
+  model: String!
+  oil: OIL_ENUM!
+  address: String!
+  status: REGISTATION_STATUS_ENUM
+  imageCar: [ImageCar!]!
+  imageRegistration: ImageRegistration!
+  user: User!
+}
+
+enum REGISTATION_STATUS_ENUM {
+  IN_PROCESS
+  PASS
+  FAIL
+}
+
 type ImageCar {
   id: String!
   url: String!
@@ -37,9 +90,9 @@ type ImageCar {
   carRegistration: CarRegistration!
 }
 
-type ImageRegistration {
-  id: String!
-  url: String!
+type IsVaildEmail {
+  isValid: Boolean!
+  phone: String!
 }
 
 type Payment {
@@ -63,6 +116,7 @@ type Reservation {
   amount: Int
   status: RESERVATION_STATUS_ENUM
   car: Car!
+  user: User!
   payment: Payment!
 }
 
@@ -77,69 +131,14 @@ enum RESERVATION_STATUS_ENUM {
   RETURN
   USING
 }
-
-type Car {
-  id: String!
-  carNumber: String!
-  isHipass: Boolean!
-  price: Int!
-  oil: OIL_ENUM!
-  contractPeriod: String!
-  carModel: CarModel!
-  carLocation: CarLocation!
-  reservation: Reservation
-  imageCar: [ImageCar!]!
-  imageRegistration: ImageRegistration!
-}
-
-enum OIL_ENUM {
-  GASOLINE
-  LIGHT_OIL
-  LPG
-  ELECTRIC
-}
-
-type CarRegistration {
-  id: String!
-  carNumber: String!
-  isHipass: Boolean!
-  model: String!
-  oil: OIL_ENUM!
-  address: String!
-  status: REGISTATION_STATUS_ENUM
-  imageCar: [ImageCar!]!
-  imageRegistration: ImageRegistration!
-}
-
-enum REGISTATION_STATUS_ENUM {
-  IN_PROCESS
-  PASS
-  FAIL
-}
-
-type User {
-  id: String!
-  name: String!
-  email: String!
-  password: String!
-  phone: String!
-  isAuth: Boolean!
-  revenue: Int!
-  carRegistration: CarRegistration!
-}
-
-type IsVaildEmail {
-  isValid: Boolean!
-  phone: String!
-}
-
 type Query {
   fetchCar(carId: String!): Car!
   fetchCars(carLocationId: String!, page: Int): [Car!]!
   fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
+  fetchCarRegistration(carRegistrationId: String!): CarRegistration!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
-  fetchReservation: [Reservation!]!
+  fetchReservations(page: Int): [Reservation!]!
   fetchLoginUser: User!
   updateUserIsAuth(isAuth: Boolean!): String!
 }
