@@ -11,8 +11,9 @@ export class CarLocationService {
   ) {}
 
   async findAll({ fetchCarLocationInput }) {
-    const { lng, lat, filter } = fetchCarLocationInput;
-    const location = await getConnection()
+    const { southWestIng, northEastLng, southWestLat, northEastLat, filter } =
+      fetchCarLocationInput;
+    const location = getConnection()
       .getRepository(CarLocation)
       .createQueryBuilder('location')
       .leftJoinAndSelect('location.car', 'car')

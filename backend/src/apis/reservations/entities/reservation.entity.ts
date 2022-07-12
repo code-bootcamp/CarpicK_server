@@ -28,23 +28,23 @@ registerEnumType(RESERVATION_STATUS_ENUM, {
 @ObjectType()
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   id: string;
 
   @Column()
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date)
   startTime: Date;
 
   @Column()
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date)
   endTime: Date;
 
   @Column()
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   amount: number;
 
   @Column({ type: 'enum', enum: RESERVATION_STATUS_ENUM })
-  @Field(() => RESERVATION_STATUS_ENUM, { nullable: true })
+  @Field(() => RESERVATION_STATUS_ENUM)
   status: string;
 
   @CreateDateColumn()
@@ -53,7 +53,7 @@ export class Reservation {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Car)
+  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
   @Field(() => Car)
   car: Car;
 

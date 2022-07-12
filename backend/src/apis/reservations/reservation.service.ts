@@ -18,9 +18,9 @@ export class ReservationService {
       .getRepository(Reservation)
       .createQueryBuilder('reservation')
       .leftJoinAndSelect('reservation.car', 'car')
-      .addFrom('car', 'cars');
-    // .leftJoinAndSelect('cars.carModel', 'carModel');
-
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration');
     if (page) {
       const result = await reservation
         .take(10)

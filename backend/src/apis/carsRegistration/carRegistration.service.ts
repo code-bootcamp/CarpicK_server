@@ -20,9 +20,9 @@ export class CarRegistrationService {
   ) {}
 
   async findOne({ carRegistrationId }) {
-    return this.carRegistrationRepository.findOne(
+    return await this.carRegistrationRepository.findOne(
       { id: carRegistrationId },
-      { relations: ['imageCar', 'imageRegistration', 'User'] },
+      { relations: ['imageCar', 'imageRegistration', 'user'] },
     );
   }
 
