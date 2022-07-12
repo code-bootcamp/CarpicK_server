@@ -164,12 +164,14 @@ type Mutation {
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
   deleteCarModel(carModelId: String!): Boolean!
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
+  updateCarRegistrationStatus(carRegistrationId: String!, status: String!): CarRegistration!
   uploadFile(files: [Upload!]!): [String!]!
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
   createRivew(carId: String!, rating: Float!): String!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
+  updateReservationStatus(reservationId: String!, status: String!): Reservation!
   isValidEmail(email: String!): IsVaildEmail!
   sendTokenToSMS(phone: String!): String!
   checkToken(token: String!): Boolean!

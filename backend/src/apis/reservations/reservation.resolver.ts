@@ -31,4 +31,12 @@ export class ReservationResolver {
       createReservationInput,
     });
   }
+
+  @Mutation(() => Reservation)
+  async updateReservationStatus(
+    @Args('reservationId') reservationId: string,
+    @Args('status') status: string,
+  ) {
+    return await this.reservationService.update({ reservationId, status });
+  }
 }

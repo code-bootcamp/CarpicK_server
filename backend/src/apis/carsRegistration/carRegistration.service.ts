@@ -69,4 +69,23 @@ export class CarRegistrationService {
     );
     return savedcarRegistration;
   }
+  async update({ carRegistrationId, status }) {
+    const teamproduct = await this.carRegistrationRepository.findOne({
+      where: { id: carRegistrationId },
+    });
+
+    if (status === 'PASS') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.PASS,
+      });
+    } else if (status === 'FAIL') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.FAIL,
+      });
+    }
+  }
 }

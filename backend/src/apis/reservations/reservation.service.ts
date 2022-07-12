@@ -43,4 +43,30 @@ export class ReservationService {
       status: RESERVATION_STATUS_ENUM.RESERVATION,
     });
   }
+
+  async update({ reservationId, status }) {
+    const teamproduct = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+    });
+
+    if (status === 'CANCEL') {
+      return await this.reservationRepository.save({
+        ...teamproduct,
+        id: reservationId,
+        status: RESERVATION_STATUS_ENUM.CANCEL,
+      });
+    } else if (status === 'RETURN') {
+      return await this.reservationRepository.save({
+        ...teamproduct,
+        id: reservationId,
+        status: RESERVATION_STATUS_ENUM.RETURN,
+      });
+    } else if (status === 'USING') {
+      return await this.reservationRepository.save({
+        ...teamproduct,
+        id: reservationId,
+        status: RESERVATION_STATUS_ENUM.USING,
+      });
+    }
+  }
 }
