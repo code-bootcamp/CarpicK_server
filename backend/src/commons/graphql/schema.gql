@@ -143,7 +143,6 @@ type Query {
   fetchCarRegistrations(page: Int): [CarRegistration!]!
   fetchReservations(page: Int): [Reservation!]!
   fetchLoginUser: User!
-  updateUserIsAuth(isAuth: Boolean!): String!
 }
 
 input FetchCarLocationInput {
@@ -162,6 +161,7 @@ type Mutation {
   logout: String!
   adminLogout: String!
   createCar(createCarInput: CreateCarInput!): Car!
+  deleteCar(carId: String!): String!
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
   deleteCarCategory(carCategoryId: String!): Boolean!
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
@@ -182,6 +182,7 @@ type Mutation {
   resetPwd(email: String!, password: String!): String!
   updateUserPwd(password: String!): String!
   updateUserPhone(phone: String!): String!
+  updateUserIsAuth(isAuth: Boolean!): String!
   deleteLoginUser: String!
 }
 

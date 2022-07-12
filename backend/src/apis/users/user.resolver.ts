@@ -100,7 +100,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard) // 방어막
-  @Query(() => String)
+  @Mutation(() => String)
   async updateUserIsAuth(
     @CurrentUser() currentUser: ICurrentUser,
     @Args('isAuth') isAuth: boolean,

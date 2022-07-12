@@ -87,7 +87,9 @@ export class Car {
   imageCar: ImageCar[];
 
   @JoinColumn()
-  @OneToOne(() => ImageRegistration)
+  @OneToOne(() => ImageRegistration, {
+    cascade: true,
+  })
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
 }
