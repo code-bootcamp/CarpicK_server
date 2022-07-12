@@ -100,4 +100,11 @@ export class CarService {
     );
     return savedCar;
   }
+
+  async delete({ carId }) {
+    const result = await this.carRepository.softDelete({
+      id: carId,
+    });
+    return result.affected ? true : false;
+  }
 }
