@@ -38,6 +38,10 @@ import { ReviewModule } from './apis/review/review.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

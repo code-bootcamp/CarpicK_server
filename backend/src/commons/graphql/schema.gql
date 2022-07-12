@@ -44,6 +44,7 @@ type ImageRegistration {
   id: String!
   url: String!
 }
+
 type Car {
   id: String!
   carNumber: String!
@@ -131,6 +132,7 @@ enum RESERVATION_STATUS_ENUM {
   RETURN
   USING
 }
+
 type Query {
   fetchCar(carId: String!): Car!
   fetchCars(carLocationId: String!, page: Int): [Car!]!
