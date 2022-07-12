@@ -4,6 +4,8 @@ import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
+import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
@@ -90,4 +92,20 @@ export class Car {
   @OneToOne(() => ImageRegistration)
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
+
+  @OneToMany(
+    () => ImageReservation,
+    (imageReservation) => imageReservation.car,
+    {
+      cascade: true,
+    },
+  )
+  @Field(() => [ImageReservation])
+  imageReservation: ImageReservation[];
+
+  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car, {
+    cascade: true,
+  })
+  @Field(() => [ImageReturn])
+  imageReturn: ImageReturn[];
 }

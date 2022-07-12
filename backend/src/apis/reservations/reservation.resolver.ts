@@ -12,11 +12,21 @@ export class ReservationResolver {
     private readonly reservationService: ReservationService, //
   ) {}
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
-  fetchReservations(
+  fetchUserReservations(
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
   ) {
-    return this.reservationService.findAll(page);
+    return this.reservationService.userFindAll({ currentUser, page });
+  }
+
+  @Query(() => [Reservation])
+  fetchOwnerReservations(
+    @Args('carId') carId: string,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
+  ) {
+    return this.reservationService.ownerFindAll({ carId, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)

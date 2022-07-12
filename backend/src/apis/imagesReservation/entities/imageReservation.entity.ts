@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -13,7 +14,11 @@ export class ImageReservation {
   @Field(() => String)
   url: string;
 
-  @ManyToOne(() => Car)
+  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
   @Field(() => Car)
   car: Car;
+
+  @ManyToOne(() => Reservation, { onDelete: 'CASCADE' })
+  @Field(() => Reservation)
+  reservation: Reservation;
 }

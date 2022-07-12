@@ -69,6 +69,7 @@ export class CarRegistrationService {
     );
     return savedcarRegistration;
   }
+
   async update({ carRegistrationId, status }) {
     const teamproduct = await this.carRegistrationRepository.findOne({
       where: { id: carRegistrationId },

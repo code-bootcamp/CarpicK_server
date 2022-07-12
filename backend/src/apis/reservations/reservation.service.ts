@@ -13,14 +13,36 @@ export class ReservationService {
     private readonly reservationRepository: Repository<Reservation>,
   ) {}
 
-  async findAll(page: number) {
+  async userFindAll({ currentUser, page }) {
     const reservation = getConnection()
       .getRepository(Reservation)
       .createQueryBuilder('reservation')
       .leftJoinAndSelect('reservation.car', 'car')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration');
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
+      .where(`reservation.userId = ${currentUser.id}`);
+    if (page) {
+      const result = await reservation
+        .take(10)
+        .skip((page - 1) * 10)
+        .getMany();
+      return result;
+    } else {
+      const result = await reservation.getMany();
+      return result;
+    }
+  }
+
+  async ownerFindAll({ carId, page }) {
+    const reservation = getConnection()
+      .getRepository(Reservation)
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.car', 'car')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
+      .where(`reservation.carId = ${carId}`);
     if (page) {
       const result = await reservation
         .take(10)

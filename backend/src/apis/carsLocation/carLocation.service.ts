@@ -11,7 +11,7 @@ export class CarLocationService {
   ) {}
 
   async findAll({ fetchCarLocationInput }) {
-    const { southWestIng, northEastLng, southWestLat, northEastLat, filter } =
+    const { southWestLng, northEastLng, southWestLat, northEastLat, filter } =
       fetchCarLocationInput;
     const location = getConnection()
       .getRepository(CarLocation)
@@ -21,10 +21,12 @@ export class CarLocationService {
         'car_model',
         'car_model',
         'car_model.id = car.carModelId',
-      );
+      )
+      .where(`lat BETWEEN ${southWestLat} AND ${northEastLat}`)
+      .andWhere(`lng BETWEEN ${southWestLng} AND ${northEastLng}`);
     if (filter) {
       const result = await location
-        .where('car_model.name IN (:...names)', {
+        .andWhere('car_model.name IN (:...names)', {
           names: filter,
         })
         .getMany();
