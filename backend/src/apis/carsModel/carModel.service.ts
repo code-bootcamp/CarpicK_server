@@ -23,4 +23,11 @@ export class CarModelService {
       ...model,
     });
   }
+
+  async delete({ carModelId }) {
+    const result = await this.carModelRepository.delete({
+      id: carModelId,
+    });
+    return result.affected ? true : false;
+  }
 }
