@@ -1,5 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
+import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
 import { Payment } from 'src/apis/payments/entities/payment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
@@ -8,6 +10,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -65,4 +68,20 @@ export class Reservation {
   @OneToOne(() => Payment)
   @Field(() => Payment)
   payment: Payment;
+
+  @OneToMany(
+    () => ImageReservation,
+    (imageReservation) => imageReservation.reservation,
+    {
+      cascade: true,
+    },
+  )
+  @Field(() => [ImageReservation])
+  imageReservation: ImageReservation[];
+
+  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.reservation, {
+    cascade: true,
+  })
+  @Field(() => [ImageReturn])
+  imageReturn: ImageReturn[];
 }

@@ -141,16 +141,17 @@ type Query {
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
-  fetchReservations(page: Int): [Reservation!]!
+  fetchUserReservations(page: Int): [Reservation!]!
+  fetchOwnerReservations(carId: String!, page: Int): [Reservation!]!
   fetchLoginUser: User!
 }
 
 input FetchCarLocationInput {
-  southWestIng: Float!
+  southWestLng: Float!
   northEastLng: Float!
   southWestLat: Float!
   northEastLat: Float!
-  filter: [String!]!
+  filter: [String!]
 }
 
 type Mutation {
