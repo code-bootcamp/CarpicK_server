@@ -52,7 +52,7 @@ export class CarRegistration {
 
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
   @Field(() => REGISTATION_STATUS_ENUM, { nullable: true })
-  status: string;
+  status?: string;
 
   @CreateDateColumn()
   createdAt: Date;
