@@ -70,4 +70,18 @@ export class UserService {
       ...currentUser,
     });
   }
+
+  async updateIsAuth({ isAuth, currentUser }) {
+    return await this.userRepository.save({
+      isAuth,
+      ...currentUser,
+    });
+  }
+
+  async deleteUser({ currentUser }) {
+    const result = await this.userRepository.softDelete({
+      id: currentUser.id,
+    });
+    return result.affected ? true : false;
+  }
 }

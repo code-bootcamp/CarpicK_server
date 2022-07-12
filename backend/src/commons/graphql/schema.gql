@@ -8,6 +8,16 @@ type Administrator {
   password: String!
 }
 
+type User {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+  phone: String!
+  isAuth: Boolean!
+  revenue: Int!
+}
+
 type CarLocation {
   id: String!
   address: String!
@@ -30,54 +40,10 @@ type CarModel {
   car: Car!
 }
 
-type ImageCar {
-  id: String!
-  url: String!
-  car: Car!
-  carRegistration: CarRegistration!
-}
-
 type ImageRegistration {
   id: String!
   url: String!
 }
-
-type Payment {
-  id: String!
-  impUid: String!
-  amount: Int!
-  status: PAYMENT_STATUS_ENUM!
-  paymentMethod: String!
-  user: User!
-}
-
-enum PAYMENT_STATUS_ENUM {
-  PAYMENT
-  CANCLE
-}
-
-type Reservation {
-  id: String
-  startTime: DateTime
-  endTime: DateTime
-  amount: Int
-  status: RESERVATION_STATUS_ENUM
-  car: Car!
-  payment: Payment!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-enum RESERVATION_STATUS_ENUM {
-  RESERVATION
-  CANCEL
-  RETURN
-  USING
-}
-
 type Car {
   id: String!
   carNumber: String!
@@ -87,7 +53,6 @@ type Car {
   contractPeriod: String!
   carModel: CarModel!
   carLocation: CarLocation!
-  reservation: Reservation
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
 }
@@ -106,9 +71,10 @@ type CarRegistration {
   model: String!
   oil: OIL_ENUM!
   address: String!
-  status: REGISTATION_STATUS_ENUM!
+  status: REGISTATION_STATUS_ENUM
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
+  user: User!
 }
 
 enum REGISTATION_STATUS_ENUM {
@@ -117,14 +83,10 @@ enum REGISTATION_STATUS_ENUM {
   FAIL
 }
 
-type User {
+type ImageCar {
   id: String!
-  name: String!
-  email: String!
-  password: String!
-  phone: String!
-  isAuth: Boolean!
-  revenue: Int!
+  url: String!
+  car: Car!
   carRegistration: CarRegistration!
 }
 
@@ -133,16 +95,52 @@ type IsVaildEmail {
   phone: String!
 }
 
-type Query {
+type Payment {
+  id: String!
+  impUid: String!
+  amount: Int!
+  status: PAYMENT_STATUS_ENUM
+  paymentMethod: String!
+  user: User!
+}
 
+enum PAYMENT_STATUS_ENUM {
+  PAYMENT
+  CANCLE
+}
+
+type Reservation {
+  id: String
+  startTime: DateTime
+  endTime: DateTime
+  amount: Int
+  status: RESERVATION_STATUS_ENUM
+  car: Car!
+  user: User!
+  payment: Payment!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum RESERVATION_STATUS_ENUM {
+  RESERVATION
+  CANCEL
+  RETURN
+  USING
+}
+type Query {
   fetchCar(carId: String!): Car!
   fetchCars(carLocationId: String!, page: Int): [Car!]!
-
-  fetchCarCategory: [Reservation!]!
-
+  fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
+  fetchCarRegistration(carRegistrationId: String!): CarRegistration!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchReservations(page: Int): [Reservation!]!
   fetchLoginUser: User!
+  updateUserIsAuth(isAuth: Boolean!): String!
 }
 
 input FetchCarLocationInput {
@@ -166,6 +164,7 @@ type Mutation {
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
+  createRivew(carId: String!, rating: Float!): String!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
   isValidEmail(email: String!): IsVaildEmail!
   sendTokenToSMS(phone: String!): String!
@@ -174,6 +173,7 @@ type Mutation {
   resetPwd(email: String!, password: String!): String!
   updateUserPwd(password: String!): String!
   updateUserPhone(phone: String!): String!
+  deleteLoginUser: String!
 }
 
 input CreateAdministratorInput {

@@ -2,6 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { OIL_ENUM } from 'src/apis/cars/entities/car.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -50,7 +51,7 @@ export class CarRegistration {
   address: string;
 
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
-  @Field(() => REGISTATION_STATUS_ENUM)
+  @Field(() => REGISTATION_STATUS_ENUM, { nullable: true })
   status: string;
 
   @CreateDateColumn()
@@ -69,4 +70,9 @@ export class CarRegistration {
   @OneToOne(() => ImageRegistration)
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
+
+  @JoinColumn()
+  @OneToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

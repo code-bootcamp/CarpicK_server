@@ -19,33 +19,42 @@ export class CarRegistrationService {
     private readonly imageCarRepository: Repository<ImageCar>,
   ) {}
 
+  async findOne({ carRegistrationId }) {
+    return this.carRegistrationRepository.findOne(
+      { id: carRegistrationId },
+      { relations: ['imageCar', 'imageRegistration', 'User'] },
+    );
+  }
+
   async findAll(page: number) {
     const registration = getConnection()
       .getRepository(CarRegistration)
       .createQueryBuilder('registration')
       .leftJoinAndSelect('registration.imageCar', 'imageCar')
       .leftJoinAndSelect('registration.imageRegistration', 'imageRegistration')
+      .leftJoinAndSelect('registration.user', 'user')
       .orderBy('registration.createdAt', 'DESC');
 
     if (page) {
-      const result = registration
+      const result = await registration
         .take(10)
         .skip((page - 1) * 10)
         .getMany();
       return result;
     } else {
-      const result = registration.getMany();
+      const result = await registration.getMany();
       return result;
     }
   }
 
-  async create({ createCarRegistrationInput }) {
+  async create({ currentUser, createCarRegistrationInput }) {
     const { carUrl, registrationUrl, ...carRegistration } =
       createCarRegistrationInput;
     const savedRegistrationUrl = await this.imageRegistrationRepository.save({
       url: registrationUrl,
     });
     const savedcarRegistration = await this.carRegistrationRepository.save({
+      user: currentUser.id,
       imageRegistration: savedRegistrationUrl,
       ...carRegistration,
       status: REGISTATION_STATUS_ENUM.IN_PROCESS,

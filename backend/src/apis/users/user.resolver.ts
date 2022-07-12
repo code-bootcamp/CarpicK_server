@@ -98,4 +98,23 @@ export class UserResolver {
     this.userService.updatePhone({ phone, currentUser });
     return '핸드폰 번호가 변경되었습니다';
   }
+
+  @UseGuards(GqlAuthAccessGuard) // 방어막
+  @Query(() => String)
+  async updateUserIsAuth(
+    @CurrentUser() currentUser: ICurrentUser,
+    @Args('isAuth') isAuth: boolean,
+  ) {
+    this.userService.updateIsAuth({ isAuth, currentUser });
+    return '면허증이 등록되었습니다.';
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => String)
+  async deleteLoginUser(
+    @CurrentUser() currentUser: any, //
+  ) {
+    const result = this.userService.deleteUser({ currentUser });
+    if (result) return '로그인한 계정이 삭제되었습니다.';
+  }
 }
