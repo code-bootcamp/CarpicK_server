@@ -13,7 +13,9 @@ export class CarCategory {
   @Field(() => String)
   name: string;
 
-  @OneToMany(() => CarModel, (carModel) => carModel.carCategory)
+  @OneToMany(() => CarModel, (carModel) => carModel.carCategory, {
+    cascade: true,
+  })
   @Field(() => [CarModel])
   carModel: CarModel[];
 }

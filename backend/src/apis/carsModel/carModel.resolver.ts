@@ -15,4 +15,11 @@ export class CarModelResolver {
   ) {
     return this.carModelService.create({ createCarModelInput });
   }
+
+  @Mutation(() => Boolean)
+  deleteCarModel(
+    @Args('carModelId') carModelId: string, //
+  ) {
+    return this.carModelService.delete({ carModelId });
+  }
 }

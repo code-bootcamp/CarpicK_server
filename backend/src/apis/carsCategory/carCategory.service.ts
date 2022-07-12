@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
-import { CarModel } from '../carsModel/entities/carModel.entity';
+import { Repository } from 'typeorm';
 import { CarCategory } from './entities/carCategory.entity';
 
 @Injectable()
@@ -19,5 +18,11 @@ export class CarCategoryService {
     return await this.carCategoryRepository.find({
       relations: ['carModel'], //CarCategory??
     });
+  }
+  async delete({ carCategoryId }) {
+    const result = await this.carCategoryRepository.delete({
+      id: carCategoryId,
+    });
+    return result.affected ? true : false;
   }
 }

@@ -20,7 +20,7 @@ export class CarModel {
   @Field(() => String)
   name: string;
 
-  @ManyToOne(() => CarCategory)
+  @ManyToOne(() => CarCategory, { onDelete: 'CASCADE' })
   @Field(() => CarCategory)
   carCategory: CarCategory;
 
