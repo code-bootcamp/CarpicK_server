@@ -19,4 +19,10 @@ export class CarCategoryService {
       relations: ['carModel'],
     });
   }
+  async delete({ carCategoryId }) {
+    const result = await this.carCategoryRepository.delete({
+      id: carCategoryId,
+    });
+    return result.affected ? true : false;
+  }
 }

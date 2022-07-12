@@ -21,4 +21,11 @@ export class CarCategoryResolver {
   ) {
     return this.carCategoryService.create({ createCarCategoryInput });
   }
+
+  @Mutation(() => Boolean)
+  deleteCarCategory(
+    @Args('carCategoryId') carCategoryId: string, //
+  ) {
+    return this.carCategoryService.delete({ carCategoryId });
+  }
 }

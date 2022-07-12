@@ -44,6 +44,7 @@ type ImageRegistration {
   id: String!
   url: String!
 }
+
 type Car {
   id: String!
   carNumber: String!
@@ -131,6 +132,7 @@ enum RESERVATION_STATUS_ENUM {
   RETURN
   USING
 }
+
 type Query {
   fetchCar(carId: String!): Car!
   fetchCars(carLocationId: String!, page: Int): [Car!]!
@@ -158,7 +160,9 @@ type Mutation {
   adminLogout: String!
   createCar(createCarInput: CreateCarInput!): Car!
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
+  deleteCarCategory(carCategoryId: String!): Boolean!
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
+  deleteCarModel(carModelId: String!): Boolean!
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
   uploadFile(files: [Upload!]!): [String!]!
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
