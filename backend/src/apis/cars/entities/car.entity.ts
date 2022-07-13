@@ -4,6 +4,9 @@ import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
+import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
   CreateDateColumn,
@@ -56,6 +59,10 @@ export class Car {
   @Field(() => String)
   contractPeriod: string;
 
+  @Column()
+  @Field(() => String)
+  ownerEmail: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -73,6 +80,12 @@ export class Car {
   @Field(() => CarLocation)
   carLocation: CarLocation;
 
+  @OneToMany(() => Reservation, (reservation) => reservation.car, {
+    cascade: true,
+  })
+  @Field(() => [Reservation])
+  reservation: Reservation[];
+
   @OneToMany(() => ImageCar, (imageCar) => imageCar.car, {
     cascade: true,
   })
@@ -80,7 +93,25 @@ export class Car {
   imageCar: ImageCar[];
 
   @JoinColumn()
-  @OneToOne(() => ImageRegistration)
+  @OneToOne(() => ImageRegistration, {
+    cascade: true,
+  })
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
+
+  @OneToMany(
+    () => ImageReservation,
+    (imageReservation) => imageReservation.car,
+    {
+      cascade: true,
+    },
+  )
+  @Field(() => [ImageReservation])
+  imageReservation: ImageReservation[];
+
+  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car, {
+    cascade: true,
+  })
+  @Field(() => [ImageReturn])
+  imageReturn: ImageReturn[];
 }

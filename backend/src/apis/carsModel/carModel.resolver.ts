@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarModelService } from './carModel.service';
 import { CreateCarModelInput } from './dto/createCarModel.input';
 import { CarModel } from './entities/carModel.entity';
@@ -16,6 +18,7 @@ export class CarModelResolver {
     return this.carModelService.create({ createCarModelInput });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Boolean)
   deleteCarModel(
     @Args('carModelId') carModelId: string, //

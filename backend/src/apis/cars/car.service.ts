@@ -28,11 +28,11 @@ export class CarService {
       .createQueryBuilder('car')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .leftJoinAndSelect('car.reservation', 'reservation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('car.carLocationId = :carLocationId', { carLocationId })
       .orderBy('car.createdAt', 'DESC');
-
     if (page) {
       const result = await car
         .take(10)
@@ -48,7 +48,13 @@ export class CarService {
   async findOne({ carId }) {
     return await this.carRepository.findOne({
       where: { id: carId },
-      relations: ['carModel', 'carLocation', 'imageCar', 'imageRegistration'],
+      relations: [
+        'carModel',
+        'carLocation',
+        'reservation',
+        'imageCar',
+        'imageRegistration',
+      ],
     });
   }
 
@@ -93,5 +99,12 @@ export class CarService {
       }),
     );
     return savedCar;
+  }
+
+  async delete({ carId }) {
+    const result = await this.carRepository.softDelete({
+      id: carId,
+    });
+    return result.affected ? true : false;
   }
 }

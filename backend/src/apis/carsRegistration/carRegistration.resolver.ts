@@ -36,4 +36,15 @@ export class CarRegistrationResolver {
       createCarRegistrationInput,
     });
   }
+
+  @Mutation(() => CarRegistration)
+  async updateCarRegistrationStatus(
+    @Args('carRegistrationId') carRegistrationId: string,
+    @Args('status') status: string,
+  ) {
+    return await this.carRegistrationService.update({
+      carRegistrationId,
+      status,
+    });
+  }
 }

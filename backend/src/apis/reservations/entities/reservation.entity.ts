@@ -1,5 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
+import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
 import { Payment } from 'src/apis/payments/entities/payment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
@@ -8,6 +10,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -28,23 +31,23 @@ registerEnumType(RESERVATION_STATUS_ENUM, {
 @ObjectType()
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   id: string;
 
   @Column()
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date)
   startTime: Date;
 
   @Column()
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date)
   endTime: Date;
 
   @Column()
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int)
   amount: number;
 
   @Column({ type: 'enum', enum: RESERVATION_STATUS_ENUM })
-  @Field(() => RESERVATION_STATUS_ENUM, { nullable: true })
+  @Field(() => RESERVATION_STATUS_ENUM)
   status: string;
 
   @CreateDateColumn()
@@ -53,7 +56,7 @@ export class Reservation {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Car)
+  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
   @Field(() => Car)
   car: Car;
 
@@ -65,4 +68,20 @@ export class Reservation {
   @OneToOne(() => Payment)
   @Field(() => Payment)
   payment: Payment;
+
+  @OneToMany(
+    () => ImageReservation,
+    (imageReservation) => imageReservation.reservation,
+    {
+      cascade: true,
+    },
+  )
+  @Field(() => [ImageReservation])
+  imageReservation: ImageReservation[];
+
+  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.reservation, {
+    cascade: true,
+  })
+  @Field(() => [ImageReturn])
+  imageReturn: ImageReturn[];
 }

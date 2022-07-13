@@ -3,11 +3,17 @@ import { Field, Float, InputType } from '@nestjs/graphql';
 @InputType()
 export class FetchCarLocationInput {
   @Field(() => Float)
-  lat?: number;
+  southWestLng?: number;
 
   @Field(() => Float)
-  lng?: number;
+  northEastLng?: number;
 
-  @Field(() => [String])
+  @Field(() => Float)
+  southWestLat?: number;
+
+  @Field(() => Float)
+  northEastLat?: number;
+
+  @Field(() => [String], { nullable: true })
   filter?: string;
 }

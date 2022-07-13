@@ -20,9 +20,9 @@ export class CarRegistrationService {
   ) {}
 
   async findOne({ carRegistrationId }) {
-    return this.carRegistrationRepository.findOne(
+    return await this.carRegistrationRepository.findOne(
       { id: carRegistrationId },
-      { relations: ['imageCar', 'imageRegistration', 'User'] },
+      { relations: ['imageCar', 'imageRegistration', 'user'] },
     );
   }
 
@@ -68,5 +68,31 @@ export class CarRegistrationService {
       }),
     );
     return savedcarRegistration;
+  }
+
+  async update({ carRegistrationId, status }) {
+    const teamproduct = await this.carRegistrationRepository.findOne({
+      where: { id: carRegistrationId },
+    });
+
+    if (status === 'PASS') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.PASS,
+      });
+    } else if (status === 'FAIL') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.FAIL,
+      });
+    } else if (status === 'EXPIRATION') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.EXPIRATION,
+      });
+    }
   }
 }

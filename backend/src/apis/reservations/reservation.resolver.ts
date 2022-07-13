@@ -12,11 +12,21 @@ export class ReservationResolver {
     private readonly reservationService: ReservationService, //
   ) {}
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
-  fetchReservations(
+  fetchUserReservations(
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
   ) {
-    return this.reservationService.findAll(page);
+    return this.reservationService.userFindAll({ currentUser, page });
+  }
+
+  @Query(() => [Reservation])
+  fetchOwnerReservations(
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
+  ) {
+    return this.reservationService.ownerFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -30,5 +40,13 @@ export class ReservationResolver {
       currentUser,
       createReservationInput,
     });
+  }
+
+  @Mutation(() => Reservation)
+  async updateReservationStatus(
+    @Args('reservationId') reservationId: string,
+    @Args('status') status: string,
+  ) {
+    return await this.reservationService.update({ reservationId, status });
   }
 }
