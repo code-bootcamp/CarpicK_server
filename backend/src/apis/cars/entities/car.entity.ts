@@ -86,16 +86,12 @@ export class Car {
   @Field(() => [Reservation])
   reservation: Reservation[];
 
-  @OneToMany(() => ImageCar, (imageCar) => imageCar.car, {
-    cascade: true,
-  })
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.car)
   @Field(() => [ImageCar])
   imageCar: ImageCar[];
 
   @JoinColumn()
-  @OneToOne(() => ImageRegistration, {
-    cascade: true,
-  })
+  @OneToOne(() => ImageRegistration)
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
 
