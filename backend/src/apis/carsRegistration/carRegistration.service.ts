@@ -87,6 +87,12 @@ export class CarRegistrationService {
         id: carRegistrationId,
         status: REGISTATION_STATUS_ENUM.FAIL,
       });
+    } else if (status === 'EXPIRATION') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.EXPIRATION,
+      });
     }
   }
 }

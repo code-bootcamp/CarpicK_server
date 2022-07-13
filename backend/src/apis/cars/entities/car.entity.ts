@@ -59,6 +59,10 @@ export class Car {
   @Field(() => String)
   contractPeriod: string;
 
+  @Column()
+  @Field(() => String)
+  ownerEmail: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

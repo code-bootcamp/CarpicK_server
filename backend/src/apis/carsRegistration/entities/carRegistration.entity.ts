@@ -18,6 +18,7 @@ export enum REGISTATION_STATUS_ENUM {
   IN_PROCESS = '심사중',
   PASS = '승인',
   FAIL = '거절',
+  EXPIRATION = '계약종료',
 }
 
 registerEnumType(REGISTATION_STATUS_ENUM, {
@@ -51,13 +52,15 @@ export class CarRegistration {
   address: string;
 
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
-  @Field(() => REGISTATION_STATUS_ENUM, { nullable: true })
+  @Field(() => REGISTATION_STATUS_ENUM)
   status?: string;
 
   @CreateDateColumn()
+  @Field(() => Date)
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Field(() => Date)
   updatedAt: Date;
 
   @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {

@@ -5,7 +5,7 @@ import { Car } from '../entities/car.entity';
 @InputType()
 export class CreateCarInput extends PickType(
   Car,
-  ['carNumber', 'isHipass', 'price', 'oil', 'contractPeriod'],
+  ['carNumber', 'isHipass', 'price', 'oil', 'contractPeriod', 'ownerEmail'],
   InputType,
 ) {
   @Field(() => String)
@@ -14,9 +14,9 @@ export class CreateCarInput extends PickType(
   @Field(() => CarLocationInput)
   carLocation: CarLocationInput;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   carUrl: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   registrationUrl: string;
 }

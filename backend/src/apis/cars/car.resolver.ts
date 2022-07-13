@@ -1,7 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
-import { CurrentUser } from 'src/commons/auth/gql-user.param';
 import { CarService } from './car.service';
 import { CreateCarInput } from './dto/createCar.entity';
 import { Car } from './entities/car.entity';
