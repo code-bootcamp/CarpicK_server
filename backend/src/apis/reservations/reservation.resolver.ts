@@ -23,10 +23,10 @@ export class ReservationResolver {
 
   @Query(() => [Reservation])
   fetchOwnerReservations(
-    @Args('carId') carId: string,
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
   ) {
-    return this.reservationService.ownerFindAll({ carId, page });
+    return this.reservationService.ownerFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)

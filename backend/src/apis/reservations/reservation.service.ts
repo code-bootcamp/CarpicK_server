@@ -21,7 +21,7 @@ export class ReservationService {
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
-      .where(`reservation.userId = ${currentUser.id}`);
+      .where('reservation.userId = :id', { id: currentUser.id });
     if (page) {
       const result = await reservation
         .take(10)
@@ -34,7 +34,7 @@ export class ReservationService {
     }
   }
 
-  async ownerFindAll({ carId, page }) {
+  async ownerFindAll({ currentUser, page }) {
     const reservation = getConnection()
       .getRepository(Reservation)
       .createQueryBuilder('reservation')
@@ -42,7 +42,7 @@ export class ReservationService {
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
-      .where(`reservation.carId = ${carId}`);
+      .where('car.ownerEmail = :email', { email: currentUser.email });
     if (page) {
       const result = await reservation
         .take(10)
