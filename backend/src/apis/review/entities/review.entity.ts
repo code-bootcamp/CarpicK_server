@@ -11,7 +11,7 @@ export class Review {
   @Field(() => String)
   id: string;
 
-  @Min(0)
+  @Min(1)
   @Max(5)
   @Column()
   @Field(() => Int)

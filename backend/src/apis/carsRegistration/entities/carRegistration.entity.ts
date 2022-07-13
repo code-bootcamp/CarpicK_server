@@ -63,9 +63,7 @@ export class CarRegistration {
   @Field(() => Date)
   updatedAt: Date;
 
-  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {
-    cascade: true,
-  })
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration)
   @Field(() => [ImageCar])
   imageCar: ImageCar[];
 

@@ -158,13 +158,13 @@ type IsVaildEmail {
 
 type Query {
   fetchCar(carId: String!): Car!
-  fetchCars(carLocationId: String!, page: Int): [Car!]!
+  fetchCars(carLocationId: String!): [Car!]!
   fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
-  fetchUserReservations(page: Int): [Reservation!]!
-  fetchOwnerReservations(page: Int): [Reservation!]!
+  fetchUserReservations: [Reservation!]!
+  fetchOwnerReservations: [Reservation!]!
   fetchLoginUser: User!
 }
 
