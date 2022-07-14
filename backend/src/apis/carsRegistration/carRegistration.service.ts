@@ -28,12 +28,13 @@ export class CarRegistrationService {
   }
 
   async findAll(page: number) {
-    return await this.carRegistrationRepository.find({
+    const [results, count] = await this.carRegistrationRepository.findAndCount({
       relations: ['imageCar', 'imageRegistration', 'user'],
       order: { createdAt: 'DESC' },
       take: 10,
-      skip: Number(`${page} - 1 * 10`),
+      skip: (page - 1) * 10,
     });
+    return { results, count };
   }
 
   async create({ currentUser, createCarRegistrationInput }) {
@@ -89,6 +90,12 @@ export class CarRegistrationService {
         ...teamproduct,
         id: carRegistrationId,
         status: REGISTATION_STATUS_ENUM.FAIL,
+      });
+    } else if (status === 'EXPIRATION') {
+      return await this.carRegistrationRepository.save({
+        ...teamproduct,
+        id: carRegistrationId,
+        status: REGISTATION_STATUS_ENUM.EXPIRATION,
       });
     }
   }
