@@ -1,15 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { CarLocation } from './entities/carLocation.entity';
 
 @Injectable()
 export class CarLocationService {
-  constructor(
-    @InjectRepository(CarLocation)
-    private readonly carLocationRepository: Repository<CarLocation>, //
-  ) {}
-
   async findAll({ fetchCarLocationInput }) {
     const { southWestLng, northEastLng, southWestLat, northEastLat, filter } =
       fetchCarLocationInput;

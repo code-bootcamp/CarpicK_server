@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   Reservation,
   RESERVATION_STATUS_ENUM,
@@ -13,46 +13,28 @@ export class ReservationService {
     private readonly reservationRepository: Repository<Reservation>,
   ) {}
 
-  async userFindAll({ currentUser, page }) {
-    const reservation = getConnection()
-      .getRepository(Reservation)
-      .createQueryBuilder('reservation')
-      .leftJoinAndSelect('reservation.car', 'car')
-      .leftJoinAndSelect('car.carModel', 'carModel')
-      .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
-      .where('reservation.userId = :id', { id: currentUser.id });
-    if (page) {
-      const result = await reservation
-        .take(10)
-        .skip((page - 1) * 10)
-        .getMany();
-      return result;
-    } else {
-      const result = await reservation.getMany();
-      return result;
-    }
+  async userFindAll({ currentUser }) {
+    return await this.reservationRepository.find({
+      where: { user: { id: currentUser.id } },
+      relations: [
+        'car',
+        'car.carModel',
+        'car.imageCar',
+        'car.imageRegistration',
+      ],
+    });
   }
 
-  async ownerFindAll({ currentUser, page }) {
-    const reservation = getConnection()
-      .getRepository(Reservation)
-      .createQueryBuilder('reservation')
-      .leftJoinAndSelect('reservation.car', 'car')
-      .leftJoinAndSelect('car.carModel', 'carModel')
-      .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
-      .where('car.ownerEmail = :email', { email: currentUser.email });
-    if (page) {
-      const result = await reservation
-        .take(10)
-        .skip((page - 1) * 10)
-        .getMany();
-      return result;
-    } else {
-      const result = await reservation.getMany();
-      return result;
-    }
+  async ownerFindAll({ currentUser }) {
+    return await this.reservationRepository.find({
+      where: { car: { ownerEmail: currentUser.email } },
+      relations: [
+        'car',
+        'car.carModel',
+        'car.imageCar',
+        'car.imageRegistration',
+      ],
+    });
   }
 
   async create({ currentUser, createReservationInput }) {

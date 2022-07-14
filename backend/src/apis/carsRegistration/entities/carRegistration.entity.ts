@@ -43,7 +43,7 @@ export class CarRegistration {
   @Field(() => String)
   model: string;
 
-  @Column({ type: 'enum', enum: OIL_ENUM })
+  @Column({ type: 'enum', enumName: 'OIL_ENUM' })
   @Field(() => OIL_ENUM)
   oil: string;
 
@@ -53,7 +53,7 @@ export class CarRegistration {
 
   @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
   @Field(() => REGISTATION_STATUS_ENUM)
-  status?: string;
+  status: string;
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -63,9 +63,7 @@ export class CarRegistration {
   @Field(() => Date)
   updatedAt: Date;
 
-  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration, {
-    cascade: true,
-  })
+  @OneToMany(() => ImageCar, (imageCar) => imageCar.carRegistration)
   @Field(() => [ImageCar])
   imageCar: ImageCar[];
 

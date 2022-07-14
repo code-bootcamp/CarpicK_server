@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
 import {
@@ -17,6 +17,7 @@ export class CarRegistrationService {
     private readonly imageRegistrationRepository: Repository<ImageRegistration>,
     @InjectRepository(ImageCar)
     private readonly imageCarRepository: Repository<ImageCar>,
+    private readonly connection: Connection,
   ) {}
 
   async findOne({ carRegistrationId }) {
@@ -27,47 +28,50 @@ export class CarRegistrationService {
   }
 
   async findAll(page: number) {
-    const registration = getConnection()
-      .getRepository(CarRegistration)
-      .createQueryBuilder('registration')
-      .leftJoinAndSelect('registration.imageCar', 'imageCar')
-      .leftJoinAndSelect('registration.imageRegistration', 'imageRegistration')
-      .leftJoinAndSelect('registration.user', 'user')
-      .orderBy('registration.createdAt', 'DESC');
-
-    if (page) {
-      const result = await registration
-        .take(10)
-        .skip((page - 1) * 10)
-        .getMany();
-      return result;
-    } else {
-      const result = await registration.getMany();
-      return result;
-    }
+    const [results, count] = await this.carRegistrationRepository.findAndCount({
+      relations: ['imageCar', 'imageRegistration', 'user'],
+      order: { createdAt: 'DESC' },
+      take: 10,
+      skip: (page - 1) * 10,
+    });
+    return { results, count };
   }
 
   async create({ currentUser, createCarRegistrationInput }) {
-    const { carUrl, registrationUrl, ...carRegistration } =
-      createCarRegistrationInput;
-    const savedRegistrationUrl = await this.imageRegistrationRepository.save({
-      url: registrationUrl,
-    });
-    const savedcarRegistration = await this.carRegistrationRepository.save({
-      user: currentUser.id,
-      imageRegistration: savedRegistrationUrl,
-      ...carRegistration,
-      status: REGISTATION_STATUS_ENUM.IN_PROCESS,
-    });
-    await Promise.all(
-      carUrl.map((address: string) => {
-        return this.imageCarRepository.save({
-          url: address,
-          carRegistration: { id: savedcarRegistration.id },
-        });
-      }),
-    );
-    return savedcarRegistration;
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction('SERIALIZABLE');
+    try {
+      const { carUrl, registrationUrl, ...carRegistration } =
+        createCarRegistrationInput;
+      const saveRegistrationUrl = this.imageRegistrationRepository.create({
+        url: registrationUrl,
+      });
+      await queryRunner.manager.save(saveRegistrationUrl);
+      const saveCarRegistration = this.carRegistrationRepository.create({
+        user: currentUser,
+        imageRegistration: saveRegistrationUrl,
+        ...carRegistration,
+        status: REGISTATION_STATUS_ENUM.IN_PROCESS,
+      });
+      const registration = await queryRunner.manager.save(saveCarRegistration);
+      await Promise.allSettled(
+        carUrl.map(async (address: string) => {
+          const url = this.imageCarRepository.create({
+            url: address,
+            carRegistration: { id: registration['id'] },
+          });
+          return await queryRunner.manager.save(url);
+        }),
+      );
+      await queryRunner.commitTransaction();
+      return saveCarRegistration;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async update({ carRegistrationId, status }) {
@@ -94,5 +98,9 @@ export class CarRegistrationService {
         status: REGISTATION_STATUS_ENUM.EXPIRATION,
       });
     }
+  }
+
+  async count() {
+    return await this.carRegistrationRepository.findAndCount();
   }
 }
