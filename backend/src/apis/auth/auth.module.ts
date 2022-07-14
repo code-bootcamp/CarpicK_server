@@ -10,11 +10,18 @@ import { UserService } from '../users/user.service';
 import { AuthController } from './auth.controller';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
+import { ImageReservation } from '../imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from '../imagesReturn/entities/imageReturn.entity';
 
 @Module({
   imports: [
     JwtModule.register({}), //
-    TypeOrmModule.forFeature([User, Administrator]),
+    TypeOrmModule.forFeature([
+      User,
+      Administrator,
+      ImageReservation,
+      ImageReturn,
+    ]),
   ],
   providers: [
     JwtGoogleStrategy, //

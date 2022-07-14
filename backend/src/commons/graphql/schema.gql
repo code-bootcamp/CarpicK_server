@@ -208,6 +208,8 @@ type Mutation {
   updateUserPhone(phone: String!): String!
   updateUserIsAuth(isAuth: Boolean!): String!
   deleteLoginUser: String!
+  createImageReservation(createImageInput: CreateImageInput!): String!
+  createImageReturn(createImageInput: CreateImageInput!): String!
 }
 
 input CreateAdministratorInput {
@@ -276,4 +278,9 @@ input CreateUserInput {
   password: String!
   phone: String!
   isAuth: Boolean!
+}
+
+input CreateImageInput {
+  urls: [String!]!
+  carId: String!
 }
