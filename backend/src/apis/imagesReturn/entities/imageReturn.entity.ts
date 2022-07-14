@@ -14,7 +14,7 @@ export class ImageReturn {
   @Field(() => String)
   url: string;
 
-  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Car)
   @Field(() => Car)
   car: Car;
 
