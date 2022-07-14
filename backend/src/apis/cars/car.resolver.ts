@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarService } from './car.service';
 import { CreateCarInput } from './dto/createCar.entity';
@@ -19,9 +19,8 @@ export class CarResolver {
   @Query(() => [Car])
   fetchCars(
     @Args('carLocationId') carLocationId: string, //
-    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
   ) {
-    return this.carService.findAll({ carLocationId, page });
+    return this.carService.findAll({ carLocationId });
   }
 
   @Mutation(() => Car)
@@ -36,6 +35,6 @@ export class CarResolver {
   @Mutation(() => String)
   async deleteCar(@Args('carId') carId: string) {
     const result = this.carService.delete({ carId });
-    if (result) return ' 차량이 삭제되었습니다.';
+    if (result) return '차량이 삭제되었습니다';
   }
 }

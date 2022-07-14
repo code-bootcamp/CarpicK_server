@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ReservationService } from './reservation.service';
 import { Reservation } from './entities/reservation.entity';
 import { CreateReservationInput } from './dto/createReservation';
@@ -14,19 +14,16 @@ export class ReservationResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
-  fetchUserReservations(
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
-    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
-  ) {
-    return this.reservationService.userFindAll({ currentUser, page });
+  fetchUserReservations(@CurrentUser('currentUser') currentUser: ICurrentUser) {
+    return this.reservationService.userFindAll({ currentUser });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
   fetchOwnerReservations(
     @CurrentUser('currentUser') currentUser: ICurrentUser,
-    @Args({ name: 'page', nullable: true, type: () => Int }) page?: number,
   ) {
-    return this.reservationService.ownerFindAll({ currentUser, page });
+    return this.reservationService.ownerFindAll({ currentUser });
   }
 
   @UseGuards(GqlAuthAccessGuard)

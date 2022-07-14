@@ -24,6 +24,11 @@ export class CarRegistrationResolver {
     return this.carRegistrationService.findAll(page);
   }
 
+  @Query(() => Int)
+  fetchCarRegistrationCount() {
+    return this.carRegistrationService.count();
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => CarRegistration)
   createCarRegistration(
