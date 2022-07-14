@@ -8,16 +8,6 @@ type Administrator {
   password: String!
 }
 
-type User {
-  id: String!
-  name: String!
-  email: String!
-  password: String!
-  phone: String!
-  isAuth: Boolean!
-  revenue: Int!
-}
-
 type CarLocation {
   id: String!
   address: String!
@@ -45,11 +35,52 @@ type ImageRegistration {
   url: String!
 }
 
+type CarRegistration {
+  id: String!
+  carNumber: String!
+  isHipass: Boolean!
+  model: String!
+  oil: OIL_ENUM!
+  address: String!
+  status: REGISTATION_STATUS_ENUM!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  imageCar: [ImageCar!]!
+  imageRegistration: ImageRegistration!
+  user: User!
+}
+
+enum OIL_ENUM {
+  GASOLINE
+  LIGHT_OIL
+  LPG
+  ELECTRIC
+}
+
+enum REGISTATION_STATUS_ENUM {
+  IN_PROCESS
+  PASS
+  FAIL
+  EXPIRATION
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ImageCar {
+  id: String!
+  url: String!
+  car: Car!
+  carRegistration: CarRegistration!
+}
+
 type ImageReturn {
   id: String!
   url: String!
   car: Car!
-  reservation: Reservation!
+  user: User!
 }
 
 type Payment {
@@ -75,27 +106,13 @@ type Reservation {
   car: Car!
   user: User!
   payment: Payment!
-  imageReservation: [ImageReservation!]!
-  imageReturn: [ImageReturn!]!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 enum RESERVATION_STATUS_ENUM {
   RESERVATION
   CANCEL
   RETURN
   USING
-}
-
-type ImageReservation {
-  id: String!
-  url: String!
-  car: Car!
-  reservation: Reservation!
 }
 
 type Car {
@@ -115,40 +132,23 @@ type Car {
   imageReturn: [ImageReturn!]!
 }
 
-enum OIL_ENUM {
-  GASOLINE
-  LIGHT_OIL
-  LPG
-  ELECTRIC
-}
-
-type CarRegistration {
-  id: String!
-  carNumber: String!
-  isHipass: Boolean!
-  model: String!
-  oil: OIL_ENUM!
-  address: String!
-  status: REGISTATION_STATUS_ENUM!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  imageCar: [ImageCar!]!
-  imageRegistration: ImageRegistration!
-  user: User!
-}
-
-enum REGISTATION_STATUS_ENUM {
-  IN_PROCESS
-  PASS
-  FAIL
-  EXPIRATION
-}
-
-type ImageCar {
+type ImageReservation {
   id: String!
   url: String!
   car: Car!
-  carRegistration: CarRegistration!
+  user: User!
+}
+
+type User {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+  phone: String!
+  isAuth: Boolean!
+  revenue: Int!
+  imageReservation: [ImageReservation!]!
+  imageReturn: [ImageReturn!]!
 }
 
 type IsVaildEmail {
@@ -163,6 +163,7 @@ type Query {
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
   fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchCarRegistrationCount: Int!
   fetchUserReservations: [Reservation!]!
   fetchOwnerReservations: [Reservation!]!
   fetchLoginUser: User!

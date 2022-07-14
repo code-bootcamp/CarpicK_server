@@ -43,7 +43,7 @@ export class CarRegistration {
   @Field(() => String)
   model: string;
 
-  @Column({ type: 'enum', enum: OIL_ENUM })
+  @Column({ type: 'enum', enum: OIL_ENUM, enumName: 'OIL_ENUM' })
   @Field(() => OIL_ENUM)
   oil: string;
 
