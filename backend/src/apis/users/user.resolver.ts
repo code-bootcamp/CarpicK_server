@@ -121,11 +121,11 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
-  createImageReservation(
+  createImageStart(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    const result = this.userService.createImageReservation({
+    const result = this.userService.createImageStart({
       createImageInput,
       currentUser,
     });
@@ -134,11 +134,11 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
-  createImageReturn(
+  createImageEnd(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    const result = this.userService.createImageReturn({
+    const result = this.userService.createImageEnd({
       createImageInput,
       currentUser,
     });

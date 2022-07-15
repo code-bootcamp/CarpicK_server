@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
-import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
+import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
@@ -54,16 +54,13 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ImageReservation,
-    (imageReservation) => imageReservation.user,
-  )
-  @Field(() => [ImageReservation])
-  imageReservation: ImageReservation[];
+  @OneToMany(() => ImageStart, (imageStart) => imageStart.user)
+  @Field(() => [ImageStart])
+  imageStart: ImageStart[];
 
-  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.user)
-  @Field(() => [ImageReturn])
-  imageReturn: ImageReturn[];
+  @OneToMany(() => ImageEnd, (imageEnd) => imageEnd.user)
+  @Field(() => [ImageEnd])
+  imageEnd: ImageEnd[];
 
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   @Field(() => [Reservation])

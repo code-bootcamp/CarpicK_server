@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
-export class ImageReservation {
+export class ImageEnd {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;

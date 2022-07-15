@@ -4,8 +4,8 @@ import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
-import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
+import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Review } from 'src/apis/review/entities/review.entity';
 import {
@@ -87,13 +87,13 @@ export class Car {
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
 
-  @OneToMany(() => ImageReservation, (imageReservation) => imageReservation.car)
-  @Field(() => [ImageReservation])
-  imageReservation: ImageReservation[];
+  @OneToMany(() => ImageStart, (imageStart) => imageStart.car)
+  @Field(() => [ImageStart])
+  imageStart: ImageStart[];
 
-  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car)
-  @Field(() => [ImageReturn])
-  imageReturn: ImageReturn[];
+  @OneToMany(() => ImageEnd, (imageEndImageEnd) => imageEndImageEnd.car)
+  @Field(() => [ImageEnd])
+  imageEndImageEnd: ImageEnd[];
 
   @OneToMany(() => Review, (review) => review.car)
   @Field(() => [Review])
