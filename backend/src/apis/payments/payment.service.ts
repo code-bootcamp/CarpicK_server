@@ -9,10 +9,8 @@ export class PaymentService {
   constructor(
     @InjectRepository(Payment)
     private readonly paymentRepository: Repository<Payment>,
-
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     private readonly connection: Connection,
   ) {}
 
@@ -20,7 +18,6 @@ export class PaymentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
-
     try {
       const payment = this.paymentRepository.create({
         ...paymentInput,
@@ -28,23 +25,20 @@ export class PaymentService {
         status: PAYMENT_STATUS_ENUM.PAYMENT,
       });
       await queryRunner.manager.save(payment);
-
       const user = await queryRunner.manager.findOne(
         User,
         { id: currentUser.id },
         { lock: { mode: 'pessimistic_write' } },
       );
-
       const updatedUser = this.userRepository.create({
         ...user,
       });
       await queryRunner.manager.save(updatedUser);
-
       await queryRunner.commitTransaction();
-
       return payment;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      return error;
     } finally {
       await queryRunner.release();
     }
@@ -60,7 +54,6 @@ export class PaymentService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
-
     try {
       const canceledPayment = this.paymentRepository.create({
         user: currentUser,
@@ -70,23 +63,20 @@ export class PaymentService {
         status: PAYMENT_STATUS_ENUM.CANCLE,
       });
       await queryRunner.manager.save(canceledPayment);
-
       const user = await queryRunner.manager.findOne(
         User,
         { id: currentUser.id },
         { lock: { mode: 'pessimistic_write' } },
       );
-
       const updatedUser = this.userRepository.create({
         ...user,
       });
       await queryRunner.manager.save(updatedUser);
-
       await queryRunner.commitTransaction();
-
       return canceledPayment;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      return error;
     } finally {
       await queryRunner.release();
     }

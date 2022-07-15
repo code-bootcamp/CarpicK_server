@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { getConnection } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { CarLocation } from './entities/carLocation.entity';
 
 @Injectable()
@@ -7,8 +7,7 @@ export class CarLocationService {
   async findAll({ fetchCarLocationInput }) {
     const { southWestLng, northEastLng, southWestLat, northEastLat, filter } =
       fetchCarLocationInput;
-    const location = getConnection()
-      .getRepository(CarLocation)
+    const location = getRepository(CarLocation)
       .createQueryBuilder('location')
       .leftJoinAndSelect('location.car', 'car')
       .leftJoinAndSelect(

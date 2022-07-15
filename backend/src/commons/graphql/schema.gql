@@ -40,28 +40,14 @@ type CarRegistration {
   carNumber: String!
   isHipass: Boolean!
   model: String!
-  oil: OIL_ENUM!
+  oil: String!
   address: String!
-  status: REGISTATION_STATUS_ENUM!
+  status: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
   user: User!
-}
-
-enum OIL_ENUM {
-  GASOLINE
-  LIGHT_OIL
-  LPG
-  ELECTRIC
-}
-
-enum REGISTATION_STATUS_ENUM {
-  IN_PROCESS
-  PASS
-  FAIL
-  EXPIRATION
 }
 
 """
@@ -102,17 +88,17 @@ type Reservation {
   startTime: DateTime!
   endTime: DateTime!
   amount: Int!
-  status: RESERVATION_STATUS_ENUM!
+  status: String!
   car: Car!
   user: User!
   payment: Payment!
 }
 
-enum RESERVATION_STATUS_ENUM {
-  RESERVATION
-  CANCEL
-  RETURN
-  USING
+type Review {
+  id: String!
+  rating: Int!
+  car: Car!
+  user: User!
 }
 
 type Car {
@@ -120,9 +106,10 @@ type Car {
   carNumber: String!
   isHipass: Boolean!
   price: Int!
-  oil: OIL_ENUM!
+  oil: String!
   contractPeriod: String!
   ownerEmail: String!
+  isAvailable: Boolean!
   carModel: CarModel!
   carLocation: CarLocation!
   reservation: [Reservation!]!
@@ -130,6 +117,7 @@ type Car {
   imageRegistration: ImageRegistration!
   imageReservation: [ImageReservation!]!
   imageReturn: [ImageReturn!]!
+  review: [Review!]!
 }
 
 type ImageReservation {
@@ -149,6 +137,27 @@ type User {
   revenue: Int!
   imageReservation: [ImageReservation!]!
   imageReturn: [ImageReturn!]!
+  reservation: [Reservation!]!
+}
+
+type PopularCarOutput {
+  id: String
+  carNumber: String
+  isHipass: Boolean
+  price: Int
+  oil: String
+  contractPeriod: String
+  ownerEmail: String
+  isAvailable: Boolean
+  carModel: CarModel
+  carLocation: CarLocation
+  reservation: [Reservation!]
+  imageCar: [ImageCar!]
+  imageRegistration: ImageRegistration
+  imageReservation: [ImageReservation!]
+  imageReturn: [ImageReturn!]
+  review: [Review!]
+  rating: Float!
 }
 
 type IsVaildEmail {
@@ -158,14 +167,15 @@ type IsVaildEmail {
 
 type Query {
   fetchCar(carId: String!): Car!
-  fetchCars(carLocationId: String!): [Car!]!
+  fetchCars(page: Float!, carLocationId: String!): [Car!]!
+  fetchPopularCars: [PopularCarOutput!]!
   fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
-  fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchCarRegistrations(page: Float!): [CarRegistration!]!
   fetchCarRegistrationCount: Int!
-  fetchUserReservations: [Reservation!]!
-  fetchOwnerReservations: [Reservation!]!
+  fetchUserReservations(page: Float!): [Reservation!]!
+  fetchOwnerReservations(page: Float!): [Reservation!]!
   fetchLoginUser: User!
 }
 
@@ -208,6 +218,8 @@ type Mutation {
   updateUserPhone(phone: String!): String!
   updateUserIsAuth(isAuth: Boolean!): String!
   deleteLoginUser: String!
+  createImageReservation(createImageInput: CreateImageInput!): String!
+  createImageReturn(createImageInput: CreateImageInput!): String!
 }
 
 input CreateAdministratorInput {
@@ -219,7 +231,7 @@ input CreateCarInput {
   carNumber: String!
   isHipass: Boolean!
   price: Int!
-  oil: OIL_ENUM!
+  oil: String!
   contractPeriod: String!
   ownerEmail: String!
   carModelName: String!
@@ -248,7 +260,7 @@ input CreateCarRegistrationInput {
   carNumber: String!
   isHipass: Boolean!
   model: String!
-  oil: OIL_ENUM!
+  oil: String!
   address: String!
   carUrl: [String!]!
   registrationUrl: String!
@@ -276,4 +288,9 @@ input CreateUserInput {
   password: String!
   phone: String!
   isAuth: Boolean!
+}
+
+input CreateImageInput {
+  urls: [String!]!
+  carId: String!
 }

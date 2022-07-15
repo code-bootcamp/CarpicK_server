@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
@@ -7,6 +7,7 @@ import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageReg
 import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
 import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
+import { Review } from 'src/apis/review/entities/review.entity';
 import {
   Column,
   CreateDateColumn,
@@ -19,17 +20,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum OIL_ENUM {
-  GASOLINE = '휘발유',
-  LIGHT_OIL = '경유',
-  LPG = 'LPG',
-  ELECTRIC = '전기',
-}
-
-registerEnumType(OIL_ENUM, {
-  name: 'OIL_ENUM',
-});
 
 @Entity()
 @ObjectType()
@@ -51,8 +41,8 @@ export class Car {
   @Field(() => Int)
   price: number;
 
-  @Column({ type: 'enum', enum: OIL_ENUM })
-  @Field(() => OIL_ENUM)
+  @Column()
+  @Field(() => String)
   oil: string;
 
   @Column()
@@ -62,6 +52,10 @@ export class Car {
   @Column()
   @Field(() => String)
   ownerEmail: string;
+
+  @Column({ default: false })
+  @Field(() => Boolean)
+  isAvailable: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -80,9 +74,7 @@ export class Car {
   @Field(() => CarLocation)
   carLocation: CarLocation;
 
-  @OneToMany(() => Reservation, (reservation) => reservation.car, {
-    cascade: true,
-  })
+  @OneToMany(() => Reservation, (reservation) => reservation.car)
   @Field(() => [Reservation])
   reservation: Reservation[];
 
@@ -95,19 +87,15 @@ export class Car {
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
 
-  @OneToMany(
-    () => ImageReservation,
-    (imageReservation) => imageReservation.car,
-    {
-      cascade: true,
-    },
-  )
+  @OneToMany(() => ImageReservation, (imageReservation) => imageReservation.car)
   @Field(() => [ImageReservation])
   imageReservation: ImageReservation[];
 
-  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car, {
-    cascade: true,
-  })
+  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car)
   @Field(() => [ImageReturn])
   imageReturn: ImageReturn[];
+
+  @OneToMany(() => Review, (review) => review.car)
+  @Field(() => [Review])
+  review: Review[];
 }

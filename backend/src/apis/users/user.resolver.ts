@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Cache } from 'cache-manager';
 import { IsVaildEmail } from './dto/isValid.output';
+import { CreateImageInput } from './dto/createImage.input';
 
 @Resolver()
 export class UserResolver {
@@ -25,7 +26,7 @@ export class UserResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User)
   async fetchLoginUser(@CurrentUser() currentUser: any) {
-    const user = await this.userService.findOne({ email: currentUser.email });
+    const user = await this.userService.findUser({ email: currentUser.email });
     return user;
   }
 
@@ -116,5 +117,31 @@ export class UserResolver {
   ) {
     const result = this.userService.deleteUser({ currentUser });
     if (result) return '로그인한 계정이 삭제되었습니다.';
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => String)
+  createImageReservation(
+    @Args('createImageInput') createImageInput: CreateImageInput,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    const result = this.userService.createImageReservation({
+      createImageInput,
+      currentUser,
+    });
+    if (result) return '등록 되었습니다.';
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => String)
+  createImageReturn(
+    @Args('createImageInput') createImageInput: CreateImageInput,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    const result = this.userService.createImageReturn({
+      createImageInput,
+      currentUser,
+    });
+    if (result) return '반납 되었습니다.';
   }
 }

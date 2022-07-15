@@ -7,7 +7,7 @@ import { ReviewService } from './review.service';
 @Resolver()
 export class ReviewResolver {
   constructor(
-    private readonly ReviewService: ReviewService, //
+    private readonly reviewService: ReviewService, //
   ) {}
 
   @UseGuards(GqlAuthAccessGuard) // 방어막
@@ -17,7 +17,7 @@ export class ReviewResolver {
     @Args('carId') carId: string,
     @Args('rating') rating: number,
   ) {
-    const result = this.ReviewService.create({
+    const result = this.reviewService.create({
       carId,
       rating,
       currentUser,
