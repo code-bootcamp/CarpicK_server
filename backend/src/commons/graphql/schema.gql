@@ -62,7 +62,7 @@ type ImageCar {
   carRegistration: CarRegistration!
 }
 
-type ImageReturn {
+type ImageEnd {
   id: String!
   url: String!
   car: Car!
@@ -115,12 +115,12 @@ type Car {
   reservation: [Reservation!]!
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
-  imageReservation: [ImageReservation!]!
-  imageReturn: [ImageReturn!]!
+  imageStart: [ImageStart!]!
+  imageEndImageEnd: [ImageEnd!]!
   review: [Review!]!
 }
 
-type ImageReservation {
+type ImageStart {
   id: String!
   url: String!
   car: Car!
@@ -135,8 +135,8 @@ type User {
   phone: String!
   isAuth: Boolean!
   revenue: Int!
-  imageReservation: [ImageReservation!]!
-  imageReturn: [ImageReturn!]!
+  imageStart: [ImageStart!]!
+  imageEnd: [ImageEnd!]!
   reservation: [Reservation!]!
 }
 
@@ -154,8 +154,8 @@ type PopularCarOutput {
   reservation: [Reservation!]
   imageCar: [ImageCar!]
   imageRegistration: ImageRegistration
-  imageReservation: [ImageReservation!]
-  imageReturn: [ImageReturn!]
+  imageStart: [ImageStart!]
+  imageEndImageEnd: [ImageEnd!]
   review: [Review!]
   rating: Float!
 }
@@ -218,8 +218,8 @@ type Mutation {
   updateUserPhone(phone: String!): String!
   updateUserIsAuth(isAuth: Boolean!): String!
   deleteLoginUser: String!
-  createImageReservation(createImageInput: CreateImageInput!): String!
-  createImageReturn(createImageInput: CreateImageInput!): String!
+  createImageStart(createImageInput: CreateImageInput!): String!
+  createImageEnd(createImageInput: CreateImageInput!): String!
 }
 
 input CreateAdministratorInput {

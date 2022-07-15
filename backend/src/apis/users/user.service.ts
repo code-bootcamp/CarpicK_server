@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { ImageReservation } from '../imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from '../imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from '../imagesStart/entities/imageStart.entity';
+import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import * as coolsms from 'coolsms-node-sdk';
 
 @Injectable()
@@ -12,11 +12,11 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @InjectRepository(ImageReservation)
-    private readonly imageReservationRepository: Repository<ImageReservation>,
+    @InjectRepository(ImageStart)
+    private readonly imageStartRepository: Repository<ImageStart>,
 
-    @InjectRepository(ImageReturn)
-    private readonly imageReturnRepository: Repository<ImageReturn>,
+    @InjectRepository(ImageEnd)
+    private readonly imageEndRepository: Repository<ImageEnd>,
   ) {}
 
   async findOne({ email }) {
@@ -110,11 +110,11 @@ export class UserService {
     return result.affected ? true : false;
   }
 
-  async createImageReservation({ createImageInput, currentUser }) {
+  async createImageStart({ createImageInput, currentUser }) {
     const { urls, carId } = createImageInput;
     return await Promise.all(
       urls.map((url: string) => {
-        return this.imageReservationRepository.save({
+        return this.imageStartRepository.save({
           url,
           car: { id: carId },
           user: currentUser,
@@ -123,11 +123,11 @@ export class UserService {
     );
   }
 
-  async createImageReturn({ createImageInput, currentUser }) {
+  async createImageEnd({ createImageInput, currentUser }) {
     const { urls, carId } = createImageInput;
     return await Promise.all(
       urls.map((url: string) => {
-        return this.imageReturnRepository.save({
+        return this.imageEndRepository.save({
           url,
           car: { id: carId },
           user: currentUser,
