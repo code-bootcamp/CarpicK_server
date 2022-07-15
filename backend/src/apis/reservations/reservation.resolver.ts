@@ -14,16 +14,20 @@ export class ReservationResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
-  fetchUserReservations(@CurrentUser('currentUser') currentUser: ICurrentUser) {
-    return this.reservationService.userFindAll({ currentUser });
+  fetchUserReservations(
+    @Args('page') page: number,
+    @CurrentUser('currentUser') currentUser: ICurrentUser,
+  ) {
+    return this.reservationService.userFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation])
   fetchOwnerReservations(
+    @Args('page') page: number,
     @CurrentUser('currentUser') currentUser: ICurrentUser,
   ) {
-    return this.reservationService.ownerFindAll({ currentUser });
+    return this.reservationService.ownerFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)

@@ -41,6 +41,7 @@
     "coolsms-node-sdk": "^2.0.1",
     "graphql": "^16.5.0",
     "graphql-upload": "^13.0.0",
+    "moment": "^2.29.4",
     "mysql2": "^2.3.3",
     "node-rsa": "^1.1.1",
     "passport": "^0.6.0",

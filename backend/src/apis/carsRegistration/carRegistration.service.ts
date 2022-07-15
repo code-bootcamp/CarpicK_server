@@ -3,10 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
-import {
-  CarRegistration,
-  REGISTATION_STATUS_ENUM,
-} from './entities/carRegistration.entity';
+import { CarRegistration } from './entities/carRegistration.entity';
 
 @Injectable()
 export class CarRegistrationService {
@@ -28,13 +25,12 @@ export class CarRegistrationService {
   }
 
   async findAll(page: number) {
-    const [results, count] = await this.carRegistrationRepository.findAndCount({
+    return await this.carRegistrationRepository.find({
       relations: ['imageCar', 'imageRegistration', 'user'],
       order: { createdAt: 'DESC' },
       take: 10,
       skip: (page - 1) * 10,
     });
-    return { results, count };
   }
 
   async create({ currentUser, createCarRegistrationInput }) {
@@ -52,7 +48,6 @@ export class CarRegistrationService {
         user: currentUser,
         imageRegistration: saveRegistrationUrl,
         ...carRegistration,
-        status: REGISTATION_STATUS_ENUM.IN_PROCESS,
       });
       const registration = await queryRunner.manager.save(saveCarRegistration);
       await Promise.allSettled(
@@ -79,28 +74,14 @@ export class CarRegistrationService {
       where: { id: carRegistrationId },
     });
 
-    if (status === 'PASS') {
-      return await this.carRegistrationRepository.save({
-        ...teamproduct,
-        id: carRegistrationId,
-        status: REGISTATION_STATUS_ENUM.PASS,
-      });
-    } else if (status === 'FAIL') {
-      return await this.carRegistrationRepository.save({
-        ...teamproduct,
-        id: carRegistrationId,
-        status: REGISTATION_STATUS_ENUM.FAIL,
-      });
-    } else if (status === 'EXPIRATION') {
-      return await this.carRegistrationRepository.save({
-        ...teamproduct,
-        id: carRegistrationId,
-        status: REGISTATION_STATUS_ENUM.EXPIRATION,
-      });
-    }
+    return await this.carRegistrationRepository.save({
+      ...teamproduct,
+      id: carRegistrationId,
+      status,
+    });
   }
 
   async count() {
-    return await this.carRegistrationRepository.findAndCount();
+    return await this.carRegistrationRepository.count();
   }
 }

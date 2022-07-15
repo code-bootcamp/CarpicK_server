@@ -1,6 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection, getRepository, Repository } from 'typeorm';
 import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
@@ -19,20 +19,6 @@ export class CarService {
     private readonly connection: Connection,
   ) {}
 
-  async findAll({ carLocationId }) {
-    return await this.carRepository.find({
-      where: { carLocation: { id: carLocationId } },
-      relations: [
-        'carModel',
-        'carLocation',
-        'reservation',
-        'imageCar',
-        'imageRegistration',
-      ],
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async findOne({ carId }) {
     return await this.carRepository.findOne({
       where: { id: carId },
@@ -44,6 +30,51 @@ export class CarService {
         'imageRegistration',
       ],
     });
+  }
+
+  async findAll({ carLocationId, page }) {
+    return await this.carRepository.find({
+      where: { carLocation: { id: carLocationId } },
+      relations: [
+        'carModel',
+        'carLocation',
+        'reservation',
+        'imageCar',
+        'imageRegistration',
+      ],
+      order: { createdAt: 'DESC' },
+      take: 10,
+      skip: (page - 1) * 10,
+    });
+  }
+
+  async findPopularAll() {
+    const avg = await getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.review', 'review')
+      .select('car.id')
+      .addSelect('AVG(review.rating)', 'avg')
+      .groupBy('car.id')
+      .take(10)
+      .orderBy('avg', 'DESC')
+      .getRawMany();
+    const popularCar = await Promise.all(
+      avg.map(async (el) => {
+        const car = await this.carRepository.findOne({
+          where: { id: el.car_id },
+          relations: [
+            'carModel',
+            'carLocation',
+            'reservation',
+            'imageCar',
+            'imageRegistration',
+          ],
+        });
+        car['rating'] = el.avg;
+        return car;
+      }),
+    );
+    return popularCar;
   }
 
   async create({ createCarInput }) {
@@ -114,34 +145,7 @@ export class CarService {
   }
 
   async delete({ carId }) {
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction('SERIALIZABLE');
-    try {
-      const carImages = await queryRunner.manager.find(ImageCar, {
-        lock: { mode: 'pessimistic_write' },
-        relations: ['car'],
-      });
-      const filteredImages = carImages.filter(
-        (image) => image.car.id === carId,
-      );
-      await Promise.all(
-        filteredImages.map(async (image) => {
-          const carImage = this.imageCarRepository.create({
-            id: image.id,
-            car: { id: null },
-          });
-          return await queryRunner.manager.save(carImage);
-        }),
-      );
-      const result = await queryRunner.manager.softDelete(Car, { id: carId });
-      await queryRunner.commitTransaction();
-      return result.affected ? true : false;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      return error;
-    } finally {
-      await queryRunner.release();
-    }
+    const result = await this.carRepository.softDelete({ id: carId });
+    return result.affected ? true : false;
   }
 }

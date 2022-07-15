@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarService } from './car.service';
 import { CreateCarInput } from './dto/createCar.entity';
+import { PopularCarOutput } from './dto/popularCar.output';
 import { Car } from './entities/car.entity';
 
 @Resolver()
@@ -18,9 +19,15 @@ export class CarResolver {
 
   @Query(() => [Car])
   fetchCars(
+    @Args('page') page: number,
     @Args('carLocationId') carLocationId: string, //
   ) {
-    return this.carService.findAll({ carLocationId });
+    return this.carService.findAll({ carLocationId, page });
+  }
+
+  @Query(() => [PopularCarOutput])
+  fetchPopularCars() {
+    return this.carService.findPopularAll();
   }
 
   @Mutation(() => Car)
