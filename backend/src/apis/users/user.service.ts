@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { ImageReservation } from '../imagesReservation/entities/imageReservation.entity';
+import { ImageReturn } from '../imagesReturn/entities/imageReturn.entity';
 import * as coolsms from 'coolsms-node-sdk';
 
 @Injectable()
@@ -9,6 +11,12 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(ImageReservation)
+    private readonly imageReservationRepository: Repository<ImageReservation>,
+
+    @InjectRepository(ImageReturn)
+    private readonly imageReturnRepository: Repository<ImageReturn>,
   ) {}
 
   async findOne({ email }) {
@@ -100,5 +108,31 @@ export class UserService {
       id: currentUser.id,
     });
     return result.affected ? true : false;
+  }
+
+  async createImageReservation({ createImageInput, currentUser }) {
+    const { urls, carId } = createImageInput;
+    return await Promise.all(
+      urls.map((url: string) => {
+        return this.imageReservationRepository.save({
+          url,
+          car: { id: carId },
+          user: currentUser,
+        });
+      }),
+    );
+  }
+
+  async createImageReturn({ createImageInput, currentUser }) {
+    const { urls, carId } = createImageInput;
+    return await Promise.all(
+      urls.map((url: string) => {
+        return this.imageReturnRepository.save({
+          url,
+          car: { id: carId },
+          user: currentUser,
+        });
+      }),
+    );
   }
 }

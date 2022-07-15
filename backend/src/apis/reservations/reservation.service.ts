@@ -50,11 +50,11 @@ export class ReservationService {
   }
 
   async update({ reservationId, status }) {
-    const teamproduct = await this.reservationRepository.findOne({
+    const savedReservation = await this.reservationRepository.findOne({
       where: { id: reservationId },
     });
     return await this.reservationRepository.save({
-      ...teamproduct,
+      ...savedReservation,
       id: reservationId,
       status,
     });
