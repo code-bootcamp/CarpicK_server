@@ -29,7 +29,12 @@ export class CarService {
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('car.id = :id', { id: carId })
-      .andWhere('reservation.endTime > :now', { now })
+      .andWhere(
+        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
+        {
+          now,
+        },
+      )
       .getOne();
   }
 
@@ -43,7 +48,12 @@ export class CarService {
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('carLocation.id = :id', { id: carLocationId })
-      .andWhere('reservation.endTime > :now', { now })
+      .andWhere(
+        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
+        {
+          now,
+        },
+      )
       .orderBy('car.createdAt', 'DESC')
       .take(10)
       .skip((page - 1) * 10)
