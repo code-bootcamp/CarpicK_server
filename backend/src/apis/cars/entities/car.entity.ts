@@ -74,9 +74,7 @@ export class Car {
   @Field(() => CarLocation)
   carLocation: CarLocation;
 
-  @OneToMany(() => Reservation, (reservation) => reservation.car, {
-    cascade: true,
-  })
+  @OneToMany(() => Reservation, (reservation) => reservation.car)
   @Field(() => [Reservation])
   reservation: Reservation[];
 
