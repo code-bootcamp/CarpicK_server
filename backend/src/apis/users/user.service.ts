@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as coolsms from 'coolsms-node-sdk';
-import * as moment from 'moment';
 
 @Injectable()
 export class UserService {
@@ -17,30 +16,19 @@ export class UserService {
   }
 
   async findUser({ email }) {
-    const endTime = await getRepository(User)
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.reservation', 'reservation')
-      .select('reservation.endtime')
-      .groupBy('reservation.endtime')
-      .getRawMany();
-    const availableReservation = endTime.map((el) => {
-      const t2 = moment(el.endtime);
-      const t1 = moment(new Date());
-      return {
-        entTime: el.endtime,
-        diff: moment.duration(t2.diff(t1)).asMinutes(),
-      };
-    });
-    const nearReservation = availableReservation
-      .filter((n) => n.diff > 0)
-      .sort((a, b) => a.diff - b.diff)[0];
+    const now = new Date();
     return await getRepository(User)
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.reservation', 'reservation')
       .where('user.email = :email', { email })
-      .andWhere('reservation.endTime = :endTime', {
-        endTime: nearReservation.entTime,
-      })
+      .andWhere(
+        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
+        {
+          now,
+        },
+      )
+      .orderBy('reservation.endTime', 'ASC')
+      .limit(1)
       .getOne();
   }
 
