@@ -26,7 +26,7 @@ export class UserResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User)
   async fetchLoginUser(@CurrentUser() currentUser: any) {
-    const user = await this.userService.findOne({ email: currentUser.email });
+    const user = await this.userService.findUser({ email: currentUser.email });
     return user;
   }
 

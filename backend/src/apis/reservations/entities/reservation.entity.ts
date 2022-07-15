@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Car } from 'src/apis/cars/entities/car.entity';
 import { Payment } from 'src/apis/payments/entities/payment.entity';
 import { User } from 'src/apis/users/entities/user.entity';
@@ -12,17 +12,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum RESERVATION_STATUS_ENUM {
-  RESERVATION = '예약',
-  CANCEL = '예약취소',
-  RETURN = '반납완료',
-  USING = '이용중',
-}
-
-registerEnumType(RESERVATION_STATUS_ENUM, {
-  name: 'RESERVATION_STATUS_ENUM',
-});
 
 @Entity()
 @ObjectType()
@@ -43,8 +32,8 @@ export class Reservation {
   @Field(() => Int)
   amount: number;
 
-  @Column({ type: 'enum', enum: RESERVATION_STATUS_ENUM })
-  @Field(() => RESERVATION_STATUS_ENUM)
+  @Column({ default: 'RESERVATION' })
+  @Field(() => String)
   status: string;
 
   @CreateDateColumn()
@@ -53,7 +42,7 @@ export class Reservation {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Car, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Car)
   @Field(() => Car)
   car: Car;
 

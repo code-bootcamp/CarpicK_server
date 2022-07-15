@@ -1,5 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { OIL_ENUM } from 'src/apis/cars/entities/car.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
 import { User } from 'src/apis/users/entities/user.entity';
@@ -14,16 +13,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum REGISTATION_STATUS_ENUM {
-  IN_PROCESS = '심사중',
-  PASS = '승인',
-  FAIL = '거절',
-  EXPIRATION = '계약종료',
-}
-
-registerEnumType(REGISTATION_STATUS_ENUM, {
-  name: 'REGISTATION_STATUS_ENUM',
-});
 @Entity()
 @ObjectType()
 export class CarRegistration {
@@ -43,16 +32,16 @@ export class CarRegistration {
   @Field(() => String)
   model: string;
 
-  @Column({ type: 'enum', enumName: 'OIL_ENUM' })
-  @Field(() => OIL_ENUM)
+  @Column()
+  @Field(() => String)
   oil: string;
 
   @Column()
   @Field(() => String)
   address: string;
 
-  @Column({ type: 'enum', enum: REGISTATION_STATUS_ENUM })
-  @Field(() => REGISTATION_STATUS_ENUM)
+  @Column({ default: 'IN_PROCESS' })
+  @Field(() => String)
   status: string;
 
   @CreateDateColumn()

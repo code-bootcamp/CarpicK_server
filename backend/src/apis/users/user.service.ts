@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as coolsms from 'coolsms-node-sdk';
 import { ImageReservation } from '../imagesReservation/entities/imageReservation.entity';
 import { ImageReturn } from '../imagesReturn/entities/imageReturn.entity';
+import * as moment from 'moment';
+
 
 @Injectable()
 export class UserService {
@@ -21,6 +23,34 @@ export class UserService {
 
   async findOne({ email }) {
     return await this.userRepository.findOne({ email });
+  }
+
+  async findUser({ email }) {
+    const endTime = await getRepository(User)
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.reservation', 'reservation')
+      .select('reservation.endtime')
+      .groupBy('reservation.endtime')
+      .getRawMany();
+    const availableReservation = endTime.map((el) => {
+      const t2 = moment(el.endtime);
+      const t1 = moment(new Date());
+      return {
+        entTime: el.endtime,
+        diff: moment.duration(t2.diff(t1)).asMinutes(),
+      };
+    });
+    const nearReservation = availableReservation
+      .filter((n) => n.diff > 0)
+      .sort((a, b) => a.diff - b.diff)[0];
+    return await getRepository(User)
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.reservation', 'reservation')
+      .where('user.email = :email', { email })
+      .andWhere('reservation.endTime = :endTime', {
+        endTime: nearReservation.entTime,
+      })
+      .getOne();
   }
 
   async checkValidationEmail({ email }) {

@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  Reservation,
-  RESERVATION_STATUS_ENUM,
-} from './entities/reservation.entity';
+import { Reservation } from './entities/reservation.entity';
 
 @Injectable()
 export class ReservationService {
@@ -13,7 +10,7 @@ export class ReservationService {
     private readonly reservationRepository: Repository<Reservation>,
   ) {}
 
-  async userFindAll({ currentUser }) {
+  async userFindAll({ currentUser, page }) {
     return await this.reservationRepository.find({
       where: { user: { id: currentUser.id } },
       relations: [
@@ -22,10 +19,12 @@ export class ReservationService {
         'car.imageCar',
         'car.imageRegistration',
       ],
+      take: 10,
+      skip: (page - 1) * 10,
     });
   }
 
-  async ownerFindAll({ currentUser }) {
+  async ownerFindAll({ currentUser, page }) {
     return await this.reservationRepository.find({
       where: { car: { ownerEmail: currentUser.email } },
       relations: [
@@ -33,7 +32,10 @@ export class ReservationService {
         'car.carModel',
         'car.imageCar',
         'car.imageRegistration',
+        'user',
       ],
+      take: 10,
+      skip: (page - 1) * 10,
     });
   }
 
@@ -44,7 +46,6 @@ export class ReservationService {
       user: { id: currentUser.id },
       car: { id: carId },
       ...reservation,
-      status: RESERVATION_STATUS_ENUM.RESERVATION,
     });
   }
 
@@ -52,25 +53,10 @@ export class ReservationService {
     const teamproduct = await this.reservationRepository.findOne({
       where: { id: reservationId },
     });
-
-    if (status === 'CANCEL') {
-      return await this.reservationRepository.save({
-        ...teamproduct,
-        id: reservationId,
-        status: RESERVATION_STATUS_ENUM.CANCEL,
-      });
-    } else if (status === 'RETURN') {
-      return await this.reservationRepository.save({
-        ...teamproduct,
-        id: reservationId,
-        status: RESERVATION_STATUS_ENUM.RETURN,
-      });
-    } else if (status === 'USING') {
-      return await this.reservationRepository.save({
-        ...teamproduct,
-        id: reservationId,
-        status: RESERVATION_STATUS_ENUM.USING,
-      });
-    }
+    return await this.reservationRepository.save({
+      ...teamproduct,
+      id: reservationId,
+      status,
+    });
   }
 }

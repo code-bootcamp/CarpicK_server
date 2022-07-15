@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
 import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
   CreateDateColumn,
@@ -63,4 +64,8 @@ export class User {
   @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.user)
   @Field(() => [ImageReturn])
   imageReturn: ImageReturn[];
+
+  @OneToMany(() => Reservation, (reservation) => reservation.user)
+  @Field(() => [Reservation])
+  reservation: Reservation[];
 }
