@@ -20,32 +20,34 @@ export class CarService {
   ) {}
 
   async findOne({ carId }) {
-    return await this.carRepository.findOne({
-      where: { id: carId },
-      relations: [
-        'carModel',
-        'carLocation',
-        'reservation',
-        'imageCar',
-        'imageRegistration',
-      ],
-    });
+    const now = new Date();
+    return await getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .leftJoinAndSelect('car.reservation', 'reservation')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
+      .where('car.id = :id', { id: carId })
+      .andWhere('reservation.endTime > :now', { now })
+      .getOne();
   }
 
   async findAll({ carLocationId, page }) {
-    return await this.carRepository.find({
-      where: { carLocation: { id: carLocationId } },
-      relations: [
-        'carModel',
-        'carLocation',
-        'reservation',
-        'imageCar',
-        'imageRegistration',
-      ],
-      order: { createdAt: 'DESC' },
-      take: 10,
-      skip: (page - 1) * 10,
-    });
+    const now = new Date();
+    return await getRepository(Car)
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .leftJoinAndSelect('car.reservation', 'reservation')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
+      .where('carLocation.id = :id', { id: carLocationId })
+      .andWhere('reservation.endTime > :now', { now })
+      .orderBy('car.createdAt', 'DESC')
+      .take(10)
+      .skip((page - 1) * 10)
+      .getMany();
   }
 
   async findPopularAll() {
