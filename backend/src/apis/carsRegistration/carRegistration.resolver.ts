@@ -13,16 +13,25 @@ export class CarRegistrationResolver {
   ) {}
 
   @Query(() => CarRegistration, { description: '등록 차량 조회' })
-  fetchCarRegistration(@Args('carRegistrationId') carRegistrationId: string) {
+  fetchCarRegistration(
+    @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
+    carRegistrationId: string,
+  ) {
     return this.carRegistrationService.findOne({ carRegistrationId });
   }
 
 
   @Query(() => [CarRegistration], { description: '등록 차량 리스트 조회' })
   fetchCarRegistrations(
-    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
+    @Args({
+      name: 'page',
+      type: () => Int,
+      defaultValue: 1,
+      description: '페이지 넘버',
+    })
+    page: number,
   ) {
-    return this.carRegistrationService.findAll(page);
+    return this.carRegistrationService.findAll({ page });
   }
 
   @Query(() => Int, { description: '등록 차량 수' })
@@ -33,7 +42,7 @@ export class CarRegistrationResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => CarRegistration, { description: '등록 차량 생성' })
   createCarRegistration(
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('createCarRegistrationInput')
     createCarRegistrationInput: CreateCarRegistrationInput,
   ) {
@@ -44,11 +53,12 @@ export class CarRegistrationResolver {
   }
 
   @Mutation(() => CarRegistration, { description: '등록 차량 상태 업데이트' })
-  async updateCarRegistrationStatus(
-    @Args('carRegistrationId') carRegistrationId: string,
-    @Args('status') status: string,
+  updateCarRegistrationStatus(
+    @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
+    carRegistrationId: string,
+    @Args({ name: 'status', description: '심사 상태' }) status: string,
   ) {
-    return await this.carRegistrationService.update({
+    return this.carRegistrationService.update({
       carRegistrationId,
       status,
     });

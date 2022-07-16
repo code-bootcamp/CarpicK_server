@@ -42,11 +42,10 @@ export class UserService {
 
   async checkValidationEmail({ email }) {
     const userEmail = await this.userRepository.findOne({ email });
-    const result = {
+    return {
       isValid: userEmail ? false : true,
       phone: userEmail ? userEmail.phone : '',
     };
-    return result;
   }
 
   getToken() {
@@ -59,7 +58,7 @@ export class UserService {
       process.env.SMS_KEY,
       process.env.SMS_SECRET,
     );
-    await messageService.sendOne({
+    return await messageService.sendOne({
       to: phone,
       from: process.env.SMS_SENDER,
       text: `[CarpicK]
@@ -117,7 +116,7 @@ export class UserService {
         return this.imageStartRepository.save({
           url,
           car: { id: carId },
-          user: currentUser,
+          user: { id: currentUser.id },
         });
       }),
     );
@@ -130,7 +129,7 @@ export class UserService {
         return this.imageEndRepository.save({
           url,
           car: { id: carId },
-          user: currentUser,
+          user: { id: currentUser.id },
         });
       }),
     );

@@ -30,8 +30,8 @@ export class AuthResolver {
 
   @Mutation(() => String, { description: '로그인' })
   async login(
-    @Args('email') email: string,
-    @Args('password') password: string,
+    @Args({ name: 'email', description: '이메일' }) email: string,
+    @Args({ name: 'password', description: '비밀번호' }) password: string,
   ) {
     const user = await this.userService.findOne({ email });
     if (!user)
@@ -43,8 +43,9 @@ export class AuthResolver {
 
   @Mutation(() => String, { description: '관리자 로그인' })
   async adminLogin(
-    @Args('adminId') adminId: string,
-    @Args('password') password: string,
+    @Args({ name: 'adminId', description: '관리자 ID' }) adminId: string,
+    @Args({ name: 'password', description: '관리자 비밀번호' })
+    password: string,
     @Context() context: any,
   ) {
     const user = await this.administratorService.findOne({ adminId });
@@ -100,7 +101,6 @@ export class AuthResolver {
       'refreshToken=',
       '',
     );
-
     try {
       const verifiedAccessToken = jwt.verify(
         accessToken,
@@ -119,7 +119,6 @@ export class AuthResolver {
     } catch {
       throw new UnauthorizedException();
     }
-
     return '로그아웃 되었습니다';
   }
 }

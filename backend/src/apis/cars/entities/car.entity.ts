@@ -23,36 +23,36 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '차량 TYPE' })
 export class Car {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '차량번호' })
   carNumber: string;
 
   @Column()
-  @Field(() => Boolean)
+  @Field(() => Boolean, { description: '하이패스 여부' })
   isHipass: boolean;
 
   @Column()
   @Min(0)
-  @Field(() => Int)
+  @Field(() => Int, { description: '시간당 가격' })
   price: number;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '유종' })
   oil: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '계약기간' })
   contractPeriod: string;
 
   @Column({ default: false })
-  @Field(() => Boolean)
-  isAvailable: boolean;
+  @Field(() => Boolean, { description: '키 사용가능 여부', nullable: true })
+  isAvailable?: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

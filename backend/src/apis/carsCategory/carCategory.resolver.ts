@@ -11,12 +11,13 @@ export class CarCategoryResolver {
     private readonly carCategoryService: CarCategoryService, //
   ) {}
 
-  @Query(() => [CarCategory], { description: '차량 카테고리 조회' })
+  @Query(() => [CarCategory], { description: '차종 조회' })
   fetchCarCategory() {
     return this.carCategoryService.findAll();
   }
 
-  @Mutation(() => CarCategory, { description: '차량 카테고리 생성' })
+
+  @Mutation(() => CarCategory, { description: '차종 생성' })
   createCarCategory(
     @Args('createCarCategoryInput')
     createCarCategoryInput: CreateCarCategoryInput, //
@@ -25,9 +26,10 @@ export class CarCategoryResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Boolean, { description: '차량 카테고리 생성' })
+  @Mutation(() => Boolean, { description: '차종 삭제' })
   deleteCarCategory(
-    @Args('carCategoryId') carCategoryId: string, //
+    @Args({ name: 'carCategoryId', description: '차종 UUID' })
+    carCategoryId: string, //
   ) {
     return this.carCategoryService.delete({ carCategoryId });
   }

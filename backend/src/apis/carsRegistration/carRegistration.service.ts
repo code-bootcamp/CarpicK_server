@@ -24,13 +24,17 @@ export class CarRegistrationService {
     );
   }
 
-  async findAll(page: number) {
+  async findAll({ page }) {
     return await this.carRegistrationRepository.find({
       relations: ['imageCar', 'imageRegistration', 'user'],
       order: { createdAt: 'DESC' },
       take: 10,
       skip: (page - 1) * 10,
     });
+  }
+
+  async count() {
+    return await this.carRegistrationRepository.count();
   }
 
   async create({ currentUser, createCarRegistrationInput }) {
@@ -45,18 +49,18 @@ export class CarRegistrationService {
       });
       await queryRunner.manager.save(saveRegistrationUrl);
       const saveCarRegistration = this.carRegistrationRepository.create({
-        user: currentUser,
-        imageRegistration: saveRegistrationUrl,
+        user: { id: currentUser.id },
+        imageRegistration: { id: saveRegistrationUrl.id },
         ...carRegistration,
       });
       const registration = await queryRunner.manager.save(saveCarRegistration);
       await Promise.allSettled(
-        carUrl.map(async (address: string) => {
+        carUrl.map((address: string) => {
           const url = this.imageCarRepository.create({
             url: address,
             carRegistration: { id: registration['id'] },
           });
-          return await queryRunner.manager.save(url);
+          return queryRunner.manager.save(url);
         }),
       );
       await queryRunner.commitTransaction();
@@ -79,9 +83,5 @@ export class CarRegistrationService {
       id: carRegistrationId,
       status,
     });
-  }
-
-  async count() {
-    return await this.carRegistrationRepository.count();
   }
 }

@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarService } from './car.service';
-import { CreateCarInput } from './dto/createCar.entity';
+import { CreateCarInput } from './dto/createCar.input';
 import { PopularCarOutput } from './dto/popularCar.output';
 import { Car } from './entities/car.entity';
 
@@ -12,15 +12,22 @@ export class CarResolver {
 
   @Query(() => Car, { description: '차량 조회' })
   fetchCar(
-    @Args('carId') carId: string, //
+    @Args({ name: 'carId', description: '차량 UUID' }) carId: string, //
   ) {
     return this.carService.findOne({ carId });
   }
 
   @Query(() => [Car], { description: '차량존 리스트 조회' })
   fetchCars(
-    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
-    @Args('carLocationId') carLocationId: string, //
+    @Args({
+      name: 'page',
+      type: () => Int,
+      defaultValue: 1,
+      description: '페이지 넘버',
+    })
+    page: number,
+    @Args({ name: 'carLocationId', description: '차량존 UUID' })
+    carLocationId: string, //
   ) {
     return this.carService.findAll({ carLocationId, page });
   }
@@ -40,8 +47,11 @@ export class CarResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '차량 삭제' })
-  async deleteCar(@Args('carId') carId: string) {
-    const result = this.carService.delete({ carId });
+  async deleteCar(
+    @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
+  ) {
+    const result = await this.carService.delete({ carId });
     if (result) return '차량이 삭제되었습니다';
+    else return '삭제를 실패하였습니다';
   }
 }

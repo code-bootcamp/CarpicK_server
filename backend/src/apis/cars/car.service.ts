@@ -132,8 +132,8 @@ export class CarService {
           '사용자가 등록한 이미지와 다릅니다',
         );
       const CarInfo = this.carRepository.create({
-        carLocation: location,
-        imageRegistration: saveRegistrationUrl,
+        carLocation: { id: location['id'] },
+        imageRegistration: { id: saveRegistrationUrl.id },
         carModel: { id: carModel.id },
         user: { id: userId },
         ...car,

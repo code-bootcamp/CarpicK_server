@@ -5,16 +5,16 @@ import { User } from 'src/apis/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '리뷰 TYPE' })
 export class Review {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Min(1)
   @Max(5)
   @Column()
-  @Field(() => Int)
+  @Field(() => Int, { description: '평점' })
   rating: number;
 
   @ManyToOne(() => Car)

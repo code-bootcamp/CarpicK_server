@@ -10,14 +10,14 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '모델 TYPE' })
 export class CarModel {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '모델명' })
   name: string;
 
   @ManyToOne(() => CarCategory, { onDelete: 'CASCADE' })

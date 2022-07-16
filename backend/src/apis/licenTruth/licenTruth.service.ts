@@ -16,7 +16,7 @@ export class LicenTruthService {
     return ret;
   }
 
-  rsaEncrypt(publicKey: string, aesKey): any {
+  rsaEncrypt(publicKey: string, aesKey: any): any {
     const key = new NodeRSA(
       '-----BEGIN PUBLIC KEY-----\n' + publicKey + '\n-----END PUBLIC KEY-----',
     );
@@ -32,7 +32,6 @@ export class LicenTruthService {
     const options = {
       json: true,
     };
-
     const response = Request('GET', uri, options);
     const rsaPublicKey = JSON.parse(response.getBody('utf8')).PublicKey;
     return rsaPublicKey;

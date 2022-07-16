@@ -30,7 +30,6 @@ export class AuthService {
       { email: user.email, sub: user.id },
       { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
     );
-
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
@@ -44,7 +43,7 @@ export class AuthService {
     );
   }
 
-  async socialLogin(req) {
+  async socialLogin(req: any) {
     let user = await this.userService.findOne({ email: req.user.email });
     const hashedPassword = await bcrypt.hash(req.user.password, 10);
     if (!user) {

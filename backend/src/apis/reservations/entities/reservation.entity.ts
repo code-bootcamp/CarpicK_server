@@ -14,27 +14,27 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '예약 TYPE' })
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { description: '시작 시간' })
   startTime: Date;
 
   @Column()
-  @Field(() => Date)
+  @Field(() => Date, { description: '종료 시간' })
   endTime: Date;
 
   @Column()
-  @Field(() => Int)
+  @Field(() => Int, { description: '결제 금액' })
   amount: number;
 
   @Column({ default: 'RESERVATION' })
-  @Field(() => String)
-  status: string;
+  @Field(() => String, { description: '예약 상태', nullable: true })
+  status?: string;
 
   @CreateDateColumn()
   createdAt: Date;

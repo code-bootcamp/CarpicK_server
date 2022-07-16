@@ -15,39 +15,53 @@ export class ReservationResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation], { description: '예약 내역 조회' })
   fetchUserReservations(
-    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
+    @Args({
+      name: 'page',
+      type: () => Int,
+      defaultValue: 1,
+      description: '페이지 넘버',
+    })
+    page: number,
+    @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.reservationService.userFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation], { description: '내차량 현황 조회' })
-  fetchOwnerReservations(
-    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
+  afetchOwnerReservations(
+    @Args({
+      name: 'page',
+      type: () => Int,
+      defaultValue: 1,
+      description: '페이지 넘버',
+    })
+    page: number,
+    @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.reservationService.ownerFindAll({ currentUser, page });
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Reservation, { description: '예약 생성' })
-  async createReservation(
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
+  createReservation(
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('createReservationInput')
     createReservationInput: CreateReservationInput, //
   ) {
-    return await this.reservationService.create({
+    return this.reservationService.create({
       currentUser,
       createReservationInput,
     });
   }
 
+
   @Mutation(() => Reservation, { description: '예약 상태 업데이트' })
-  async updateReservationStatus(
-    @Args('reservationId') reservationId: string,
-    @Args('status') status: string,
+  updateReservationStatus(
+    @Args({ name: 'reservationId', description: '예약 UUID' })
+    reservationId: string,
+    @Args({ name: 'status', description: '예약 상태' }) status: string,
   ) {
-    return await this.reservationService.update({ reservationId, status });
+    return this.reservationService.update({ reservationId, status });
   }
 }
