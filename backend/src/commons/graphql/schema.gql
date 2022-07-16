@@ -166,16 +166,37 @@ type IsVaildEmail {
 }
 
 type Query {
+  """차량 조회"""
   fetchCar(carId: String!): Car!
+
+  """차량존 리스트 조회"""
   fetchCars(page: Int = 1, carLocationId: String!): [Car!]!
+
+  """인기 차량 조회"""
   fetchPopularCars: [PopularCarOutput!]!
+
+  """차량 카테고리 조회"""
   fetchCarCategory: [CarCategory!]!
+
+  """차량존 조회"""
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
+
+  """등록 차량 조회"""
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
+
+  """등록 차량 리스트 조회"""
   fetchCarRegistrations(page: Int): [CarRegistration!]!
+
+  """등록 차량 수"""
   fetchCarRegistrationCount: Int!
+
+  """예약 내역 조회"""
   fetchUserReservations(page: Float!): [Reservation!]!
+
+  """내차량 현황 조회"""
   fetchOwnerReservations(page: Float!): [Reservation!]!
+
+  """로그인 유저 조회"""
   fetchLoginUser: User!
 }
 
@@ -188,37 +209,100 @@ input FetchCarLocationInput {
 }
 
 type Mutation {
+  """관리자 생성"""
   createAdministrator(createAdministratorInput: CreateAdministratorInput!): Administrator!
+
+  """로그인"""
   login(email: String!, password: String!): String!
+
+  """관리자 로그인"""
   adminLogin(adminId: String!, password: String!): String!
+
+  """엑세스 토큰 재발급"""
   restoreAccessToken: String!
+
+  """로그아웃"""
   logout: String!
+
+  """관리자 로그아웃"""
   adminLogout: String!
+
+  """차량 생성"""
   createCar(createCarInput: CreateCarInput!): Car!
+
+  """차량 삭제"""
   deleteCar(carId: String!): String!
+
+  """차량 카테고리 생성"""
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
+
+  """차량 카테고리 생성"""
   deleteCarCategory(carCategoryId: String!): Boolean!
+
+  """차량 모델 생성"""
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
+
+  """차량 모델 삭제"""
   deleteCarModel(carModelId: String!): Boolean!
+
+  """등록 차량 생성"""
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
+
+  """등록 차량 상태 업데이트"""
   updateCarRegistrationStatus(carRegistrationId: String!, status: String!): CarRegistration!
+
+  """파일 업로드"""
   uploadFile(files: [Upload!]!): [String!]!
+
+  """운전면허 확인"""
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
+
+  """결제 생성"""
   createPayment(paymentInput: PaymentInput!): Payment!
+
+  """결제 취소"""
   cancelPayment(paymentInput: PaymentInput!): Payment!
-  createReview(carId: String!, rating: Float!): String!
+
+  """리뷰 생성"""
+ createReview(carId: String!, rating: Float!): String!
+
+  """예약 생성"""
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
+
+  """예약 상태 업데이트"""
   updateReservationStatus(reservationId: String!, status: String!): Reservation!
+
+  """이메일 확인"""
   isValidEmail(email: String!): IsVaildEmail!
+
+  """토큰 보내기"""
   sendTokenToSMS(phone: String!): String!
+
+  """토큰 확인"""
   checkToken(token: String!): Boolean!
+
+  """유저 생성"""
   createUser(createUserInput: CreateUserInput!): User!
+
+  """비밀번호 재설정"""
   resetPwd(email: String!, password: String!): String!
+
+  """비밀번호 변경"""
   updateUserPwd(password: String!): String!
+
+  """핸드폰번호 변경"""
   updateUserPhone(phone: String!): String!
+
+  """면허 업데이트"""
   updateUserIsAuth(isAuth: Boolean!): String!
+
+  """계정 삭제"""
   deleteLoginUser: String!
+
+  """탑승전 이미지 등록"""
   createImageStart(createImageInput: CreateImageInput!): String!
+
+  """반납 이미지 등록"""
   createImageEnd(createImageInput: CreateImageInput!): String!
 }
 

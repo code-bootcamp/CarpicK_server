@@ -11,8 +11,8 @@ export class ReviewResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard) // 방어막
-  @Mutation(() => String)
-  async createReview(
+  @Mutation(() => String, { description: '리뷰 생성' })
+  async createRivew(
     @CurrentUser() currentUser: ICurrentUser,
     @Args('carId') carId: string,
     @Args('rating') rating: number,

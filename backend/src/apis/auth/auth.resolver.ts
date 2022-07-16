@@ -28,7 +28,7 @@ export class AuthResolver {
     private readonly cacheManager: Cache,
   ) {}
 
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '로그인' })
   async login(
     @Args('email') email: string,
     @Args('password') password: string,
@@ -41,7 +41,7 @@ export class AuthResolver {
     return this.authService.getAppAccessToken({ user });
   }
 
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '관리자 로그인' })
   async adminLogin(
     @Args('adminId') adminId: string,
     @Args('password') password: string,
@@ -57,7 +57,7 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthRefreshGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '엑세스 토큰 재발급' })
   restoreAccessToken(
     @CurrentUser() currentUser: ICurrentUser, //
   ) {
@@ -65,7 +65,7 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '로그아웃' })
   async logout(
     @Context() context: any, //
   ) {
@@ -88,7 +88,7 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '관리자 로그아웃' })
   async adminLogout(
     @Context() context: any, //
   ) {

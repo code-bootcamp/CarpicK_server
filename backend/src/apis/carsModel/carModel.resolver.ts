@@ -11,7 +11,7 @@ export class CarModelResolver {
     private readonly carModelService: CarModelService, //
   ) {}
 
-  @Mutation(() => CarModel)
+  @Mutation(() => CarModel, { description: '차량 모델 생성' })
   createCarModel(
     @Args('createCarModelInput') createCarModelInput: CreateCarModelInput, //
   ) {
@@ -19,7 +19,7 @@ export class CarModelResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { description: '차량 모델 삭제' })
   deleteCarModel(
     @Args('carModelId') carModelId: string, //
   ) {

@@ -12,25 +12,26 @@ export class CarRegistrationResolver {
     private readonly carRegistrationService: CarRegistrationService, //
   ) {}
 
-  @Query(() => CarRegistration)
+  @Query(() => CarRegistration, { description: '등록 차량 조회' })
   fetchCarRegistration(@Args('carRegistrationId') carRegistrationId: string) {
     return this.carRegistrationService.findOne({ carRegistrationId });
   }
 
-  @Query(() => [CarRegistration])
+
+  @Query(() => [CarRegistration], { description: '등록 차량 리스트 조회' })
   fetchCarRegistrations(
     @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
   ) {
     return this.carRegistrationService.findAll(page);
   }
 
-  @Query(() => Int)
+  @Query(() => Int, { description: '등록 차량 수' })
   fetchCarRegistrationCount() {
     return this.carRegistrationService.count();
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => CarRegistration)
+  @Mutation(() => CarRegistration, { description: '등록 차량 생성' })
   createCarRegistration(
     @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args('createCarRegistrationInput')
@@ -42,7 +43,7 @@ export class CarRegistrationResolver {
     });
   }
 
-  @Mutation(() => CarRegistration)
+  @Mutation(() => CarRegistration, { description: '등록 차량 상태 업데이트' })
   async updateCarRegistrationStatus(
     @Args('carRegistrationId') carRegistrationId: string,
     @Args('status') status: string,

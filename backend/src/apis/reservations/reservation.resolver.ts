@@ -13,7 +13,7 @@ export class ReservationResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => [Reservation])
+  @Query(() => [Reservation], { description: '예약 내역 조회' })
   fetchUserReservations(
     @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
     @CurrentUser('currentUser') currentUser: ICurrentUser,
@@ -22,7 +22,7 @@ export class ReservationResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => [Reservation])
+  @Query(() => [Reservation], { description: '내차량 현황 조회' })
   fetchOwnerReservations(
     @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
     @CurrentUser('currentUser') currentUser: ICurrentUser,
@@ -31,7 +31,7 @@ export class ReservationResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Reservation)
+  @Mutation(() => Reservation, { description: '예약 생성' })
   async createReservation(
     @CurrentUser('currentUser') currentUser: ICurrentUser,
     @Args('createReservationInput')
@@ -43,7 +43,7 @@ export class ReservationResolver {
     });
   }
 
-  @Mutation(() => Reservation)
+  @Mutation(() => Reservation, { description: '예약 상태 업데이트' })
   async updateReservationStatus(
     @Args('reservationId') reservationId: string,
     @Args('status') status: string,
