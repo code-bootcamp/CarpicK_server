@@ -347,6 +347,12 @@ type Query {
     page: Int = 1
   ): [Reservation!]!
 
+  """유저 이메일 조회"""
+  fetchEmail(
+    """전화번호"""
+    phone: String!
+  ): String!
+
   """로그인 유저 조회"""
   fetchLoginUser: User!
 }

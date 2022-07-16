@@ -23,6 +23,15 @@ export class UserResolver {
     private readonly userService: UserService, //
   ) {}
 
+  @Query(() => String, { description: '유저 이메일 조회' })
+  async fetchEmail(
+    @Args({ name: 'phone', description: '전화번호' }) phone: string,
+  ) {
+    const user = await this.userService.findEmail({ phone });
+    if (user) return user.email;
+    else return '등록되지 않은 번호입니다';
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User, { description: '로그인 유저 조회' })
   fetchLoginUser(@CurrentUser() currentUser: any) {
@@ -58,9 +67,18 @@ export class UserResolver {
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput, //
   ) {
-    const { password, ...info } = createUserInput;
+    const { email, password, ...info } = createUserInput;
+    const emailRegExp =
+      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    const passwordRegExp = /^(?=.[a-zA-Z])(?=.*[0-9])/;
+    if (!email.match(emailRegExp))
+      throw new UnprocessableEntityException('이메일 형식에 맞게 입력해주세요');
+    if (!password.match(passwordRegExp))
+      throw new UnprocessableEntityException(
+        '비밀번호에는 영문, 숫자가 포함되어야 합니다',
+      );
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.userService.create({ hashedPassword, ...info });
+    return this.userService.create({ email, hashedPassword, ...info });
   }
 
   @Mutation(() => String, { description: '비밀번호 재설정' })
@@ -103,7 +121,7 @@ export class UserResolver {
   ) {
     const user = await this.userService.findOne({ email: currentUser.email });
     if (phone === user.phone)
-      throw new UnprocessableEntityException('기존 비밀번호 입니다');
+      throw new UnprocessableEntityException('기존 전화번호 입니다');
     const result = await this.userService.updatePhone({ phone, currentUser });
     if (result) return '핸드폰 번호가 변경되었습니다';
     else return '변경을 실패하였습니다';

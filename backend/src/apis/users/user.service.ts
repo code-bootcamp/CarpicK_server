@@ -19,6 +19,10 @@ export class UserService {
     private readonly imageEndRepository: Repository<ImageEnd>,
   ) {}
 
+  async findEmail({ phone }) {
+    return await this.userRepository.findOne({ phone });
+  }
+
   async findOne({ email }) {
     return await this.userRepository.findOne({ email });
   }
@@ -67,8 +71,9 @@ export class UserService {
     });
   }
 
-  async create({ hashedPassword: password, ...info }) {
+  async create({ email, hashedPassword: password, ...info }) {
     return await this.userRepository.save({
+      email,
       password,
       ...info,
     });
