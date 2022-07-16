@@ -109,7 +109,6 @@ export class UserResolver {
     else return '변경을 실패하였습니다';
   }
 
-
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '면허 업데이트' })
   async updateUserIsAuth(

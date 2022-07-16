@@ -29,7 +29,7 @@ export class ReservationResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Reservation], { description: '내차량 현황 조회' })
-  afetchOwnerReservations(
+  fetchOwnerReservations(
     @Args({
       name: 'page',
       type: () => Int,
@@ -54,7 +54,6 @@ export class ReservationResolver {
       createReservationInput,
     });
   }
-
 
   @Mutation(() => Reservation, { description: '예약 상태 업데이트' })
   updateReservationStatus(
