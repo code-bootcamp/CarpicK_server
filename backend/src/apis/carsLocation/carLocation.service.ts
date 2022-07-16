@@ -18,15 +18,13 @@ export class CarLocationService {
       .where(`lat BETWEEN ${southWestLat} AND ${northEastLat}`)
       .andWhere(`lng BETWEEN ${southWestLng} AND ${northEastLng}`);
     if (filter) {
-      const result = await location
+      return await location
         .andWhere('car_model.name IN (:...names)', {
           names: filter,
         })
         .getMany();
-      return result;
     } else {
-      const result = await location.getMany();
-      return result;
+      return await location.getMany();
     }
   }
 }

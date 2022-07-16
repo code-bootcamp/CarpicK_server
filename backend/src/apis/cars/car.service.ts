@@ -94,8 +94,14 @@ export class CarService {
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
-      const { carLocation, carModelName, carUrl, registrationUrl, ...car } =
-        createCarInput;
+      const {
+        userId,
+        carLocation,
+        carModelName,
+        carUrl,
+        registrationUrl,
+        ...car
+      } = createCarInput;
       let location: CarLocation[] | CarLocation;
       const saveLocation = await queryRunner.manager.findOne(
         CarLocation,
@@ -129,6 +135,7 @@ export class CarService {
         carLocation: location,
         imageRegistration: saveRegistrationUrl,
         carModel: { id: carModel.id },
+        user: { id: userId },
         ...car,
       });
       const saveCar = await queryRunner.manager.save(CarInfo);
@@ -147,7 +154,7 @@ export class CarService {
         }),
       );
       await queryRunner.commitTransaction();
-      return saveCar;
+      return CarInfo;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       return error;
