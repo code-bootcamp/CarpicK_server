@@ -16,7 +16,6 @@ export class CarCategoryResolver {
     return this.carCategoryService.findAll();
   }
 
-
   @Mutation(() => CarCategory, { description: '차종 생성' })
   createCarCategory(
     @Args('createCarCategoryInput')
