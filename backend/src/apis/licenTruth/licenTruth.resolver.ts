@@ -11,10 +11,11 @@ export class LicenTruthResolver {
 
   @Mutation(() => String)
   checkLicense(
-    @Args('BirthDate') BirthDate: string,
-    @Args('Name') Name: string,
-    @Args('LicNumber') LicNumber: string,
-    @Args('SpecialNumber') SpecialNumber: string,
+    @Args({ name: 'BirthDate', description: '생년월일' }) BirthDate: string,
+    @Args({ name: 'Name', description: '이름' }) Name: string,
+    @Args({ name: 'LicNumber', description: '면허번호' }) LicNumber: string,
+    @Args({ name: 'SpecialNumber', description: '식별번호' })
+    SpecialNumber: string,
   ) {
     const rsaPublicKey = this.licenTruthService.getPublicKey(
       process.env.LICENTRUTH_API_KEY,
@@ -26,7 +27,6 @@ export class LicenTruthResolver {
     ]);
     let aesCipherKey = Buffer.alloc(0);
     aesCipherKey = this.licenTruthService.rsaEncrypt(rsaPublicKey, aesKey);
-    console.log('aesCipherKey:', aesCipherKey);
     const url = process.env.LICENTRUTH_API_HOST + 'api/v1.0/Efine/LicenTruth';
     const res = Request('POST', url, {
       headers: {
@@ -45,7 +45,6 @@ export class LicenTruthResolver {
         ),
       },
     });
-    console.log('res:', res.getBody('utf8'));
     return res.getBody('utf8');
   }
 }

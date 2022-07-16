@@ -22,7 +22,6 @@ export class IamportService {
   }
 
   async getInfo({ access_token, impUid }) {
-    // imp_uid로 아임포트 서버에서 결제 정보 조회
     const getPaymentData = await axios({
       url: `https://api.iamport.kr/payments/${impUid}`,
       method: 'get',

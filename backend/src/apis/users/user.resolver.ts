@@ -25,28 +25,31 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User)
-  async fetchLoginUser(@CurrentUser() currentUser: any) {
-    const user = await this.userService.findUser({ email: currentUser.email });
-    return user;
+  fetchLoginUser(@CurrentUser() currentUser: any) {
+    return this.userService.findUser({ email: currentUser.email });
   }
 
   @Mutation(() => IsVaildEmail)
-  isValidEmail(@Args('email') email: string) {
+  isValidEmail(@Args({ name: 'email', description: '이메일' }) email: string) {
     return this.userService.checkValidationEmail({ email });
   }
 
   @Mutation(() => String)
-  async sendTokenToSMS(@Args('phone') phone: string) {
+  async sendTokenToSMS(
+    @Args({ name: 'phone', description: '전화번호' }) phone: string,
+  ) {
     const token = this.userService.getToken();
-    this.userService.sendToken({ phone, token });
+    const req = await this.userService.sendToken({ phone, token });
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
-    return `{phone:${phone},token:${token}}`;
+    if (req) return `{phone:${phone},token:${token}}`;
   }
 
   @Mutation(() => Boolean)
-  async checkToken(@Args('token') token: string) {
+  async checkToken(
+    @Args({ name: 'token', description: '토큰' }) token: string,
+  ) {
     const tokenCache = await this.cacheManager.get(token);
     return tokenCache ? true : false;
   }
@@ -62,52 +65,59 @@ export class UserResolver {
 
   @Mutation(() => String)
   async resetPwd(
-    @Args('email') email: string, //
-    @Args('password') password: string,
+    @Args({ name: 'email', description: '이메일' }) email: string, //
+    @Args({ name: 'password', description: '비밀번호' }) password: string,
   ) {
     const user = await this.userService.findOne({ email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
     const hashedPassword = await bcrypt.hash(password, 10);
-    this.userService.reset({ hashedPassword, user });
-    return '비밀번호가 변경되었습니다';
+    const result = await this.userService.reset({ hashedPassword, user });
+    if (result) return '비밀번호가 재설정되었습니다';
+    else return '재설정을 실패하였습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async updateUserPwd(
-    @CurrentUser() currentUser: ICurrentUser, //
-    @Args('password') password: string,
+    @CurrentUser() currentUser: ICurrentUser,
+    @Args({ name: 'password', description: '비밀번호' }) password: string,
   ) {
     const user = await this.userService.findOne({ email: currentUser.email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
     const hashedPassword = await bcrypt.hash(password, 10);
-    this.userService.updatePwd({ hashedPassword, currentUser });
-    return '비밀번호가 변경되었습니다';
+    const result = await this.userService.updatePwd({
+      hashedPassword,
+      currentUser,
+    });
+    if (result) return '비밀번호가 변경되었습니다';
+    else return '변경을 실패하였습니다.';
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async updateUserPhone(
     @CurrentUser() currentUser: ICurrentUser, //
-    @Args('phone') phone: string,
+    @Args({ name: 'phone', description: '전화번호' }) phone: string,
   ) {
     const user = await this.userService.findOne({ email: currentUser.email });
     if (phone === user.phone)
       throw new UnprocessableEntityException('기존 비밀번호 입니다');
-    this.userService.updatePhone({ phone, currentUser });
-    return '핸드폰 번호가 변경되었습니다';
+    const result = await this.userService.updatePhone({ phone, currentUser });
+    if (result) return '핸드폰 번호가 변경되었습니다';
+    else return '변경을 실패하였습니다';
   }
 
-  @UseGuards(GqlAuthAccessGuard) // 방어막
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   async updateUserIsAuth(
     @CurrentUser() currentUser: ICurrentUser,
-    @Args('isAuth') isAuth: boolean,
+    @Args({ name: 'isAuth', description: '면허인증 여부' }) isAuth: boolean,
   ) {
-    this.userService.updateIsAuth({ isAuth, currentUser });
-    return '면허증이 등록되었습니다';
+    const result = await this.userService.updateIsAuth({ isAuth, currentUser });
+    if (result) return '면허증이 등록되었습니다';
+    else return '등록을 실패하였습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -115,33 +125,36 @@ export class UserResolver {
   async deleteLoginUser(
     @CurrentUser() currentUser: any, //
   ) {
-    const result = this.userService.deleteUser({ currentUser });
+    const result = await this.userService.deleteUser({ currentUser });
     if (result) return '로그인한 계정이 삭제되었습니다';
+    else return '삭제에 실패하였습니다.';
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
-  createImageStart(
+  async createImageStart(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    const result = this.userService.createImageStart({
+    const result = await this.userService.createImageStart({
       createImageInput,
       currentUser,
     });
     if (result) return '등록 되었습니다';
+    else return '등록을 실패하였습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
-  createImageEnd(
+  async createImageEnd(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    const result = this.userService.createImageEnd({
+    const result = await this.userService.createImageEnd({
       createImageInput,
       currentUser,
     });
     if (result) return '반납 되었습니다';
+    else return '반납을 실패하였습니다';
   }
 }

@@ -26,7 +26,7 @@ export class ReservationService {
 
   async ownerFindAll({ currentUser, page }) {
     return await this.reservationRepository.find({
-      where: { car: { ownerEmail: currentUser.email } },
+      where: { car: { user: { id: currentUser.id } } },
       relations: [
         'car',
         'car.carModel',

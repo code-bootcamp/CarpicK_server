@@ -19,31 +19,34 @@ registerEnumType(PAYMENT_STATUS_ENUM, {
 });
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '결제 TYPE' })
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: 'IMPUID' })
   impUid: string;
-
-  @CreateDateColumn()
-  createAt: Date;
 
   @Column()
   @Min(0)
-  @Field(() => Int)
+  @Field(() => Int, { description: '결제 금액' })
   amount: number;
 
+  @Column()
+  @Field(() => String, { description: '결제 방식' })
+  paymentMethod: string;
+
   @Column({ type: 'enum', enum: PAYMENT_STATUS_ENUM })
-  @Field(() => PAYMENT_STATUS_ENUM, { nullable: true })
+  @Field(() => PAYMENT_STATUS_ENUM, {
+    nullable: true,
+    description: '결제 상태',
+  })
   status: string;
 
-  @Column()
-  @Field(() => String)
-  paymentMethod: string;
+  @CreateDateColumn()
+  createAt: Date;
 
   @ManyToOne(() => User)
   @Field(() => User)

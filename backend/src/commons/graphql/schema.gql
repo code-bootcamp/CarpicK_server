@@ -2,48 +2,94 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""관리자 TYPE"""
 type Administrator {
+  """UUID"""
   id: String!
+
+  """관리자 ID"""
   adminId: String!
+
+  """관리자 비밀번호"""
   password: String!
 }
 
+"""차량존 TYPE"""
 type CarLocation {
+  """UUID"""
   id: String!
+
+  """주소"""
   address: String!
+
+  """차량존"""
   addressDetail: String!
+
+  """위도"""
   lat: Float!
+
+  """경도"""
   lng: Float!
   car: [Car!]!
 }
 
+"""차종 TYPE"""
 type CarCategory {
+  """UUID"""
   id: String!
+
+  """차종"""
   name: String!
   carModel: [CarModel!]!
 }
 
+"""모델 TYPE"""
 type CarModel {
+  """UUID"""
   id: String!
+
+  """모델명"""
   name: String!
   carCategory: CarCategory!
   car: Car!
 }
 
+"""차량등록증 TYPE"""
 type ImageRegistration {
+  """UUID"""
   id: String!
+
+  """URL"""
   url: String!
 }
 
+"""등록 차량 TYPE"""
 type CarRegistration {
+  """UUID"""
   id: String!
+
+  """차량번호"""
   carNumber: String!
+
+  """하이패스 여부"""
   isHipass: Boolean!
+
+  """모델명"""
   model: String!
+
+  """유종"""
   oil: String!
+
+  """주소"""
   address: String!
-  status: String!
+
+  """심사 상태"""
+  status: String
+
+  """등록시간"""
   createdAt: DateTime!
+
+  """갱신시간"""
   updatedAt: DateTime!
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
@@ -55,26 +101,44 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""차량 이미지 TYPE"""
 type ImageCar {
+  """UUID"""
   id: String!
+
+  """URL"""
   url: String!
   car: Car!
   carRegistration: CarRegistration!
 }
 
+"""반납 이미지 TYPE"""
 type ImageEnd {
+  """UUID"""
   id: String!
+
+  """URL"""
   url: String!
   car: Car!
   user: User!
 }
 
+"""결제 TYPE"""
 type Payment {
+  """UUID"""
   id: String!
+
+  """IMPUID"""
   impUid: String!
+
+  """결제 금액"""
   amount: Int!
-  status: PAYMENT_STATUS_ENUM
+
+  """결제 방식"""
   paymentMethod: String!
+
+  """결제 상태"""
+  status: PAYMENT_STATUS_ENUM
   user: User!
 }
 
@@ -83,32 +147,60 @@ enum PAYMENT_STATUS_ENUM {
   CANCLE
 }
 
+"""예약 TYPE"""
 type Reservation {
+  """UUID"""
   id: String!
+
+  """시작 시간"""
   startTime: DateTime!
+
+  """종료 시간"""
   endTime: DateTime!
+
+  """결제 금액"""
   amount: Int!
-  status: String!
+
+  """예약 상태"""
+  status: String
   car: Car!
   user: User!
   payment: Payment!
 }
 
+"""리뷰 TYPE"""
 type Review {
+  """UUID"""
   id: String!
+
+  """평점"""
   rating: Int!
   car: Car!
   user: User!
 }
 
+"""차량 TYPE"""
 type Car {
+  """UUID"""
   id: String!
+
+  """차량번호"""
   carNumber: String!
+
+  """하이패스 여부"""
   isHipass: Boolean!
+
+  """시간당 가격"""
   price: Int!
+
+  """유종"""
   oil: String!
+
+  """계약기간"""
   contractPeriod: String!
-  isAvailable: Boolean!
+
+  """키 사용가능 여부"""
+  isAvailable: Boolean
   carModel: CarModel!
   carLocation: CarLocation!
   reservation: [Reservation!]!
@@ -120,33 +212,65 @@ type Car {
   user: User!
 }
 
+"""탑승전 이미지 TYPE"""
 type ImageStart {
+  """UUID"""
   id: String!
+
+  """URL"""
   url: String!
   car: Car!
   user: User!
 }
 
+"""유저 TYPE"""
 type User {
+  """UUID"""
   id: String!
+
+  """이름"""
   name: String!
+
+  """이메일"""
   email: String!
+
+  """비밀번호"""
   password: String!
+
+  """핸드폰 번호"""
   phone: String!
+
+  """면허인증 여부"""
   isAuth: Boolean!
+
+  """등록차량 총수익"""
   revenue: Int!
   imageStart: [ImageStart!]!
   imageEnd: [ImageEnd!]!
   reservation: [Reservation!]!
 }
 
+"""인기차 OUTPUT"""
 type PopularCarOutput {
+  """UUID"""
   id: String
+
+  """차량번호"""
   carNumber: String
+
+  """하이패스 여부"""
   isHipass: Boolean
+
+  """시간당 가격"""
   price: Int
+
+  """유종"""
   oil: String
+
+  """계약기간"""
   contractPeriod: String
+
+  """키 사용가능 여부"""
   isAvailable: Boolean
   carModel: CarModel
   carLocation: CarLocation
@@ -157,110 +281,281 @@ type PopularCarOutput {
   imageEndImageEnd: [ImageEnd!]
   review: [Review!]
   user: User
+
+  """평균 평점"""
   rating: Float!
 }
 
+"""유효이메일 OUTPUT"""
 type IsVaildEmail {
+  """사용가능 여부"""
   isValid: Boolean!
+
+  """전화번호"""
   phone: String!
 }
 
 type Query {
-  fetchCar(carId: String!): Car!
-  fetchCars(page: Int = 1, carLocationId: String!): [Car!]!
+  fetchCar(
+    """차량 UUID"""
+    carId: String!
+  ): Car!
+  fetchCars(
+    """페이지 넘버"""
+    page: Int = 1
+
+    """차량존 UUID"""
+    carLocationId: String!
+  ): [Car!]!
   fetchPopularCars: [PopularCarOutput!]!
+
+  """차종 조회"""
   fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
-  fetchCarRegistration(carRegistrationId: String!): CarRegistration!
-  fetchCarRegistrations(page: Int): [CarRegistration!]!
+  fetchCarRegistration(
+    """등록 차량 UUID"""
+    carRegistrationId: String!
+  ): CarRegistration!
+  fetchCarRegistrations(
+    """페이지 넘버"""
+    page: Int = 1
+  ): [CarRegistration!]!
   fetchCarRegistrationCount: Int!
-  fetchUserReservations(page: Float!): [Reservation!]!
-  fetchOwnerReservations(page: Float!): [Reservation!]!
+  fetchUserReservations(
+    """페이지 넘버"""
+    page: Int = 1
+  ): [Reservation!]!
+  afetchOwnerReservations(
+    """페이지 넘버"""
+    page: Int = 1
+  ): [Reservation!]!
   fetchLoginUser: User!
 }
 
+"""차량존 조회 INPUT"""
 input FetchCarLocationInput {
+  """남서 경도"""
   southWestLng: Float!
+
+  """북동 경도"""
   northEastLng: Float!
+
+  """남서 위도"""
   southWestLat: Float!
+
+  """북동 위도"""
   northEastLat: Float!
+
+  """차종 필터"""
   filter: [String!]
 }
 
 type Mutation {
   createAdministrator(createAdministratorInput: CreateAdministratorInput!): Administrator!
-  login(email: String!, password: String!): String!
-  adminLogin(adminId: String!, password: String!): String!
+  login(
+    """이메일"""
+    email: String!
+
+    """비밀번호"""
+    password: String!
+  ): String!
+  adminLogin(
+    """관리자 ID"""
+    adminId: String!
+
+    """관리자 비밀번호"""
+    password: String!
+  ): String!
   restoreAccessToken: String!
   logout: String!
   adminLogout: String!
   createCar(createCarInput: CreateCarInput!): Car!
-  deleteCar(carId: String!): String!
+  deleteCar(
+    """차량 UUID"""
+    carId: String!
+  ): String!
+
+  """차종 생성"""
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!
-  deleteCarCategory(carCategoryId: String!): Boolean!
+
+  """차종 삭제"""
+  deleteCarCategory(
+    """차종 UUID"""
+    carCategoryId: String!
+  ): Boolean!
+
+  """모델 생성"""
   createCarModel(createCarModelInput: CreateCarModelInput!): CarModel!
-  deleteCarModel(carModelId: String!): Boolean!
+
+  """모델 삭제"""
+  deleteCarModel(
+    """모델 UUID"""
+    carModelId: String!
+  ): Boolean!
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
-  updateCarRegistrationStatus(carRegistrationId: String!, status: String!): CarRegistration!
-  uploadFile(files: [Upload!]!): [String!]!
-  checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
+  updateCarRegistrationStatus(
+    """등록 차량 UUID"""
+    carRegistrationId: String!
+
+    """심사 상태"""
+    status: String!
+  ): CarRegistration!
+  uploadFile(
+    """파일"""
+    files: [Upload!]!
+  ): [String!]!
+  checkLicense(
+    """생년월일"""
+    BirthDate: String!
+
+    """이름"""
+    Name: String!
+
+    """면허번호"""
+    LicNumber: String!
+
+    """식별번호"""
+    SpecialNumber: String!
+  ): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
-  createReview(carId: String!, rating: Float!): String!
+  createReview(
+    """차량 UUID"""
+    carId: String!
+
+    """평점"""
+    rating: Int!
+  ): Review!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
-  updateReservationStatus(reservationId: String!, status: String!): Reservation!
-  isValidEmail(email: String!): IsVaildEmail!
-  sendTokenToSMS(phone: String!): String!
-  checkToken(token: String!): Boolean!
+  updateReservationStatus(
+    """예약 UUID"""
+    reservationId: String!
+
+    """예약 상태"""
+    status: String!
+  ): Reservation!
+  isValidEmail(
+    """이메일"""
+    email: String!
+  ): IsVaildEmail!
+  sendTokenToSMS(
+    """전화번호"""
+    phone: String!
+  ): String!
+  checkToken(
+    """토큰"""
+    token: String!
+  ): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
-  resetPwd(email: String!, password: String!): String!
-  updateUserPwd(password: String!): String!
-  updateUserPhone(phone: String!): String!
-  updateUserIsAuth(isAuth: Boolean!): String!
+  resetPwd(
+    """이메일"""
+    email: String!
+
+    """비밀번호"""
+    password: String!
+  ): String!
+  updateUserPwd(
+    """비밀번호"""
+    password: String!
+  ): String!
+  updateUserPhone(
+    """전화번호"""
+    phone: String!
+  ): String!
+  updateUserIsAuth(
+    """면허인증 여부"""
+    isAuth: Boolean!
+  ): String!
   deleteLoginUser: String!
   createImageStart(createImageInput: CreateImageInput!): String!
   createImageEnd(createImageInput: CreateImageInput!): String!
 }
 
+"""관리자 생성 INPUT"""
 input CreateAdministratorInput {
+  """관리자 ID"""
   adminId: String!
+
+  """관리자 비밀번호"""
   password: String!
 }
 
+"""차량 생성 INPUT"""
 input CreateCarInput {
+  """차량번호"""
   carNumber: String!
+
+  """하이패스 여부"""
   isHipass: Boolean!
+
+  """시간당 가격"""
   price: Int!
+
+  """유종"""
   oil: String!
+
+  """계약기간"""
   contractPeriod: String!
+
+  """유저 UUID"""
   userId: String!
+
+  """모델명"""
   carModelName: String!
   carLocation: CarLocationInput!
-  carUrl: [String!]
-  registrationUrl: String
+
+  """차량 이미지"""
+  carUrl: [String!]!
+
+  """차량등록증 이미지"""
+  registrationUrl: String!
 }
 
+"""차량존 생성 INPUT"""
 input CarLocationInput {
+  """주소"""
   address: String!
+
+  """차량존"""
   addressDetail: String!
+
+  """위도"""
   lat: Float!
+
+  """경도"""
   lng: Float!
 }
 
+"""차종 생성 INPUT"""
 input CreateCarCategoryInput {
+  """차종"""
   name: String!
 }
 
+"""모델 INPUT"""
 input CreateCarModelInput {
+  """모델명"""
   name: String!
+
+  """차종"""
   carCategoryName: String!
 }
 
+"""등록 차량 생성 INPUT"""
 input CreateCarRegistrationInput {
+  """차량번호"""
   carNumber: String!
+
+  """하이패스 여부"""
   isHipass: Boolean!
+
+  """모델명"""
   model: String!
+
+  """유종"""
   oil: String!
+
+  """주소"""
   address: String!
   carUrl: [String!]!
   registrationUrl: String!
@@ -269,28 +564,56 @@ input CreateCarRegistrationInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
+"""결제 생성 INPUT"""
 input PaymentInput {
+  """IMPUID"""
   impUid: String!
+
+  """결제 금액"""
   amount: Int!
+
+  """결제 방식"""
   paymentMethod: String!
 }
 
+"""예약 생성 INPUT"""
 input CreateReservationInput {
+  """시작 시간"""
   startTime: DateTime!
+
+  """종료 시간"""
   endTime: DateTime!
+
+  """결제 금액"""
   amount: Int!
+
+  """차량 UUID"""
   carId: String!
 }
 
+"""유저 생성 INPUT"""
 input CreateUserInput {
+  """이메일"""
   email: String!
+
+  """이름"""
   name: String!
+
+  """비밀번호"""
   password: String!
+
+  """전화번호"""
   phone: String!
+
+  """면허인증 여부"""
   isAuth: Boolean!
 }
 
+"""이미지 생성 INPUT"""
 input CreateImageInput {
+  """URL"""
   urls: [String!]!
+
+  """차량 UUID"""
   carId: String!
 }

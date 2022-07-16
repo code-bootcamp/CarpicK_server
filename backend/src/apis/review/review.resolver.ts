@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
+import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
 
 @Resolver()
@@ -10,18 +11,18 @@ export class ReviewResolver {
     private readonly reviewService: ReviewService, //
   ) {}
 
-  @UseGuards(GqlAuthAccessGuard) // 방어막
-  @Mutation(() => String)
-  async createReview(
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => Review)
+  createReview(
     @CurrentUser() currentUser: ICurrentUser,
-    @Args('carId') carId: string,
-    @Args('rating') rating: number,
+    @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
+    @Args({ name: 'rating', type: () => Int, description: '평점' })
+    rating: number,
   ) {
-    const result = this.reviewService.create({
+    return this.reviewService.create({
       carId,
       rating,
       currentUser,
     });
-    if (result) return '리뷰가 등록되었습니다';
   }
 }

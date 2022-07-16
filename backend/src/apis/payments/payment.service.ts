@@ -21,7 +21,7 @@ export class PaymentService {
     try {
       const payment = this.paymentRepository.create({
         ...paymentInput,
-        user: currentUser,
+        user: { id: currentUser.id },
         status: PAYMENT_STATUS_ENUM.PAYMENT,
       });
       await queryRunner.manager.save(payment);

@@ -14,35 +14,35 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '유저 TYPE' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '이름' })
   name: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '이메일' })
   email: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '비밀번호' })
   password: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '핸드폰 번호' })
   phone: string;
 
   @Column()
-  @Field(() => Boolean)
+  @Field(() => Boolean, { description: '면허인증 여부' })
   isAuth: boolean;
 
   @Column({ default: 0 })
   @Min(0)
-  @Field(() => Int)
+  @Field(() => Int, { description: '등록차량 총수익' })
   revenue: number;
 
   @CreateDateColumn()
