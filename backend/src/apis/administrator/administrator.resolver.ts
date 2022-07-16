@@ -10,7 +10,7 @@ export class AdministratorResolver {
     private readonly administratorService: AdministratorService, //
   ) {}
 
-  @Mutation(() => Administrator)
+  @Mutation(() => Administrator, { description: '관리자 생성' })
   async createAdministrator(
     @Args('createAdministratorInput')
     createAdministratorInput: CreateAdministratorInput, //

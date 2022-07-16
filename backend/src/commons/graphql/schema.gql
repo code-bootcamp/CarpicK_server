@@ -296,10 +296,13 @@ type IsVaildEmail {
 }
 
 type Query {
+  """차량 조회"""
   fetchCar(
     """차량 UUID"""
     carId: String!
   ): Car!
+  
+  """차량존 리스트 조회"""
   fetchCars(
     """페이지 넘버"""
     page: Int = 1
@@ -307,28 +310,44 @@ type Query {
     """차량존 UUID"""
     carLocationId: String!
   ): [Car!]!
+  
+  """인기 차량 조회"""
   fetchPopularCars: [PopularCarOutput!]!
 
   """차종 조회"""
   fetchCarCategory: [CarCategory!]!
+
+  """차량존 조회"""
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
+  
+  """등록 차량 조회"""
   fetchCarRegistration(
     """등록 차량 UUID"""
     carRegistrationId: String!
   ): CarRegistration!
+  
+  """등록 차량 리스트 조회"""
   fetchCarRegistrations(
     """페이지 넘버"""
     page: Int = 1
   ): [CarRegistration!]!
+  
+  """등록 차량 수"""
   fetchCarRegistrationCount: Int!
+  
+  """예약 내역 조회"""
   fetchUserReservations(
     """페이지 넘버"""
     page: Int = 1
   ): [Reservation!]!
+  
+  ""내차량 현황 조회"""
   afetchOwnerReservations(
     """페이지 넘버"""
     page: Int = 1
   ): [Reservation!]!
+
+  """로그인 유저 조회"""
   fetchLoginUser: User!
 }
 
@@ -351,7 +370,10 @@ input FetchCarLocationInput {
 }
 
 type Mutation {
+  """관리자 생성"""
   createAdministrator(createAdministratorInput: CreateAdministratorInput!): Administrator!
+
+  """로그인"""
   login(
     """이메일"""
     email: String!
@@ -359,6 +381,8 @@ type Mutation {
     """비밀번호"""
     password: String!
   ): String!
+  
+  """관리자 로그인"""
   adminLogin(
     """관리자 ID"""
     adminId: String!
@@ -366,10 +390,20 @@ type Mutation {
     """관리자 비밀번호"""
     password: String!
   ): String!
+
+  """엑세스 토큰 재발급"""
   restoreAccessToken: String!
+
+  """로그아웃"""
   logout: String!
+
+  """관리자 로그아웃"""
   adminLogout: String!
+
+  """차량 생성"""
   createCar(createCarInput: CreateCarInput!): Car!
+
+  """차량 삭제"""
   deleteCar(
     """차량 UUID"""
     carId: String!
@@ -392,7 +426,11 @@ type Mutation {
     """모델 UUID"""
     carModelId: String!
   ): Boolean!
+  
+  """등록 차량 생성"""
   createCarRegistration(createCarRegistrationInput: CreateCarRegistrationInput!): CarRegistration!
+  
+  """등록 차량 상태 업데이트"""  
   updateCarRegistrationStatus(
     """등록 차량 UUID"""
     carRegistrationId: String!
@@ -400,10 +438,14 @@ type Mutation {
     """심사 상태"""
     status: String!
   ): CarRegistration!
+  
+  """파일 업로드"""
   uploadFile(
     """파일"""
     files: [Upload!]!
   ): [String!]!
+  
+  """운전면허 확인"""
   checkLicense(
     """생년월일"""
     BirthDate: String!
@@ -417,8 +459,14 @@ type Mutation {
     """식별번호"""
     SpecialNumber: String!
   ): String!
+
+  """결제 생성"""
   createPayment(paymentInput: PaymentInput!): Payment!
+
+  """결제 취소"""
   cancelPayment(paymentInput: PaymentInput!): Payment!
+
+  """리뷰 생성"""
   createReview(
     """차량 UUID"""
     carId: String!
@@ -426,7 +474,11 @@ type Mutation {
     """평점"""
     rating: Int!
   ): Review!
+  
+  """예약 생성"""
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
+  
+  """예약 상태 업데이트"""
   updateReservationStatus(
     """예약 UUID"""
     reservationId: String!
@@ -434,19 +486,29 @@ type Mutation {
     """예약 상태"""
     status: String!
   ): Reservation!
+  
+  """이메일 확인"""
   isValidEmail(
     """이메일"""
     email: String!
   ): IsVaildEmail!
+  
+  """토큰 보내기"""
   sendTokenToSMS(
     """전화번호"""
     phone: String!
   ): String!
+  
+  """토큰 확인"""
   checkToken(
     """토큰"""
     token: String!
   ): Boolean!
+  
+  """유저 생성"""
   createUser(createUserInput: CreateUserInput!): User!
+  
+  """비밀번호 재설정"""
   resetPwd(
     """이메일"""
     email: String!
@@ -454,20 +516,32 @@ type Mutation {
     """비밀번호"""
     password: String!
   ): String!
+  
+  """비밀번호 변경"""
   updateUserPwd(
     """비밀번호"""
     password: String!
   ): String!
+  
+  """핸드폰번호 변경"""
   updateUserPhone(
     """전화번호"""
     phone: String!
   ): String!
+  
+  """면허 업데이트"""
   updateUserIsAuth(
     """면허인증 여부"""
     isAuth: Boolean!
   ): String!
+
+  """계정 삭제"""
   deleteLoginUser: String!
+
+  """탑승전 이미지 등록"""
   createImageStart(createImageInput: CreateImageInput!): String!
+
+  """반납 이미지 등록"""
   createImageEnd(createImageInput: CreateImageInput!): String!
 }
 

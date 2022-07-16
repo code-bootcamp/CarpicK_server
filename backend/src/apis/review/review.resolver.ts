@@ -11,7 +11,8 @@ export class ReviewResolver {
     private readonly reviewService: ReviewService, //
   ) {}
 
-  @UseGuards(GqlAuthAccessGuard)
+
+  @Mutation(() => String, { description: '리뷰 생성' })
   @Mutation(() => Review)
   createReview(
     @CurrentUser() currentUser: ICurrentUser,

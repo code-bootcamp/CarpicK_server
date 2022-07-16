@@ -24,17 +24,17 @@ export class UserResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => User)
+  @Query(() => User, { description: '로그인 유저 조회' })
   fetchLoginUser(@CurrentUser() currentUser: any) {
     return this.userService.findUser({ email: currentUser.email });
   }
 
-  @Mutation(() => IsVaildEmail)
+  @Mutation(() => IsVaildEmail, { description: '이메일 확인' })
   isValidEmail(@Args({ name: 'email', description: '이메일' }) email: string) {
     return this.userService.checkValidationEmail({ email });
   }
 
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '토큰 보내기' })
   async sendTokenToSMS(
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
   ) {
@@ -46,7 +46,7 @@ export class UserResolver {
     if (req) return `{phone:${phone},token:${token}}`;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { description: '토큰 확인' })
   async checkToken(
     @Args({ name: 'token', description: '토큰' }) token: string,
   ) {
@@ -54,7 +54,7 @@ export class UserResolver {
     return tokenCache ? true : false;
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { description: '유저 생성' })
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput, //
   ) {
@@ -63,7 +63,7 @@ export class UserResolver {
     return this.userService.create({ hashedPassword, ...info });
   }
 
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '비밀번호 재설정' })
   async resetPwd(
     @Args({ name: 'email', description: '이메일' }) email: string, //
     @Args({ name: 'password', description: '비밀번호' }) password: string,
@@ -78,7 +78,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '비밀번호 변경' })
   async updateUserPwd(
     @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'password', description: '비밀번호' }) password: string,
@@ -96,7 +96,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '핸드폰번호 변경' })
   async updateUserPhone(
     @CurrentUser() currentUser: ICurrentUser, //
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
@@ -109,8 +109,9 @@ export class UserResolver {
     else return '변경을 실패하였습니다';
   }
 
+
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '면허 업데이트' })
   async updateUserIsAuth(
     @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'isAuth', description: '면허인증 여부' }) isAuth: boolean,
@@ -121,7 +122,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '계정 삭제' })
   async deleteLoginUser(
     @CurrentUser() currentUser: any, //
   ) {
@@ -131,7 +132,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '탑승전 이미지 등록' })
   async createImageStart(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
@@ -145,7 +146,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '반납 이미지 등록' })
   async createImageEnd(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,

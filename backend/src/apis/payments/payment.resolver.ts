@@ -23,7 +23,7 @@ export class PaymentResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Payment)
+  @Mutation(() => Payment, { description: '결제 생성' })
   async createPayment(
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,
@@ -47,7 +47,7 @@ export class PaymentResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Payment)
+  @Mutation(() => Payment, { description: '결제 취소' })
   async cancelPayment(
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,

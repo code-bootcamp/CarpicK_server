@@ -9,7 +9,7 @@ export class LicenTruthResolver {
     private readonly licenTruthService: LicenTruthService, //
   ) {}
 
-  @Mutation(() => String)
+  @Mutation(() => String, { description: '운전면허 확인' })
   checkLicense(
     @Args({ name: 'BirthDate', description: '생년월일' }) BirthDate: string,
     @Args({ name: 'Name', description: '이름' }) Name: string,

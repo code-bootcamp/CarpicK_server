@@ -12,7 +12,6 @@ export class CarModelResolver {
   ) {}
 
   @Mutation(() => CarModel, { description: '모델 생성' })
-  createCarModel(
     @Args('createCarModelInput') createCarModelInput: CreateCarModelInput, //
   ) {
     return this.carModelService.create({ createCarModelInput });
