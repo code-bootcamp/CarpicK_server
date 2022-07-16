@@ -107,7 +107,7 @@ export class UserResolver {
     @Args('isAuth') isAuth: boolean,
   ) {
     this.userService.updateIsAuth({ isAuth, currentUser });
-    return '면허증이 등록되었습니다.';
+    return '면허증이 등록되었습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -116,7 +116,7 @@ export class UserResolver {
     @CurrentUser() currentUser: any, //
   ) {
     const result = this.userService.deleteUser({ currentUser });
-    if (result) return '로그인한 계정이 삭제되었습니다.';
+    if (result) return '로그인한 계정이 삭제되었습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -129,7 +129,7 @@ export class UserResolver {
       createImageInput,
       currentUser,
     });
-    if (result) return '등록 되었습니다.';
+    if (result) return '등록 되었습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -142,6 +142,6 @@ export class UserResolver {
       createImageInput,
       currentUser,
     });
-    if (result) return '반납 되었습니다.';
+    if (result) return '반납 되었습니다';
   }
 }

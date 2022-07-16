@@ -18,7 +18,9 @@ export class CarRegistrationResolver {
   }
 
   @Query(() => [CarRegistration])
-  fetchCarRegistrations(@Args('page') page: number) {
+  fetchCarRegistrations(
+    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
+  ) {
     return this.carRegistrationService.findAll(page);
   }
 

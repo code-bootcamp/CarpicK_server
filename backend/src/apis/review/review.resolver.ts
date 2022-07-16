@@ -12,7 +12,7 @@ export class ReviewResolver {
 
   @UseGuards(GqlAuthAccessGuard) // 방어막
   @Mutation(() => String)
-  async createRivew(
+  async createReview(
     @CurrentUser() currentUser: ICurrentUser,
     @Args('carId') carId: string,
     @Args('rating') rating: number,

@@ -8,6 +8,7 @@ import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReser
 import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Review } from 'src/apis/review/entities/review.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -48,10 +49,6 @@ export class Car {
   @Column()
   @Field(() => String)
   contractPeriod: string;
-
-  @Column()
-  @Field(() => String)
-  ownerEmail: string;
 
   @Column({ default: false })
   @Field(() => Boolean)
@@ -98,4 +95,9 @@ export class Car {
   @OneToMany(() => Review, (review) => review.car)
   @Field(() => [Review])
   review: Review[];
+
+  @JoinColumn()
+  @OneToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

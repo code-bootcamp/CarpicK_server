@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarService } from './car.service';
 import { CreateCarInput } from './dto/createCar.entity';
@@ -19,7 +19,7 @@ export class CarResolver {
 
   @Query(() => [Car])
   fetchCars(
-    @Args('page') page: number,
+    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
     @Args('carLocationId') carLocationId: string, //
   ) {
     return this.carService.findAll({ carLocationId, page });

@@ -108,7 +108,6 @@ type Car {
   price: Int!
   oil: String!
   contractPeriod: String!
-  ownerEmail: String!
   isAvailable: Boolean!
   carModel: CarModel!
   carLocation: CarLocation!
@@ -118,6 +117,7 @@ type Car {
   imageReservation: [ImageReservation!]!
   imageReturn: [ImageReturn!]!
   review: [Review!]!
+  user: User!
 }
 
 type ImageReservation {
@@ -147,7 +147,6 @@ type PopularCarOutput {
   price: Int
   oil: String
   contractPeriod: String
-  ownerEmail: String
   isAvailable: Boolean
   carModel: CarModel
   carLocation: CarLocation
@@ -157,6 +156,7 @@ type PopularCarOutput {
   imageReservation: [ImageReservation!]
   imageReturn: [ImageReturn!]
   review: [Review!]
+  user: User
   rating: Float!
 }
 
@@ -167,12 +167,12 @@ type IsVaildEmail {
 
 type Query {
   fetchCar(carId: String!): Car!
-  fetchCars(page: Float!, carLocationId: String!): [Car!]!
+  fetchCars(page: Int = 1, carLocationId: String!): [Car!]!
   fetchPopularCars: [PopularCarOutput!]!
   fetchCarCategory: [CarCategory!]!
   fetchCarLocation(fetchCarLocationInput: FetchCarLocationInput!): [CarLocation!]!
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
-  fetchCarRegistrations(page: Float!): [CarRegistration!]!
+  fetchCarRegistrations(page: Int): [CarRegistration!]!
   fetchCarRegistrationCount: Int!
   fetchUserReservations(page: Float!): [Reservation!]!
   fetchOwnerReservations(page: Float!): [Reservation!]!
@@ -206,7 +206,7 @@ type Mutation {
   checkLicense(BirthDate: String!, Name: String!, LicNumber: String!, SpecialNumber: String!): String!
   createPayment(paymentInput: PaymentInput!): Payment!
   cancelPayment(paymentInput: PaymentInput!): Payment!
-  createRivew(carId: String!, rating: Float!): String!
+  createReview(carId: String!, rating: Float!): String!
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
   updateReservationStatus(reservationId: String!, status: String!): Reservation!
   isValidEmail(email: String!): IsVaildEmail!
@@ -233,7 +233,7 @@ input CreateCarInput {
   price: Int!
   oil: String!
   contractPeriod: String!
-  ownerEmail: String!
+  userId: String!
   carModelName: String!
   carLocation: CarLocationInput!
   carUrl: [String!]
