@@ -17,8 +17,11 @@ export class CarRegistrationResolver {
     return this.carRegistrationService.findOne({ carRegistrationId });
   }
 
+
   @Query(() => [CarRegistration], { description: '등록 차량 리스트 조회' })
-  fetchCarRegistrations(@Args('page') page: number) {
+  fetchCarRegistrations(
+    @Args({ name: 'page', type: () => Int, defaultValue: 1 }) page: number,
+  ) {
     return this.carRegistrationService.findAll(page);
   }
 

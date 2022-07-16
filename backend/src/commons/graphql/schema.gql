@@ -108,7 +108,6 @@ type Car {
   price: Int!
   oil: String!
   contractPeriod: String!
-  ownerEmail: String!
   isAvailable: Boolean!
   carModel: CarModel!
   carLocation: CarLocation!
@@ -118,6 +117,7 @@ type Car {
   imageStart: [ImageStart!]!
   imageEndImageEnd: [ImageEnd!]!
   review: [Review!]!
+  user: User!
 }
 
 type ImageStart {
@@ -147,7 +147,6 @@ type PopularCarOutput {
   price: Int
   oil: String
   contractPeriod: String
-  ownerEmail: String
   isAvailable: Boolean
   carModel: CarModel
   carLocation: CarLocation
@@ -157,6 +156,7 @@ type PopularCarOutput {
   imageStart: [ImageStart!]
   imageEndImageEnd: [ImageEnd!]
   review: [Review!]
+  user: User
   rating: Float!
 }
 
@@ -170,7 +170,7 @@ type Query {
   fetchCar(carId: String!): Car!
 
   """차량존 리스트 조회"""
-  fetchCars(page: Float!, carLocationId: String!): [Car!]!
+  fetchCars(page: Int = 1, carLocationId: String!): [Car!]!
 
   """인기 차량 조회"""
   fetchPopularCars: [PopularCarOutput!]!
@@ -185,7 +185,7 @@ type Query {
   fetchCarRegistration(carRegistrationId: String!): CarRegistration!
 
   """등록 차량 리스트 조회"""
-  fetchCarRegistrations(page: Float!): [CarRegistration!]!
+  fetchCarRegistrations(page: Int): [CarRegistration!]!
 
   """등록 차량 수"""
   fetchCarRegistrationCount: Int!
@@ -264,7 +264,7 @@ type Mutation {
   cancelPayment(paymentInput: PaymentInput!): Payment!
 
   """리뷰 생성"""
-  createRivew(carId: String!, rating: Float!): String!
+ createReview(carId: String!, rating: Float!): String!
 
   """예약 생성"""
   createReservation(createReservationInput: CreateReservationInput!): Reservation!
@@ -317,7 +317,7 @@ input CreateCarInput {
   price: Int!
   oil: String!
   contractPeriod: String!
-  ownerEmail: String!
+  userId: String!
   carModelName: String!
   carLocation: CarLocationInput!
   carUrl: [String!]
