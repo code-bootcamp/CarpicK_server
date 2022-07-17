@@ -9,7 +9,7 @@ interface IFile {
 
 @Injectable()
 export class FileService {
-  async upload({ files }: IFile) {
+  async upload({ files }: IFile): Promise<unknown[]> {
     const waitedFiles = await Promise.all(files);
     const storage = new Storage({
       projectId: process.env.STORAGE_PROJECT_ID,

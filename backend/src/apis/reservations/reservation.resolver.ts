@@ -23,7 +23,7 @@ export class ReservationResolver {
     })
     page: number,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<Reservation[]> {
     return this.reservationService.userFindAll({ currentUser, page });
   }
 
@@ -38,7 +38,7 @@ export class ReservationResolver {
     })
     page: number,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<Reservation[]> {
     return this.reservationService.ownerFindAll({ currentUser, page });
   }
 
@@ -48,7 +48,7 @@ export class ReservationResolver {
     @CurrentUser() currentUser: ICurrentUser,
     @Args('createReservationInput')
     createReservationInput: CreateReservationInput, //
-  ) {
+  ): Promise<Reservation> {
     return this.reservationService.create({
       currentUser,
       createReservationInput,
@@ -60,7 +60,7 @@ export class ReservationResolver {
     @Args({ name: 'reservationId', description: '예약 UUID' })
     reservationId: string,
     @Args({ name: 'status', description: '예약 상태' }) status: string,
-  ) {
+  ): Promise<Reservation> {
     return this.reservationService.update({ reservationId, status });
   }
 }

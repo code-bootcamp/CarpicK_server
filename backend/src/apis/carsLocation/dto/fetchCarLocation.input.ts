@@ -15,5 +15,5 @@ export class FetchCarLocationInput {
   northEastLat: number;
 
   @Field(() => [String], { description: '차종 필터', nullable: true })
-  filter?: string;
+  filter?: string[];
 }

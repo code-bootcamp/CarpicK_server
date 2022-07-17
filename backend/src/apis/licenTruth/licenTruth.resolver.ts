@@ -16,7 +16,7 @@ export class LicenTruthResolver {
     @Args({ name: 'LicNumber', description: '면허번호' }) LicNumber: string,
     @Args({ name: 'SpecialNumber', description: '식별번호' })
     SpecialNumber: string,
-  ) {
+  ): string {
     const rsaPublicKey = this.licenTruthService.getPublicKey(
       process.env.LICENTRUTH_API_KEY,
     );

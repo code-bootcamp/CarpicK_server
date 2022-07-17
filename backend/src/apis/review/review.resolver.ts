@@ -12,14 +12,13 @@ export class ReviewResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String, { description: '리뷰 생성' })
-  @Mutation(() => Review)
+  @Mutation(() => Review, { description: '리뷰 생성' })
   createReview(
     @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
     @Args({ name: 'rating', type: () => Int, description: '평점' })
     rating: number,
-  ) {
+  ): Promise<Review> {
     return this.reviewService.create({
       carId,
       rating,

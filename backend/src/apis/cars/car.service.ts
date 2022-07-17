@@ -5,6 +5,7 @@ import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
+import { CreateCarInput } from './dto/createCar.input';
 import { Car } from './entities/car.entity';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class CarService {
     private readonly connection: Connection,
   ) {}
 
-  async findOne({ carId }) {
+  async findOne({ carId }: { carId: string }): Promise<Car> {
     const now = new Date();
     return await getRepository(Car)
       .createQueryBuilder('car')
@@ -38,7 +39,13 @@ export class CarService {
       .getOne();
   }
 
-  async findAll({ carLocationId, page }) {
+  async findAll({
+    carLocationId,
+    page,
+  }: {
+    carLocationId: string;
+    page: number;
+  }): Promise<Car[]> {
     const now = new Date();
     return await getRepository(Car)
       .createQueryBuilder('car')
@@ -60,7 +67,7 @@ export class CarService {
       .getMany();
   }
 
-  async findPopularAll() {
+  async findPopularAll(): Promise<any[]> {
     const avg = await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoinAndSelect('car.review', 'review')
@@ -71,8 +78,8 @@ export class CarService {
       .orderBy('avg', 'DESC')
       .getRawMany();
     const popularCar = await Promise.all(
-      avg.map(async (el) => {
-        const car = await this.carRepository.findOne({
+      avg.map((el) => {
+        const car = this.carRepository.findOne({
           where: { id: el.car_id },
           relations: [
             'carModel',
@@ -89,7 +96,11 @@ export class CarService {
     return popularCar;
   }
 
-  async create({ createCarInput }) {
+  async create({
+    createCarInput,
+  }: {
+    createCarInput: CreateCarInput;
+  }): Promise<Car> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
@@ -102,7 +113,7 @@ export class CarService {
         registrationUrl,
         ...car
       } = createCarInput;
-      let location: CarLocation[] | CarLocation;
+      let location: CarLocation;
       const saveLocation = await queryRunner.manager.findOne(
         CarLocation,
         { address: carLocation.address },
@@ -132,7 +143,7 @@ export class CarService {
           '사용자가 등록한 이미지와 다릅니다',
         );
       const CarInfo = this.carRepository.create({
-        carLocation: { id: location['id'] },
+        carLocation: { id: location.id },
         imageRegistration: { id: saveRegistrationUrl.id },
         carModel: { id: carModel.id },
         user: { id: userId },
@@ -140,8 +151,8 @@ export class CarService {
       });
       const saveCar = await queryRunner.manager.save(CarInfo);
       await Promise.all(
-        carUrl.map(async (address: string) => {
-          const savedUrl = await queryRunner.manager.findOne(
+        carUrl.map((address: string) => {
+          const savedUrl = queryRunner.manager.findOne(
             ImageCar,
             { url: address },
             { lock: { mode: 'pessimistic_write' } },
@@ -150,7 +161,7 @@ export class CarService {
             ...savedUrl,
             car: { id: saveCar['id'] },
           });
-          return await queryRunner.manager.save(url);
+          return queryRunner.manager.save(url);
         }),
       );
       await queryRunner.commitTransaction();
@@ -163,7 +174,7 @@ export class CarService {
     }
   }
 
-  async delete({ carId }) {
+  async delete({ carId }: { carId: string }): Promise<boolean> {
     const result = await this.carRepository.softDelete({ id: carId });
     return result.affected ? true : false;
   }

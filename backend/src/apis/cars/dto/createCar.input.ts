@@ -18,7 +18,7 @@ export class CreateCarInput extends PickType(
   carLocation: CarLocationInput;
 
   @Field(() => [String], { description: '차량 이미지' })
-  carUrl: string;
+  carUrl: string[];
 
   @Field(() => String, { description: '차량등록증 이미지' })
   registrationUrl: string;

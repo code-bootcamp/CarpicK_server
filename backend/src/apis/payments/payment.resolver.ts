@@ -27,7 +27,7 @@ export class PaymentResolver {
   async createPayment(
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<Payment> {
     const access_token = await this.iamportService.getToken();
     const paymentData = await this.iamportService.getInfo({
       access_token,
@@ -51,7 +51,7 @@ export class PaymentResolver {
   async cancelPayment(
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<Payment> {
     const payment = await this.paymentRepository.find({
       where: { impUid: paymentInput.impUid },
     });
@@ -64,9 +64,7 @@ export class PaymentResolver {
       amount: paymentInput.amount,
     });
     return this.paymentService.cancel({
-      impUid: paymentInput.impUid,
-      amount: paymentInput.amount,
-      paymentMethod: paymentInput.paymentMethod,
+      paymentInput,
       currentUser,
     });
   }

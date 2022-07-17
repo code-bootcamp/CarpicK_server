@@ -26,7 +26,7 @@ export class UserResolver {
   @Query(() => String, { description: '유저 이메일 조회' })
   async fetchEmail(
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
-  ) {
+  ): Promise<string> {
     const user = await this.userService.findEmail({ phone });
     if (user) return user.email;
     else return '등록되지 않은 번호입니다';
@@ -34,31 +34,34 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User, { description: '로그인 유저 조회' })
-  fetchLoginUser(@CurrentUser() currentUser: any) {
+  fetchLoginUser(@CurrentUser() currentUser: ICurrentUser): Promise<User> {
     return this.userService.findUser({ email: currentUser.email });
   }
 
   @Mutation(() => IsVaildEmail, { description: '이메일 확인' })
-  isValidEmail(@Args({ name: 'email', description: '이메일' }) email: string) {
+  isValidEmail(
+    @Args({ name: 'email', description: '이메일' }) email: string,
+  ): Promise<IsVaildEmail> {
     return this.userService.checkValidationEmail({ email });
   }
 
   @Mutation(() => String, { description: '토큰 보내기' })
   async sendTokenToSMS(
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
-  ) {
+  ): Promise<string> {
     const token = this.userService.getToken();
     const req = await this.userService.sendToken({ phone, token });
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
     if (req) return `{phone:${phone},token:${token}}`;
+    else return '토큰 전송을 실패하였습니다';
   }
 
   @Mutation(() => Boolean, { description: '토큰 확인' })
   async checkToken(
     @Args({ name: 'token', description: '토큰' }) token: string,
-  ) {
+  ): Promise<boolean> {
     const tokenCache = await this.cacheManager.get(token);
     return tokenCache ? true : false;
   }
@@ -66,7 +69,7 @@ export class UserResolver {
   @Mutation(() => User, { description: '유저 생성' })
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput, //
-  ) {
+  ): Promise<User> {
     const { email, password, ...info } = createUserInput;
     const emailRegExp =
       /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
@@ -85,7 +88,7 @@ export class UserResolver {
   async resetPwd(
     @Args({ name: 'email', description: '이메일' }) email: string, //
     @Args({ name: 'password', description: '비밀번호' }) password: string,
-  ) {
+  ): Promise<string> {
     const user = await this.userService.findOne({ email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
@@ -100,7 +103,7 @@ export class UserResolver {
   async updateUserPwd(
     @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'password', description: '비밀번호' }) password: string,
-  ) {
+  ): Promise<string> {
     const user = await this.userService.findOne({ email: currentUser.email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
@@ -118,7 +121,7 @@ export class UserResolver {
   async updateUserPhone(
     @CurrentUser() currentUser: ICurrentUser, //
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
-  ) {
+  ): Promise<string> {
     const user = await this.userService.findOne({ email: currentUser.email });
     if (phone === user.phone)
       throw new UnprocessableEntityException('기존 전화번호 입니다');
@@ -132,7 +135,7 @@ export class UserResolver {
   async updateUserIsAuth(
     @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'isAuth', description: '면허인증 여부' }) isAuth: boolean,
-  ) {
+  ): Promise<string> {
     const result = await this.userService.updateIsAuth({ isAuth, currentUser });
     if (result) return '면허증이 등록되었습니다';
     else return '등록을 실패하였습니다';
@@ -142,7 +145,7 @@ export class UserResolver {
   @Mutation(() => String, { description: '계정 삭제' })
   async deleteLoginUser(
     @CurrentUser() currentUser: any, //
-  ) {
+  ): Promise<string> {
     const result = await this.userService.deleteUser({ currentUser });
     if (result) return '로그인한 계정이 삭제되었습니다';
     else return '삭제에 실패하였습니다.';
@@ -153,7 +156,7 @@ export class UserResolver {
   async createImageStart(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<string> {
     const result = await this.userService.createImageStart({
       createImageInput,
       currentUser,
@@ -167,7 +170,7 @@ export class UserResolver {
   async createImageEnd(
     @Args('createImageInput') createImageInput: CreateImageInput,
     @CurrentUser() currentUser: ICurrentUser,
-  ) {
+  ): Promise<string> {
     const result = await this.userService.createImageEnd({
       createImageInput,
       currentUser,

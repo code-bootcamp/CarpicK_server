@@ -13,7 +13,7 @@ export class CarResolver {
   @Query(() => Car, { description: '차량 조회' })
   fetchCar(
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string, //
-  ) {
+  ): Promise<Car> {
     return this.carService.findOne({ carId });
   }
 
@@ -28,12 +28,12 @@ export class CarResolver {
     page: number,
     @Args({ name: 'carLocationId', description: '차량존 UUID' })
     carLocationId: string, //
-  ) {
+  ): Promise<Car[]> {
     return this.carService.findAll({ carLocationId, page });
   }
 
   @Query(() => [PopularCarOutput], { description: '인기 차량 조회' })
-  fetchPopularCars() {
+  fetchPopularCars(): Promise<PopularCarOutput[]> {
     return this.carService.findPopularAll();
   }
 
@@ -41,7 +41,7 @@ export class CarResolver {
   createCar(
     @Args('createCarInput')
     createCarInput: CreateCarInput, //
-  ) {
+  ): Promise<Car> {
     return this.carService.create({ createCarInput });
   }
 
@@ -49,7 +49,7 @@ export class CarResolver {
   @Mutation(() => String, { description: '차량 삭제' })
   async deleteCar(
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
-  ) {
+  ): Promise<string> {
     const result = await this.carService.delete({ carId });
     if (result) return '차량이 삭제되었습니다';
     else return '삭제를 실패하였습니다';

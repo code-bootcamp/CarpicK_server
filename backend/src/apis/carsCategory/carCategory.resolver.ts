@@ -12,7 +12,7 @@ export class CarCategoryResolver {
   ) {}
 
   @Query(() => [CarCategory], { description: '차종 조회' })
-  fetchCarCategory() {
+  fetchCarCategory(): Promise<CarCategory[]> {
     return this.carCategoryService.findAll();
   }
 
@@ -20,7 +20,7 @@ export class CarCategoryResolver {
   createCarCategory(
     @Args('createCarCategoryInput')
     createCarCategoryInput: CreateCarCategoryInput, //
-  ) {
+  ): Promise<CarCategory> {
     return this.carCategoryService.create({ createCarCategoryInput });
   }
 
@@ -29,7 +29,7 @@ export class CarCategoryResolver {
   deleteCarCategory(
     @Args({ name: 'carCategoryId', description: '차종 UUID' })
     carCategoryId: string, //
-  ) {
+  ): Promise<boolean> {
     return this.carCategoryService.delete({ carCategoryId });
   }
 }
