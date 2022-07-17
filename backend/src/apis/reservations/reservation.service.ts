@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Repository } from 'typeorm';
+import { CreateReservationInput } from './dto/createReservation';
 import { Reservation } from './entities/reservation.entity';
 
 @Injectable()
@@ -10,7 +12,13 @@ export class ReservationService {
     private readonly reservationRepository: Repository<Reservation>,
   ) {}
 
-  async userFindAll({ currentUser, page }) {
+  async userFindAll({
+    currentUser,
+    page,
+  }: {
+    currentUser: ICurrentUser;
+    page: number;
+  }): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { user: { id: currentUser.id } },
       relations: [
@@ -24,7 +32,13 @@ export class ReservationService {
     });
   }
 
-  async ownerFindAll({ currentUser, page }) {
+  async ownerFindAll({
+    currentUser,
+    page,
+  }: {
+    currentUser: ICurrentUser;
+    page: number;
+  }): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { car: { user: { id: currentUser.id } } },
       relations: [
@@ -39,9 +53,14 @@ export class ReservationService {
     });
   }
 
-  async create({ currentUser, createReservationInput }) {
+  async create({
+    currentUser,
+    createReservationInput,
+  }: {
+    currentUser: ICurrentUser;
+    createReservationInput: CreateReservationInput;
+  }): Promise<Reservation> {
     const { carId, ...reservation } = createReservationInput;
-    console.log(currentUser);
     return await this.reservationRepository.save({
       user: { id: currentUser.id },
       car: { id: carId },
@@ -49,13 +68,18 @@ export class ReservationService {
     });
   }
 
-  async update({ reservationId, status }) {
+  async update({
+    reservationId,
+    status,
+  }: {
+    reservationId: string;
+    status: string;
+  }): Promise<Reservation> {
     const savedReservation = await this.reservationRepository.findOne({
       where: { id: reservationId },
     });
     return await this.reservationRepository.save({
       ...savedReservation,
-      id: reservationId,
       status,
     });
   }

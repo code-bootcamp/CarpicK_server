@@ -16,7 +16,7 @@ export class CreateCarRegistrationInput extends OmitType(
   InputType,
 ) {
   @Field(() => [String])
-  carUrl: string;
+  carUrl: string[];
 
   @Field(() => String)
   registrationUrl: string;

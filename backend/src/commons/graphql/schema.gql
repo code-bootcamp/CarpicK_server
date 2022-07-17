@@ -479,7 +479,7 @@ type Mutation {
 
     """평점"""
     rating: Int!
-  ): String!
+  ): Review!
 
   """예약 생성"""
   createReservation(createReservationInput: CreateReservationInput!): Reservation!

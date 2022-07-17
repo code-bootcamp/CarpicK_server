@@ -3,6 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/user.service';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
+import { User } from '../users/entities/user.entity';
+import { Administrator } from '../administrator/entities/administrator.entity';
+import { ICurrentAdmin } from 'src/commons/auth/gql-user.param';
 
 @Injectable()
 export class AuthService {
@@ -11,25 +14,28 @@ export class AuthService {
     private readonly jwtService: JwtService, //
   ) {}
 
-  getAccessToken({ user }) {
+  getAccessToken({ admin }: { admin: Administrator | ICurrentAdmin }): string {
     return this.jwtService.sign(
-      { email: user.email, id: user.id },
+      { email: admin.adminId, id: admin.id },
       { secret: process.env.ACCESS_TOKEN_KEY, expiresIn: '1h' },
     );
   }
 
-  getAppAccessToken({ user }) {
+  getAppAccessToken({ user }: { user: User }): string {
     return this.jwtService.sign(
       { email: user.email, id: user.id },
       { secret: process.env.ACCESS_TOKEN_KEY, expiresIn: '1w' },
     );
   }
 
-  setRefreshToken({ user, res }) {
+  setRefreshToken({ admin, res }: { admin: Administrator; res: any }): void {
     const refreshToken = this.jwtService.sign(
-      { email: user.email, sub: user.id },
+      { email: admin.adminId, id: admin.id },
       { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
     );
+    // dev
+    // res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/`);
+    // deploy
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
@@ -43,7 +49,7 @@ export class AuthService {
     );
   }
 
-  async socialLogin(req: any) {
+  async socialLogin(req: any): Promise<void> {
     let user = await this.userService.findOne({ email: req.user.email });
     const hashedPassword = await bcrypt.hash(req.user.password, 10);
     if (!user) {
@@ -52,6 +58,7 @@ export class AuthService {
         hashedPassword,
         name: req.user.name,
         phone: req.user.phone,
+        isAuth: false,
       });
     }
   }

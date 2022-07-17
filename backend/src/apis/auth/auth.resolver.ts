@@ -15,7 +15,7 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import 'dotenv/config';
-import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
+import { CurrentAdmin, ICurrentAdmin } from 'src/commons/auth/gql-user.param';
 import { AdministratorService } from '../administrator/administrator.service';
 
 @Resolver()
@@ -32,7 +32,7 @@ export class AuthResolver {
   async login(
     @Args({ name: 'email', description: '이메일' }) email: string,
     @Args({ name: 'password', description: '비밀번호' }) password: string,
-  ) {
+  ): Promise<string> {
     const user = await this.userService.findOne({ email });
     if (!user)
       throw new UnprocessableEntityException('존재하지 않는 이메일입니다');
@@ -47,29 +47,31 @@ export class AuthResolver {
     @Args({ name: 'password', description: '관리자 비밀번호' })
     password: string,
     @Context() context: any,
-  ) {
-    const user = await this.administratorService.findOne({ adminId });
-    if (!user)
+  ): Promise<string> {
+    const admin = await this.administratorService.findOne({ adminId });
+    if (!admin)
       throw new UnprocessableEntityException('존재하지 않는 아이디입니다');
-    const isAuth = await bcrpypt.compare(password, user.password);
+    const isAuth = await bcrpypt.compare(password, admin.password);
     if (!isAuth) throw new UnprocessableEntityException('암호가 틀렸습니다');
-    this.authService.setRefreshToken({ user, res: context.req.res });
-    return this.authService.getAccessToken({ user });
+    this.authService.setRefreshToken({ admin, res: context.req.res });
+    return this.authService.getAccessToken({ admin });
   }
 
   @UseGuards(GqlAuthRefreshGuard)
   @Mutation(() => String, { description: '엑세스 토큰 재발급' })
   restoreAccessToken(
-    @CurrentUser() currentUser: ICurrentUser, //
-  ) {
-    return this.authService.getAccessToken({ user: currentUser });
+    @CurrentAdmin() currentAdmin: ICurrentAdmin, //
+  ): string {
+    console.log('11111111111111111111111111');
+    console.log(currentAdmin);
+    return this.authService.getAccessToken({ admin: currentAdmin });
   }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '로그아웃' })
   async logout(
     @Context() context: any, //
-  ) {
+  ): Promise<string> {
     const accessToken = context.req.headers.authorization.replace(
       'Bearer ',
       '',
@@ -92,7 +94,7 @@ export class AuthResolver {
   @Mutation(() => String, { description: '관리자 로그아웃' })
   async adminLogout(
     @Context() context: any, //
-  ) {
+  ): Promise<string> {
     const accessToken = context.req.headers.authorization.replace(
       'Bearer ',
       '',

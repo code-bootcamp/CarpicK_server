@@ -12,7 +12,7 @@ export class FileResolver {
   uploadFile(
     @Args({ name: 'files', type: () => [GraphQLUpload], description: '파일' })
     files: FileUpload[], //
-  ) {
+  ): Promise<unknown[]> {
     return this.fileService.upload({ files });
   }
 }

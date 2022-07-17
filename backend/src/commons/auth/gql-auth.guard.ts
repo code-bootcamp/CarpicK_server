@@ -3,14 +3,14 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 
 export class GqlAuthAccessGuard extends AuthGuard('access') {
-  getRequest(context: ExecutionContext) {
+  getRequest(context: ExecutionContext): any {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;
   }
 }
 
 export class GqlAuthRefreshGuard extends AuthGuard('refresh') {
-  getRequest(context: ExecutionContext) {
+  getRequest(context: ExecutionContext): any {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;
   }

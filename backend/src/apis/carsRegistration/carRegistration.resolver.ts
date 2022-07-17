@@ -16,7 +16,7 @@ export class CarRegistrationResolver {
   fetchCarRegistration(
     @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
     carRegistrationId: string,
-  ) {
+  ): Promise<CarRegistration> {
     return this.carRegistrationService.findOne({ carRegistrationId });
   }
 
@@ -29,12 +29,12 @@ export class CarRegistrationResolver {
       description: '페이지 넘버',
     })
     page: number,
-  ) {
+  ): Promise<CarRegistration[]> {
     return this.carRegistrationService.findAll({ page });
   }
 
   @Query(() => Int, { description: '등록 차량 수' })
-  fetchCarRegistrationCount() {
+  fetchCarRegistrationCount(): Promise<number> {
     return this.carRegistrationService.count();
   }
 
@@ -44,7 +44,7 @@ export class CarRegistrationResolver {
     @CurrentUser() currentUser: ICurrentUser,
     @Args('createCarRegistrationInput')
     createCarRegistrationInput: CreateCarRegistrationInput,
-  ) {
+  ): Promise<CarRegistration> {
     return this.carRegistrationService.create({
       currentUser,
       createCarRegistrationInput,
@@ -56,7 +56,7 @@ export class CarRegistrationResolver {
     @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
     carRegistrationId: string,
     @Args({ name: 'status', description: '심사 상태' }) status: string,
-  ) {
+  ): Promise<CarRegistration> {
     return this.carRegistrationService.update({
       carRegistrationId,
       status,

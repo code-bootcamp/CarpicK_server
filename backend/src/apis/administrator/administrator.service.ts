@@ -10,11 +10,17 @@ export class AdministratorService {
     private readonly administratorRepository: Repository<Administrator>, //
   ) {}
 
-  async findOne({ adminId }) {
+  async findOne({ adminId }: { adminId: string }): Promise<Administrator> {
     return await this.administratorRepository.findOne({ adminId });
   }
 
-  async create({ hashedPassword: password, adminId }) {
+  async create({
+    hashedPassword: password,
+    adminId,
+  }: {
+    hashedPassword: string;
+    adminId: string;
+  }): Promise<Administrator> {
     return await this.administratorRepository.save({
       password,
       adminId,
