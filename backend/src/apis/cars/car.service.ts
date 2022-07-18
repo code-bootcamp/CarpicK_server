@@ -63,7 +63,7 @@ export class CarService {
       )
       .orderBy('car.createdAt', 'DESC')
       .take(10)
-      .skip((page - 1) * 10)
+      .skip(page ? (page - 1) * 10 : 1)
       .getMany();
   }
 
