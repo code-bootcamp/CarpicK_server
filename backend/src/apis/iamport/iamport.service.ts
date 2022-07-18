@@ -7,7 +7,7 @@ const IMP_API_SECRET = process.env.IMP_API_SECRET;
 
 @Injectable()
 export class IamportService {
-  async getToken(): Promise<string> {
+  async getToken() {
     const token = await axios({
       url: 'https://api.iamport.kr/users/getToken',
       method: 'post',
@@ -17,17 +17,11 @@ export class IamportService {
         imp_secret: IMP_API_SECRET,
       },
     });
-    const { access_token }: { access_token: string } = token.data.response;
+    const { access_token } = token.data.response;
     return access_token;
   }
 
-  async getInfo({
-    access_token,
-    impUid,
-  }: {
-    access_token: string;
-    impUid: string;
-  }): Promise<any> {
+  async getInfo({ access_token, impUid }) {
     const getPaymentData = await axios({
       url: `https://api.iamport.kr/payments/${impUid}`,
       method: 'get',
@@ -36,15 +30,7 @@ export class IamportService {
     return getPaymentData.data.response;
   }
 
-  async cancel({
-    access_token,
-    impUid,
-    amount,
-  }: {
-    access_token: string;
-    impUid: string;
-    amount: number;
-  }): Promise<any> {
+  async cancel({ access_token, impUid, amount }) {
     const getCancelData = await axios({
       url: 'https://api.iamport.kr/payments/cancel',
       method: 'post',

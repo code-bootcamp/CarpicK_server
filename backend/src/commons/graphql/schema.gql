@@ -466,12 +466,6 @@ type Mutation {
     SpecialNumber: String!
   ): String!
 
-  """결제 생성"""
-  createPayment(paymentInput: PaymentInput!): Payment!
-
-  """결제 취소"""
-  cancelPayment(paymentInput: PaymentInput!): Payment!
-
   """리뷰 생성"""
   createReview(
     """차량 UUID"""
@@ -482,7 +476,17 @@ type Mutation {
   ): Review!
 
   """예약 생성"""
-  createReservation(createReservationInput: CreateReservationInput!): Reservation!
+  createReservation(createReservationInput: CreateReservationInput!, paymentInput: PaymentInput!): Reservation!
+
+  """예약 취소"""
+  cancelReservation(
+    """예약 UUID"""
+    reservationId: String!
+
+    """예약 상태"""
+    status: String!
+    paymentInput: PaymentInput!
+  ): Reservation!
 
   """예약 상태 업데이트"""
   updateReservationStatus(
@@ -644,18 +648,6 @@ input CreateCarRegistrationInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-"""결제 생성 INPUT"""
-input PaymentInput {
-  """IMPUID"""
-  impUid: String!
-
-  """결제 금액"""
-  amount: Int!
-
-  """결제 방식"""
-  paymentMethod: String!
-}
-
 """예약 생성 INPUT"""
 input CreateReservationInput {
   """시작 시간"""
@@ -669,6 +661,18 @@ input CreateReservationInput {
 
   """차량 UUID"""
   carId: String!
+}
+
+"""결제 생성 INPUT"""
+input PaymentInput {
+  """IMPUID"""
+  impUid: String!
+
+  """결제 금액"""
+  amount: Int!
+
+  """결제 방식"""
+  paymentMethod: String!
 }
 
 """유저 생성 INPUT"""
