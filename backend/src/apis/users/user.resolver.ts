@@ -73,7 +73,7 @@ export class UserResolver {
     const { email, password, ...info } = createUserInput;
     const emailRegExp =
       /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    const passwordRegExp = /^(?=.[a-zA-Z])(?=.*[0-9]).{8,16}/;
+    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
     if (!email.match(emailRegExp))
       throw new UnprocessableEntityException('이메일 형식에 맞게 입력해주세요');
     if (!password.match(passwordRegExp))
@@ -92,7 +92,7 @@ export class UserResolver {
     const user = await this.userService.findOne({ email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
-    const passwordRegExp = /^(?=.[a-zA-Z])(?=.*[0-9]).{8,16}/;
+    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
     if (!password.match(passwordRegExp))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
@@ -112,7 +112,7 @@ export class UserResolver {
     const user = await this.userService.findOne({ email: currentUser.email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
-    const passwordRegExp = /^(?=.[a-zA-Z])(?=.*[0-9]).{8,16}/;
+    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
     if (!password.match(passwordRegExp))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',

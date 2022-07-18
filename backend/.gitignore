@@ -2,7 +2,7 @@
 .env
 /dist
 /node_modules
-gcp-cloud-storage.json
+gcp-file-storage.json
 
 # Logs
 logs

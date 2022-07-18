@@ -6,9 +6,10 @@ import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import { User } from './entities/user.entity';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
+import { Car } from '../cars/entities/car.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, ImageStart, ImageEnd])],
+  imports: [TypeOrmModule.forFeature([User, ImageStart, ImageEnd, Car])],
   providers: [
     JwtAccessStrategy, //
     UserResolver,
