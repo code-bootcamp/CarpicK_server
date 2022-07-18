@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { User } from '../users/entities/user.entity';
@@ -14,7 +14,7 @@ export class AuthController {
     private readonly authService: AuthService, //
   ) {}
 
-  @Get('/login/google')
+  @Post('/userinfo/v2/me')
   @UseGuards(AuthGuard('google'))
   async loginGoogle(
     @Req() req: Request & IOAuthUser, //
