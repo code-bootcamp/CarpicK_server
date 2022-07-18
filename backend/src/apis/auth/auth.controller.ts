@@ -19,7 +19,7 @@ export class AuthController {
   async loginGoogle(
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
     await this.authService.socialLogin(req);
     res.redirect('https://carpick.shop');
   }

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Connection, Repository } from 'typeorm';
+import { Car } from '../cars/entities/car.entity';
 import { User } from '../users/entities/user.entity';
+import { PaymentInput } from './dto/payment.input';
 import { Payment, PAYMENT_STATUS_ENUM } from './entities/payment.entity';
 
 @Injectable()
@@ -14,24 +17,50 @@ export class PaymentService {
     private readonly connection: Connection,
   ) {}
 
-  async create({ paymentInput, currentUser }) {
+  async findOne({ impUid }: { impUid: string }): Promise<Payment> {
+    return await this.paymentRepository.findOne({
+      impUid,
+    });
+  }
+
+  async findAll({ impUid }: { impUid: string }): Promise<Payment[]> {
+    return await this.paymentRepository.find({
+      where: { impUid },
+    });
+  }
+
+  async create({
+    carId,
+    paymentInput,
+    currentUser,
+  }: {
+    carId: string;
+    paymentInput: PaymentInput;
+    currentUser: ICurrentUser;
+  }): Promise<Payment> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
       const payment = this.paymentRepository.create({
         ...paymentInput,
-        user: currentUser,
+        user: { id: currentUser.id },
         status: PAYMENT_STATUS_ENUM.PAYMENT,
       });
       await queryRunner.manager.save(payment);
+      const car = await queryRunner.manager.findOne(
+        Car,
+        { id: carId },
+        { lock: { mode: 'pessimistic_write' }, relations: ['user'] },
+      );
       const user = await queryRunner.manager.findOne(
         User,
-        { id: currentUser.id },
+        { id: car.user.id },
         { lock: { mode: 'pessimistic_write' } },
       );
       const updatedUser = this.userRepository.create({
         ...user,
+        revenue: user.revenue + paymentInput.amount,
       });
       await queryRunner.manager.save(updatedUser);
       await queryRunner.commitTransaction();
@@ -44,32 +73,40 @@ export class PaymentService {
     }
   }
 
-  async findOne({ impUid }) {
-    return await this.paymentRepository.findOne({
-      impUid,
-    });
-  }
-
-  async cancel({ impUid, amount, paymentMethod, currentUser }) {
+  async cancel({
+    carId,
+    paymentInput,
+    currentUser,
+  }: {
+    carId: string;
+    paymentInput: PaymentInput;
+    currentUser: ICurrentUser;
+  }): Promise<Payment> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
       const canceledPayment = this.paymentRepository.create({
-        user: currentUser,
-        impUid,
-        amount: -amount,
-        paymentMethod,
+        user: { id: currentUser.id },
+        impUid: paymentInput.impUid,
+        amount: -paymentInput.amount,
+        paymentMethod: paymentInput.paymentMethod,
         status: PAYMENT_STATUS_ENUM.CANCLE,
       });
       await queryRunner.manager.save(canceledPayment);
+      const car = await queryRunner.manager.findOne(
+        Car,
+        { id: carId },
+        { lock: { mode: 'pessimistic_write' }, relations: ['user'] },
+      );
       const user = await queryRunner.manager.findOne(
         User,
-        { id: currentUser.id },
+        { id: car.user.id },
         { lock: { mode: 'pessimistic_write' } },
       );
       const updatedUser = this.userRepository.create({
         ...user,
+        revenue: user.revenue - paymentInput.amount,
       });
       await queryRunner.manager.save(updatedUser);
       await queryRunner.commitTransaction();

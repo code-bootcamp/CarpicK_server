@@ -12,40 +12,52 @@ export class CarRegistrationResolver {
     private readonly carRegistrationService: CarRegistrationService, //
   ) {}
 
-  @Query(() => CarRegistration)
-  fetchCarRegistration(@Args('carRegistrationId') carRegistrationId: string) {
+  @Query(() => CarRegistration, { description: '등록 차량 조회' })
+  fetchCarRegistration(
+    @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
+    carRegistrationId: string,
+  ): Promise<CarRegistration> {
     return this.carRegistrationService.findOne({ carRegistrationId });
   }
 
-  @Query(() => [CarRegistration])
-  fetchCarRegistrations(@Args('page') page: number) {
-    return this.carRegistrationService.findAll(page);
+  @Query(() => [CarRegistration], { description: '등록 차량 리스트 조회' })
+  fetchCarRegistrations(
+    @Args({
+      name: 'page',
+      type: () => Int,
+      defaultValue: 1,
+      description: '페이지 넘버',
+    })
+    page: number,
+  ): Promise<CarRegistration[]> {
+    return this.carRegistrationService.findAll({ page });
   }
 
-  @Query(() => Int)
-  fetchCarRegistrationCount() {
+  @Query(() => Int, { description: '등록 차량 수' })
+  fetchCarRegistrationCount(): Promise<number> {
     return this.carRegistrationService.count();
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => CarRegistration)
+  @Mutation(() => CarRegistration, { description: '등록 차량 생성' })
   createCarRegistration(
-    @CurrentUser('currentUser') currentUser: ICurrentUser,
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('createCarRegistrationInput')
     createCarRegistrationInput: CreateCarRegistrationInput,
-  ) {
+  ): Promise<CarRegistration> {
     return this.carRegistrationService.create({
       currentUser,
       createCarRegistrationInput,
     });
   }
 
-  @Mutation(() => CarRegistration)
-  async updateCarRegistrationStatus(
-    @Args('carRegistrationId') carRegistrationId: string,
-    @Args('status') status: string,
-  ) {
-    return await this.carRegistrationService.update({
+  @Mutation(() => CarRegistration, { description: '등록 차량 상태 업데이트' })
+  updateCarRegistrationStatus(
+    @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
+    carRegistrationId: string,
+    @Args({ name: 'status', description: '심사 상태' }) status: string,
+  ): Promise<CarRegistration> {
+    return this.carRegistrationService.update({
       carRegistrationId,
       status,
     });

@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { getRepository } from 'typeorm';
+import { FetchCarLocationInput } from './dto/fetchCarLocation.input';
 import { CarLocation } from './entities/carLocation.entity';
 
 @Injectable()
 export class CarLocationService {
-  async findAll({ fetchCarLocationInput }) {
+  async findAll({
+    fetchCarLocationInput,
+  }: {
+    fetchCarLocationInput: FetchCarLocationInput;
+  }): Promise<CarLocation[]> {
     const { southWestLng, northEastLng, southWestLat, northEastLat, filter } =
       fetchCarLocationInput;
     const location = getRepository(CarLocation)
@@ -18,15 +23,13 @@ export class CarLocationService {
       .where(`lat BETWEEN ${southWestLat} AND ${northEastLat}`)
       .andWhere(`lng BETWEEN ${southWestLng} AND ${northEastLng}`);
     if (filter) {
-      const result = await location
+      return await location
         .andWhere('car_model.name IN (:...names)', {
           names: filter,
         })
         .getMany();
-      return result;
     } else {
-      const result = await location.getMany();
-      return result;
+      return await location.getMany();
     }
   }
 }

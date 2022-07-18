@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CarCategory } from '../carsCategory/entities/carCategory.entity';
+import { CreateCarModelInput } from './dto/createCarModel.input';
 import { CarModel } from './entities/carModel.entity';
 
 @Injectable()
@@ -13,7 +14,11 @@ export class CarModelService {
     private readonly carCategoryRepository: Repository<CarCategory>,
   ) {}
 
-  async create({ createCarModelInput }) {
+  async create({
+    createCarModelInput,
+  }: {
+    createCarModelInput: CreateCarModelInput;
+  }): Promise<CarModel> {
     const { carCategoryName, ...model } = createCarModelInput;
     const carCategory = await this.carCategoryRepository.findOne({
       name: carCategoryName,
@@ -24,7 +29,7 @@ export class CarModelService {
     });
   }
 
-  async delete({ carModelId }) {
+  async delete({ carModelId }: { carModelId: string }): Promise<boolean> {
     const result = await this.carModelRepository.delete({
       id: carModelId,
     });

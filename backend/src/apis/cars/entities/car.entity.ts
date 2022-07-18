@@ -4,10 +4,11 @@ import { CarLocation } from 'src/apis/carsLocation/entities/carLocation.entity';
 import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
-import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
+import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Review } from 'src/apis/review/entities/review.entity';
+import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -22,40 +23,36 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '차량 TYPE' })
 export class Car {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '차량번호' })
   carNumber: string;
 
   @Column()
-  @Field(() => Boolean)
+  @Field(() => Boolean, { description: '하이패스 여부' })
   isHipass: boolean;
 
   @Column()
   @Min(0)
-  @Field(() => Int)
+  @Field(() => Int, { description: '시간당 가격' })
   price: number;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '유종' })
   oil: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '계약기간' })
   contractPeriod: string;
 
-  @Column()
-  @Field(() => String)
-  ownerEmail: string;
-
   @Column({ default: false })
-  @Field(() => Boolean)
-  isAvailable: boolean;
+  @Field(() => Boolean, { description: '키 사용가능 여부', nullable: true })
+  isAvailable?: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -87,15 +84,20 @@ export class Car {
   @Field(() => ImageRegistration)
   imageRegistration: ImageRegistration;
 
-  @OneToMany(() => ImageReservation, (imageReservation) => imageReservation.car)
-  @Field(() => [ImageReservation])
-  imageReservation: ImageReservation[];
+  @OneToMany(() => ImageStart, (imageStart) => imageStart.car)
+  @Field(() => [ImageStart])
+  imageStart: ImageStart[];
 
-  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.car)
-  @Field(() => [ImageReturn])
-  imageReturn: ImageReturn[];
+  @OneToMany(() => ImageEnd, (imageEndImageEnd) => imageEndImageEnd.car)
+  @Field(() => [ImageEnd])
+  imageEndImageEnd: ImageEnd[];
 
   @OneToMany(() => Review, (review) => review.car)
   @Field(() => [Review])
   review: Review[];
+
+  @JoinColumn()
+  @OneToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

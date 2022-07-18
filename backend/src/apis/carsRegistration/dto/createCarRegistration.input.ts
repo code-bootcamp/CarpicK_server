@@ -1,7 +1,7 @@
 import { Field, InputType, OmitType } from '@nestjs/graphql';
 import { CarRegistration } from '../entities/carRegistration.entity';
 
-@InputType()
+@InputType({ description: '등록 차량 생성 INPUT' })
 export class CreateCarRegistrationInput extends OmitType(
   CarRegistration,
   [
@@ -16,7 +16,7 @@ export class CreateCarRegistrationInput extends OmitType(
   InputType,
 ) {
   @Field(() => [String])
-  carUrl: string;
+  carUrl: string[];
 
   @Field(() => String)
   registrationUrl: string;

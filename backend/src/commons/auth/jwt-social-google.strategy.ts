@@ -12,7 +12,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  validate(accessToken, refreshToken, profile) {
+  validate(accessToken: any, refreshToken: any, profile: any) {
     return {
       email: profile.emails[0].value,
       password: profile.id,

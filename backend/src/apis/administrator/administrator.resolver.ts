@@ -10,11 +10,11 @@ export class AdministratorResolver {
     private readonly administratorService: AdministratorService, //
   ) {}
 
-  @Mutation(() => Administrator)
+  @Mutation(() => Administrator, { description: '관리자 생성' })
   async createAdministrator(
     @Args('createAdministratorInput')
     createAdministratorInput: CreateAdministratorInput, //
-  ) {
+  ): Promise<Administrator> {
     const { password, adminId } = createAdministratorInput;
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.administratorService.create({ hashedPassword, adminId });

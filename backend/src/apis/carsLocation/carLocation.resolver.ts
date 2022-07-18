@@ -9,10 +9,10 @@ export class CarLocationResolver {
     private readonly carLocationService: CarLocationService, //
   ) {}
 
-  @Query(() => [CarLocation])
+  @Query(() => [CarLocation], { description: '차량존 조회' })
   fetchCarLocation(
     @Args('fetchCarLocationInput') fetchCarLocationInput: FetchCarLocationInput,
-  ) {
+  ): Promise<CarLocation[]> {
     return this.carLocationService.findAll({ fetchCarLocationInput });
   }
 }

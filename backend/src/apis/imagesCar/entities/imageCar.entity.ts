@@ -4,14 +4,14 @@ import { CarRegistration } from 'src/apis/carsRegistration/entities/carRegistrat
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '차량 이미지 TYPE' })
 export class ImageCar {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: 'URL' })
   url: string;
 
   @ManyToOne(() => Car)

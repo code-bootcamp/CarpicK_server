@@ -11,18 +11,18 @@ export class CarModelResolver {
     private readonly carModelService: CarModelService, //
   ) {}
 
-  @Mutation(() => CarModel)
+  @Mutation(() => CarModel, { description: '모델 생성' })
   createCarModel(
     @Args('createCarModelInput') createCarModelInput: CreateCarModelInput, //
-  ) {
+  ): Promise<CarModel> {
     return this.carModelService.create({ createCarModelInput });
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { description: '모델 삭제' })
   deleteCarModel(
-    @Args('carModelId') carModelId: string, //
-  ) {
+    @Args({ name: 'carModelId', description: '모델 UUID' }) carModelId: string, //
+  ): Promise<boolean> {
     return this.carModelService.delete({ carModelId });
   }
 }

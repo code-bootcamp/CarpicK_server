@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Connection, Repository } from 'typeorm';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
+import { CreateCarRegistrationInput } from './dto/createCarRegistration.input';
 import { CarRegistration } from './entities/carRegistration.entity';
 
 @Injectable()
@@ -17,14 +19,18 @@ export class CarRegistrationService {
     private readonly connection: Connection,
   ) {}
 
-  async findOne({ carRegistrationId }) {
+  async findOne({
+    carRegistrationId,
+  }: {
+    carRegistrationId: string;
+  }): Promise<CarRegistration> {
     return await this.carRegistrationRepository.findOne(
       { id: carRegistrationId },
       { relations: ['imageCar', 'imageRegistration', 'user'] },
     );
   }
 
-  async findAll(page: number) {
+  async findAll({ page }: { page: number }): Promise<CarRegistration[]> {
     return await this.carRegistrationRepository.find({
       relations: ['imageCar', 'imageRegistration', 'user'],
       order: { createdAt: 'DESC' },
@@ -33,7 +39,17 @@ export class CarRegistrationService {
     });
   }
 
-  async create({ currentUser, createCarRegistrationInput }) {
+  async count(): Promise<number> {
+    return await this.carRegistrationRepository.count();
+  }
+
+  async create({
+    currentUser,
+    createCarRegistrationInput,
+  }: {
+    currentUser: ICurrentUser;
+    createCarRegistrationInput: CreateCarRegistrationInput;
+  }): Promise<CarRegistration> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
@@ -45,18 +61,18 @@ export class CarRegistrationService {
       });
       await queryRunner.manager.save(saveRegistrationUrl);
       const saveCarRegistration = this.carRegistrationRepository.create({
-        user: currentUser,
-        imageRegistration: saveRegistrationUrl,
+        user: { id: currentUser.id },
+        imageRegistration: { id: saveRegistrationUrl.id },
         ...carRegistration,
       });
       const registration = await queryRunner.manager.save(saveCarRegistration);
       await Promise.allSettled(
-        carUrl.map(async (address: string) => {
+        carUrl.map((address: string) => {
           const url = this.imageCarRepository.create({
             url: address,
-            carRegistration: { id: registration['id'] },
+            carRegistration: { id: registration.id },
           });
-          return await queryRunner.manager.save(url);
+          return queryRunner.manager.save(url);
         }),
       );
       await queryRunner.commitTransaction();
@@ -69,19 +85,20 @@ export class CarRegistrationService {
     }
   }
 
-  async update({ carRegistrationId, status }) {
+  async update({
+    carRegistrationId,
+    status,
+  }: {
+    carRegistrationId: string;
+    status: string;
+  }): Promise<CarRegistration> {
     const savedCarRegistration = await this.carRegistrationRepository.findOne({
       where: { id: carRegistrationId },
     });
 
     return await this.carRegistrationRepository.save({
       ...savedCarRegistration,
-      id: carRegistrationId,
       status,
     });
-  }
-
-  async count() {
-    return await this.carRegistrationRepository.count();
   }
 }

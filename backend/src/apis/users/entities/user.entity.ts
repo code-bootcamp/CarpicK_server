@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
-import { ImageReservation } from 'src/apis/imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from 'src/apis/imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
+import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
@@ -14,35 +14,35 @@ import {
 } from 'typeorm';
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: '유저 TYPE' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  @Field(() => String)
+  @Field(() => String, { description: 'UUID' })
   id: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '이름' })
   name: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '이메일' })
   email: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { description: '비밀번호' })
   password: string;
 
   @Column({ unique: true })
-  @Field(() => String)
+  @Field(() => String, { description: '핸드폰 번호' })
   phone: string;
 
   @Column()
-  @Field(() => Boolean)
+  @Field(() => Boolean, { description: '면허인증 여부' })
   isAuth: boolean;
 
   @Column({ default: 0 })
   @Min(0)
-  @Field(() => Int)
+  @Field(() => Int, { description: '등록차량 총수익' })
   revenue: number;
 
   @CreateDateColumn()
@@ -54,16 +54,13 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(
-    () => ImageReservation,
-    (imageReservation) => imageReservation.user,
-  )
-  @Field(() => [ImageReservation])
-  imageReservation: ImageReservation[];
+  @OneToMany(() => ImageStart, (imageStart) => imageStart.user)
+  @Field(() => [ImageStart])
+  imageStart: ImageStart[];
 
-  @OneToMany(() => ImageReturn, (imageReturn) => imageReturn.user)
-  @Field(() => [ImageReturn])
-  imageReturn: ImageReturn[];
+  @OneToMany(() => ImageEnd, (imageEnd) => imageEnd.user)
+  @Field(() => [ImageEnd])
+  imageEnd: ImageEnd[];
 
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   @Field(() => [Reservation])

@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 // import { AppLocalModule } from './appLocal.module';
 import { HttpExcptionFilter } from './commons/filter/http-exception.filter';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExcptionFilter());

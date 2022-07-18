@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { ImageReservation } from '../imagesReservation/entities/imageReservation.entity';
-import { ImageReturn } from '../imagesReturn/entities/imageReturn.entity';
+import { ImageStart } from '../imagesStart/entities/imageStart.entity';
+import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import * as coolsms from 'coolsms-node-sdk';
+import { IsVaildEmail } from './dto/isValid.output';
+import { ICurrentUser } from 'src/commons/auth/gql-user.param';
+import { CreateImageInput } from './dto/createImage.input';
 
 @Injectable()
 export class UserService {
@@ -12,18 +15,22 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @InjectRepository(ImageReservation)
-    private readonly imageReservationRepository: Repository<ImageReservation>,
+    @InjectRepository(ImageStart)
+    private readonly imageStartRepository: Repository<ImageStart>,
 
-    @InjectRepository(ImageReturn)
-    private readonly imageReturnRepository: Repository<ImageReturn>,
+    @InjectRepository(ImageEnd)
+    private readonly imageEndRepository: Repository<ImageEnd>,
   ) {}
 
-  async findOne({ email }) {
+  async findEmail({ phone }: { phone: string }): Promise<User> {
+    return await this.userRepository.findOne({ phone });
+  }
+
+  async findOne({ email }: { email: string }): Promise<User> {
     return await this.userRepository.findOne({ email });
   }
 
-  async findUser({ email }) {
+  async findUser({ email }: { email: string }): Promise<User> {
     const now = new Date();
     return await getRepository(User)
       .createQueryBuilder('user')
@@ -40,26 +47,35 @@ export class UserService {
       .getOne();
   }
 
-  async checkValidationEmail({ email }) {
+  async checkValidationEmail({
+    email,
+  }: {
+    email: string;
+  }): Promise<IsVaildEmail> {
     const userEmail = await this.userRepository.findOne({ email });
-    const result = {
+    return {
       isValid: userEmail ? false : true,
       phone: userEmail ? userEmail.phone : '',
     };
-    return result;
   }
 
-  getToken() {
+  getToken(): string {
     return String(Math.floor(Math.random() * 10 ** 6)).padStart(6, '0');
   }
 
-  async sendToken({ phone, token }) {
+  async sendToken({
+    phone,
+    token,
+  }: {
+    phone: string;
+    token: string;
+  }): Promise<coolsms.SingleMessageSentResponse> {
     const mysms = coolsms.default;
     const messageService = new mysms(
       process.env.SMS_KEY,
       process.env.SMS_SECRET,
     );
-    await messageService.sendOne({
+    return await messageService.sendOne({
       to: phone,
       from: process.env.SMS_SENDER,
       text: `[CarpicK]
@@ -68,69 +84,120 @@ export class UserService {
     });
   }
 
-  async create({ hashedPassword: password, ...info }) {
+  async create({
+    email,
+    hashedPassword: password,
+    ...info
+  }: {
+    email: string;
+    hashedPassword: string;
+    name: string;
+    phone: string;
+    isAuth: boolean;
+  }): Promise<User> {
     return await this.userRepository.save({
+      email,
       password,
       ...info,
     });
   }
 
-  async reset({ hashedPassword: password, user }) {
+  async reset({
+    hashedPassword: password,
+    user,
+  }: {
+    hashedPassword: string;
+    user: User;
+  }): Promise<User> {
     return await this.userRepository.save({
-      ...user,
+      id: user.id,
       password,
     });
   }
 
-  async updatePwd({ hashedPassword: password, currentUser }) {
+  async updatePwd({
+    hashedPassword: password,
+    currentUser,
+  }: {
+    hashedPassword: string;
+    currentUser: ICurrentUser;
+  }): Promise<User> {
     return await this.userRepository.save({
       password,
-      ...currentUser,
+      id: currentUser.id,
     });
   }
 
-  async updatePhone({ phone, currentUser }) {
+  async updatePhone({
+    phone,
+    currentUser,
+  }: {
+    phone: string;
+    currentUser: ICurrentUser;
+  }): Promise<User> {
     return await this.userRepository.save({
       phone,
-      ...currentUser,
+      id: currentUser.id,
     });
   }
 
-  async updateIsAuth({ isAuth, currentUser }) {
+  async updateIsAuth({
+    isAuth,
+    currentUser,
+  }: {
+    isAuth: boolean;
+    currentUser: ICurrentUser;
+  }): Promise<User> {
     return await this.userRepository.save({
       isAuth,
-      ...currentUser,
+      id: currentUser.id,
     });
   }
 
-  async deleteUser({ currentUser }) {
+  async deleteUser({
+    currentUser,
+  }: {
+    currentUser: ICurrentUser;
+  }): Promise<boolean> {
     const result = await this.userRepository.softDelete({
       id: currentUser.id,
     });
     return result.affected ? true : false;
   }
 
-  async createImageReservation({ createImageInput, currentUser }) {
+  async createImageStart({
+    createImageInput,
+    currentUser,
+  }: {
+    createImageInput: CreateImageInput;
+    currentUser: ICurrentUser;
+  }): Promise<ImageStart[]> {
     const { urls, carId } = createImageInput;
     return await Promise.all(
       urls.map((url: string) => {
-        return this.imageReservationRepository.save({
+        return this.imageStartRepository.save({
           url,
           car: { id: carId },
-          user: currentUser,
+          user: { id: currentUser.id },
         });
       }),
     );
   }
 
-  async createImageReturn({ createImageInput, currentUser }) {
+  async createImageEnd({
+    createImageInput,
+    currentUser,
+  }: {
+    createImageInput: CreateImageInput;
+    currentUser: ICurrentUser;
+  }): Promise<ImageEnd[]> {
     const { urls, carId } = createImageInput;
     return await Promise.all(
       urls.map((url: string) => {
-        return this.imageReturnRepository.save({
+        return this.imageEndRepository.save({
           url,
           car: { id: carId },
-          user: currentUser,
+          user: { id: currentUser.id },
         });
       }),
     );
