@@ -35,7 +35,7 @@ export class CarRegistrationService {
       relations: ['imageCar', 'imageRegistration', 'user'],
       order: { createdAt: 'DESC' },
       take: 10,
-      skip: page ? (page - 1) * 10 : 1,
+      skip: page ? (page - 1) * 10 : 0,
     });
   }
 
