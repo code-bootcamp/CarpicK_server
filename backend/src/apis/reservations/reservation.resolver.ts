@@ -59,14 +59,14 @@ export class ReservationResolver {
     createReservationInput: CreateReservationInput, //
     @Args('paymentInput') paymentInput: PaymentInput,
   ): Promise<Reservation> {
-    // const access_token = await this.iamportService.getToken();
-    // const paymentData = await this.iamportService.getInfo({
-    //   access_token,
-    //   impUid: paymentInput.impUid,
-    // });
-    // const { amount } = paymentData;
-    // if (amount !== paymentInput.amount)
-    //   throw new UnprocessableEntityException('유효하지 않은 결제입니다');
+    const access_token = await this.iamportService.getToken();
+    const paymentData = await this.iamportService.getInfo({
+      access_token,
+      impUid: paymentInput.impUid,
+    });
+    const { amount } = paymentData;
+    if (amount !== paymentInput.amount)
+      throw new UnprocessableEntityException('유효하지 않은 결제입니다');
     const isAuth = await this.paymentService.findOne({
       impUid: paymentInput.impUid,
     });
