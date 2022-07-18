@@ -26,6 +26,7 @@ export class CarRegistrationResolver {
       name: 'page',
       type: () => Int,
       defaultValue: 1,
+      nullable: true,
       description: '페이지 넘버',
     })
     page: number,
