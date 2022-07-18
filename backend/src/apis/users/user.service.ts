@@ -38,7 +38,7 @@ export class UserService {
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.reservation', 'reservation')
       .leftJoinAndSelect('reservation.car', 'car')
-      .leftJoinAndSelect('car.location', 'location')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .where('user.email = :email', { email })
