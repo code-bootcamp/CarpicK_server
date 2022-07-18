@@ -25,7 +25,6 @@ export class CarRegistrationResolver {
     @Args({
       name: 'page',
       type: () => Int,
-      defaultValue: 1,
       nullable: true,
       description: '페이지 넘버',
     })

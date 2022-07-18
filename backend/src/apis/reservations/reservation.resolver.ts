@@ -27,7 +27,6 @@ export class ReservationResolver {
     @Args({
       name: 'page',
       type: () => Int,
-      defaultValue: 1,
       nullable: true,
       description: '페이지 넘버',
     })
@@ -43,7 +42,6 @@ export class ReservationResolver {
     @Args({
       name: 'page',
       type: () => Int,
-      defaultValue: 1,
       nullable: true,
       description: '페이지 넘버',
     })
