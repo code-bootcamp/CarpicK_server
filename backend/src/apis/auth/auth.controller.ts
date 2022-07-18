@@ -19,6 +19,8 @@ export class AuthController {
   async loginGoogle(
     @Req() req: Request & IOAuthUser, //
   ): Promise<void> {
+    console.log('reqr====', req);
+    console.log('req.user====', req.user);
     await this.authService.socialLogin(req);
   }
 }
