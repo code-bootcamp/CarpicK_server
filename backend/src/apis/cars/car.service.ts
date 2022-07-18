@@ -149,19 +149,19 @@ export class CarService {
         user: { id: userId },
         ...car,
       });
-      const saveCar = await queryRunner.manager.save(CarInfo);
+      await queryRunner.manager.save(CarInfo);
       await Promise.all(
-        carUrl.map((address: string) => {
-          const savedUrl = queryRunner.manager.findOne(
+        carUrl.map(async (address: string) => {
+          const savedUrl = await queryRunner.manager.findOne(
             ImageCar,
             { url: address },
             { lock: { mode: 'pessimistic_write' } },
           );
           const url = this.imageCarRepository.create({
             ...savedUrl,
-            car: { id: saveCar['id'] },
+            car: { id: CarInfo.id },
           });
-          return queryRunner.manager.save(url);
+          return await queryRunner.manager.save(url);
         }),
       );
       await queryRunner.commitTransaction();
