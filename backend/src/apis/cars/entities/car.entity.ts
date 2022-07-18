@@ -90,7 +90,7 @@ export class Car {
 
   @OneToMany(() => ImageEnd, (imageEndImageEnd) => imageEndImageEnd.car)
   @Field(() => [ImageEnd])
-  imageEndImageEnd: ImageEnd[];
+  imageEnd: ImageEnd[];
 
   @OneToMany(() => Review, (review) => review.car)
   @Field(() => [Review])

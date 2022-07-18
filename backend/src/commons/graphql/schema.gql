@@ -207,7 +207,7 @@ type Car {
   imageCar: [ImageCar!]!
   imageRegistration: ImageRegistration!
   imageStart: [ImageStart!]!
-  imageEndImageEnd: [ImageEnd!]!
+  imageEnd: [ImageEnd!]!
   review: [Review!]!
   user: User!
 }
@@ -278,7 +278,7 @@ type PopularCarOutput {
   imageCar: [ImageCar!]
   imageRegistration: ImageRegistration
   imageStart: [ImageStart!]
-  imageEndImageEnd: [ImageEnd!]
+  imageEnd: [ImageEnd!]
   review: [Review!]
   user: User
 
@@ -305,7 +305,7 @@ type Query {
   """차량존 리스트 조회"""
   fetchCars(
     """페이지 넘버"""
-    page: Int = 1
+    page: Int
 
     """차량존 UUID"""
     carLocationId: String!
@@ -329,7 +329,7 @@ type Query {
   """등록 차량 리스트 조회"""
   fetchCarRegistrations(
     """페이지 넘버"""
-    page: Int = 1
+    page: Int
   ): [CarRegistration!]!
 
   """등록 차량 수"""
@@ -338,13 +338,13 @@ type Query {
   """예약 내역 조회"""
   fetchUserReservations(
     """페이지 넘버"""
-    page: Int = 1
+    page: Int
   ): [Reservation!]!
 
   """내차량 현황 조회"""
   fetchOwnerReservations(
     """페이지 넘버"""
-    page: Int = 1
+    page: Int
   ): [Reservation!]!
 
   """유저 이메일 조회"""
