@@ -482,19 +482,7 @@ type Mutation {
   cancelReservation(
     """예약 UUID"""
     reservationId: String!
-
-    """예약 상태"""
-    status: String!
     paymentInput: PaymentInput!
-  ): Reservation!
-
-  """예약 상태 업데이트"""
-  updateReservationStatus(
-    """예약 UUID"""
-    reservationId: String!
-
-    """예약 상태"""
-    status: String!
   ): Reservation!
 
   """이메일 확인"""
@@ -548,11 +536,11 @@ type Mutation {
   """계정 삭제"""
   deleteLoginUser: String!
 
-  """탑승전 이미지 등록"""
-  createImageStart(createImageInput: CreateImageInput!): String!
+  """차량 이용 시작"""
+  startCar(startCarInput: StartCarInput!): String!
 
-  """반납 이미지 등록"""
-  createImageEnd(createImageInput: CreateImageInput!): String!
+  """차량 이용 종료"""
+  endCar(endCarInput: EndCarInput!): String!
 }
 
 """관리자 생성 INPUT"""
@@ -693,11 +681,26 @@ input CreateUserInput {
   isAuth: Boolean!
 }
 
-"""이미지 생성 INPUT"""
-input CreateImageInput {
+"""차량 이용 시작 INPUT"""
+input StartCarInput {
   """URL"""
   urls: [String!]!
 
   """차량 UUID"""
   carId: String!
+
+  """예약 UUID"""
+  reservationId: String!
+}
+
+"""차량 이용 종료 INPUT"""
+input EndCarInput {
+  """URL"""
+  urls: [String!]!
+
+  """차량 UUID"""
+  carId: String!
+
+  """예약 UUID"""
+  reservationId: String!
 }
