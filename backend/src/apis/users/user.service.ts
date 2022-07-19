@@ -40,22 +40,18 @@ export class UserService {
     const now = new Date();
     return await getRepository(User)
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.reservation', 'reservation')
+      .leftJoinAndMapMany(
+        'user.reservation',
+        'user.reservation',
+        'reservation',
+        'reservation.endTime > :now',
+        { now },
+      )
       .leftJoinAndSelect('reservation.car', 'car')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .where('user.email = :email', { email })
-      .andWhere(
-        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
-        { now },
-      )
-      .orWhere(
-        'IF(reservation.endTime > :now is null, reservation.endTime > :now is null, reservation.endTime > :now)',
-        { now },
-      )
-      .orderBy('reservation.endTime', 'ASC')
-      .limit(1)
       .getOne();
   }
 
