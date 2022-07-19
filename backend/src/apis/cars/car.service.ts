@@ -25,8 +25,8 @@ export class CarService {
     return await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoinAndMapMany(
-        'user.reservation',
-        'user.reservation',
+        'car.reservation',
+        'car.reservation',
         'reservation',
         'reservation.endTime > :now',
         { now },
@@ -50,8 +50,8 @@ export class CarService {
     return await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoinAndMapMany(
-        'user.reservation',
-        'user.reservation',
+        'car.reservation',
+        'car.reservation',
         'reservation',
         'reservation.endTime > :now',
         { now },
