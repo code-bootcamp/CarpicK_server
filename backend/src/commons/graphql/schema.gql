@@ -247,7 +247,8 @@ type User {
   revenue: Int!
   imageStart: [ImageStart!]!
   imageEnd: [ImageEnd!]!
-  reservation: [Reservation!]
+  reservation: [Reservation!]!
+  car: Car!
 }
 
 """인기차 OUTPUT"""
@@ -355,6 +356,9 @@ type Query {
 
   """로그인 유저 조회"""
   fetchLoginUser: User!
+
+  """로그인 오너 조회"""
+  fetchLoginOwenr: User!
 }
 
 """차량존 조회 INPUT"""
@@ -665,11 +669,11 @@ input PaymentInput {
 
 """유저 생성 INPUT"""
 input CreateUserInput {
-  """이메일"""
-  email: String!
-
   """이름"""
   name: String!
+
+  """이메일"""
+  email: String!
 
   """비밀번호"""
   password: String!
