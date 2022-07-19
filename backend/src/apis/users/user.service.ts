@@ -7,8 +7,10 @@ import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import * as coolsms from 'coolsms-node-sdk';
 import { IsVaildEmail } from './dto/isValid.output';
 import { ICurrentUser } from 'src/commons/auth/gql-user.param';
-import { CreateImageInput } from './dto/createImage.input';
+import { StartCarInput } from './dto/startCar.input';
 import { Car } from '../cars/entities/car.entity';
+import { EndCarInput } from './dto/endCar.input';
+import { Reservation } from '../reservations/entities/reservation.entity';
 
 @Injectable()
 export class UserService {
@@ -21,6 +23,8 @@ export class UserService {
     private readonly imageStartRepository: Repository<ImageStart>,
     @InjectRepository(ImageEnd)
     private readonly imageEndRepository: Repository<ImageEnd>,
+    @InjectRepository(Reservation)
+    private readonly reservationRepository: Repository<Reservation>,
     private readonly connection: Connection,
   ) {}
 
@@ -44,9 +48,11 @@ export class UserService {
       .where('user.email = :email', { email })
       .andWhere(
         'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
-        {
-          now,
-        },
+        { now },
+      )
+      .orWhere(
+        'IF(reservation.endTime > :now is null, reservation.endTime > :now is null, reservation.endTime > :now)',
+        { now },
       )
       .orderBy('reservation.endTime', 'ASC')
       .limit(1)
@@ -171,28 +177,38 @@ export class UserService {
     return result.affected ? true : false;
   }
 
-  async createImageStart({
-    createImageInput,
+  async start({
+    startCarInput,
     currentUser,
   }: {
-    createImageInput: CreateImageInput;
+    startCarInput: StartCarInput;
     currentUser: ICurrentUser;
   }): Promise<ImageStart[]> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
-      const { urls, carId } = createImageInput;
+      const { urls, carId, reservationId } = startCarInput;
       const carFound = await queryRunner.manager.findOne(
         Car,
         { id: carId },
         { lock: { mode: 'pessimistic_write' } },
       );
       const car = this.carRepository.create({
-        ...carFound,
+        id: carFound.id,
         isAvailable: true,
       });
       await queryRunner.manager.save(car);
+      const reservationFound = await queryRunner.manager.findOne(
+        Reservation,
+        { id: reservationId },
+        { lock: { mode: 'pessimistic_write' } },
+      );
+      const reservation = this.reservationRepository.create({
+        id: reservationFound.id,
+        status: 'USING',
+      });
+      await queryRunner.manager.save(reservation);
       const startImage = await Promise.all(
         urls.map((url: string) => {
           const startUrl = this.imageStartRepository.create({
@@ -213,28 +229,38 @@ export class UserService {
     }
   }
 
-  async createImageEnd({
-    createImageInput,
+  async end({
+    endCarInput,
     currentUser,
   }: {
-    createImageInput: CreateImageInput;
+    endCarInput: EndCarInput;
     currentUser: ICurrentUser;
   }): Promise<ImageEnd[]> {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
-      const { urls, carId } = createImageInput;
+      const { urls, carId, reservationId } = endCarInput;
       const carFound = await queryRunner.manager.findOne(
         Car,
         { id: carId },
         { lock: { mode: 'pessimistic_write' } },
       );
       const car = this.carRepository.create({
-        ...carFound,
+        id: carFound.id,
         isAvailable: false,
       });
       await queryRunner.manager.save(car);
+      const reservationFound = await queryRunner.manager.findOne(
+        Reservation,
+        { id: reservationId },
+        { lock: { mode: 'pessimistic_write' } },
+      );
+      const reservation = this.reservationRepository.create({
+        id: reservationFound.id,
+        status: 'RETURN',
+      });
+      await queryRunner.manager.save(reservation);
       const endImage = await Promise.all(
         urls.map((url: string) => {
           const endUrl = this.imageEndRepository.create({

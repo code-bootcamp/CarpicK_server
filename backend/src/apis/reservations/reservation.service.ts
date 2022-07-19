@@ -87,17 +87,15 @@ export class ReservationService {
 
   async update({
     reservationId,
-    status,
   }: {
     reservationId: string;
-    status: string;
   }): Promise<Reservation> {
     const savedReservation = await this.reservationRepository.findOne({
       where: { id: reservationId },
     });
     return await this.reservationRepository.save({
-      ...savedReservation,
-      status,
+      id: savedReservation.id,
+      status: 'CANCLE',
     });
   }
 }

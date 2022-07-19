@@ -13,7 +13,8 @@ import * as bcrypt from 'bcrypt';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Cache } from 'cache-manager';
 import { IsVaildEmail } from './dto/isValid.output';
-import { CreateImageInput } from './dto/createImage.input';
+import { StartCarInput } from './dto/startCar.input';
+import { EndCarInput } from './dto/endCar.input';
 
 @Resolver()
 export class UserResolver {
@@ -72,11 +73,11 @@ export class UserResolver {
   ): Promise<User> {
     const { email, password, ...info } = createUserInput;
     const emailRegExp =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
-    if (!email.match(emailRegExp))
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+    const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+    if (!emailRegExp.test(email))
       throw new UnprocessableEntityException('이메일 형식에 맞게 입력해주세요');
-    if (!password.match(passwordRegExp))
+    if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
@@ -92,8 +93,8 @@ export class UserResolver {
     const user = await this.userService.findOne({ email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
-    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
-    if (!password.match(passwordRegExp))
+    const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+    if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
@@ -112,8 +113,8 @@ export class UserResolver {
     const user = await this.userService.findOne({ email: currentUser.email });
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
-    const passwordRegExp = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,16}$/;
-    if (!password.match(passwordRegExp))
+    const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+    if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
@@ -162,30 +163,30 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String, { description: '탑승전 이미지 등록' })
-  async createImageStart(
-    @Args('createImageInput') createImageInput: CreateImageInput,
+  @Mutation(() => String, { description: '차량 이용 시작' })
+  async startCar(
+    @Args('startCarInput') startCarInput: StartCarInput,
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
-    const result = await this.userService.createImageStart({
-      createImageInput,
+    const result = await this.userService.start({
+      startCarInput,
       currentUser,
     });
-    if (result) return '등록 되었습니다';
-    else return '등록을 실패하였습니다';
+    if (result) return '차량 이용이 시작되었습니다';
+    else return '키 발급을 실패하였습니다';
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String, { description: '반납 이미지 등록' })
-  async createImageEnd(
-    @Args('createImageInput') createImageInput: CreateImageInput,
+  @Mutation(() => String, { description: '차량 이용 종료' })
+  async endCar(
+    @Args('endCarInput') endCarInput: EndCarInput,
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
-    const result = await this.userService.createImageEnd({
-      createImageInput,
+    const result = await this.userService.end({
+      endCarInput,
       currentUser,
     });
-    if (result) return '반납 되었습니다';
-    else return '반납을 실패하였습니다';
+    if (result) return '차량 이용이 종료되었습니다';
+    else return '키 반납을 실패하였습니다';
   }
 }
