@@ -41,9 +41,8 @@ export class UserResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => User, { description: '로그인 오너 조회' })
-  fetchLoginOwenr(@CurrentUser() currentUser: ICurrentUser): Promise<User> {
+  fetchLoginOwner(@CurrentUser() currentUser: ICurrentUser): Promise<User> {
     return this.userService.findOwner({
-      id: currentUser.id,
       email: currentUser.email,
     });
   }

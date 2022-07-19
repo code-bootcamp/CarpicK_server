@@ -248,7 +248,7 @@ type User {
   imageStart: [ImageStart!]!
   imageEnd: [ImageEnd!]!
   reservation: [Reservation!]!
-  car: Car!
+  car: Car
 }
 
 """인기차 OUTPUT"""
@@ -358,7 +358,7 @@ type Query {
   fetchLoginUser: User!
 
   """로그인 오너 조회"""
-  fetchLoginOwenr: User!
+  fetchLoginOwner: User!
 }
 
 """차량존 조회 INPUT"""
