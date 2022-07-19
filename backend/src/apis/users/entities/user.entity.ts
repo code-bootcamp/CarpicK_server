@@ -9,9 +9,11 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Car } from 'src/apis/cars/entities/car.entity';
 
 @Entity()
 @ObjectType({ description: '유저 TYPE' })
@@ -62,9 +64,11 @@ export class User {
   @Field(() => [ImageEnd])
   imageEnd: ImageEnd[];
 
-  @OneToMany(() => Reservation, (reservation) => reservation.user, {
-    nullable: true,
-  })
-  @Field(() => [Reservation], { nullable: true })
+  @OneToMany(() => Reservation, (reservation) => reservation.user)
+  @Field(() => [Reservation])
   reservation: Reservation[];
+
+  @OneToOne(() => Car, (car) => car.user)
+  @Field(() => Car)
+  car: Car;
 }

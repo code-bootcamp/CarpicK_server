@@ -97,7 +97,7 @@ export class Car {
   review: Review[];
 
   @JoinColumn()
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.car)
   @Field(() => User)
   user: User;
 }
