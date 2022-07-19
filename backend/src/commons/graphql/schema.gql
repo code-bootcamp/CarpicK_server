@@ -247,7 +247,7 @@ type User {
   revenue: Int!
   imageStart: [ImageStart!]!
   imageEnd: [ImageEnd!]!
-  reservation: [Reservation!]!
+  reservation: [Reservation!]
 }
 
 """인기차 OUTPUT"""

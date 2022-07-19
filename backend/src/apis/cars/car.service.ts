@@ -24,20 +24,18 @@ export class CarService {
     const now = new Date();
     return await getRepository(Car)
       .createQueryBuilder('car')
+      .leftJoinAndMapMany(
+        'user.reservation',
+        'user.reservation',
+        'reservation',
+        'reservation.endTime > :now',
+        { now },
+      )
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
-      .leftJoinAndSelect('car.reservation', 'reservation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('car.id = :id', { id: carId })
-      .andWhere(
-        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
-        { now },
-      )
-      .orWhere(
-        'IF(reservation.endTime > :now is null, reservation.endTime > :now is null, reservation.endTime > :now)',
-        { now },
-      )
       .getOne();
   }
 
@@ -51,18 +49,18 @@ export class CarService {
     const now = new Date();
     return await getRepository(Car)
       .createQueryBuilder('car')
+      .leftJoinAndMapMany(
+        'user.reservation',
+        'user.reservation',
+        'reservation',
+        'reservation.endTime > :now',
+        { now },
+      )
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
-      .leftJoinAndSelect('car.reservation', 'reservation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('carLocation.id = :id', { id: carLocationId })
-      .andWhere(
-        'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
-        {
-          now,
-        },
-      )
       .orderBy('car.createdAt', 'DESC')
       .take(10)
       .skip(page ? (page - 1) * 10 : 0)
