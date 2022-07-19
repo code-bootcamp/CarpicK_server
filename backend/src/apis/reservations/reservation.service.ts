@@ -40,6 +40,7 @@ export class ReservationService {
         'car.imageCar',
         'payment',
       ],
+      order: { createdAt: 'DESC' },
       take: 10,
       skip: page ? (page - 1) * 10 : 0,
     });
@@ -62,6 +63,7 @@ export class ReservationService {
         'user',
         'payment',
       ],
+      order: { createdAt: 'DESC' },
       take: 10,
       skip: page ? (page - 1) * 10 : 0,
     });
