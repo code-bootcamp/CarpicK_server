@@ -68,7 +68,7 @@ export class User {
   @Field(() => [Reservation])
   reservation: Reservation[];
 
-  @OneToOne(() => Car, (car) => car.user)
-  @Field(() => Car)
+  @OneToOne(() => Car, (car) => car.user, { nullable: true })
+  @Field(() => Car, { nullable: true })
   car: Car;
 }
