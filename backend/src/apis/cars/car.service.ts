@@ -34,7 +34,6 @@ export class CarService {
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('car.id = :id', { id: carId })
       .getOne();
   }
@@ -59,7 +58,6 @@ export class CarService {
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .leftJoinAndSelect('car.imageRegistration', 'imageRegistration')
       .where('carLocation.id = :id', { id: carLocationId })
       .orderBy('car.createdAt', 'DESC')
       .take(10)
@@ -81,13 +79,7 @@ export class CarService {
       avg.map((el) => {
         const car = this.carRepository.findOne({
           where: { id: el.car_id },
-          relations: [
-            'carModel',
-            'carLocation',
-            'reservation',
-            'imageCar',
-            'imageRegistration',
-          ],
+          relations: ['carModel', 'carLocation', 'reservation', 'imageCar'],
         });
         car['rating'] = el.avg;
         return car;

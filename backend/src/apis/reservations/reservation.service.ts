@@ -36,8 +36,8 @@ export class ReservationService {
       relations: [
         'car',
         'car.carModel',
+        'car.carLocation',
         'car.imageCar',
-        'car.imageRegistration',
         'payment',
       ],
       take: 10,
@@ -57,8 +57,8 @@ export class ReservationService {
       relations: [
         'car',
         'car.carModel',
+        'car.carLocation',
         'car.imageCar',
-        'car.imageRegistration',
         'user',
         'payment',
       ],

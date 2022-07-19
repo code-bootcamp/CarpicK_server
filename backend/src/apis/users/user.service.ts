@@ -55,6 +55,18 @@ export class UserService {
       .getOne();
   }
 
+  async findOwner({ id, email }: { id: string; email: string }): Promise<User> {
+    return await getRepository(User)
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.car', 'car')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .where('user.email = :email', { email })
+      .andWhere('car.userId = :id', { id })
+      .getOne();
+  }
+
   async checkValidationEmail({
     email,
   }: {
