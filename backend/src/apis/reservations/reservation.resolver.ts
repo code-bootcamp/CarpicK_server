@@ -89,7 +89,6 @@ export class ReservationResolver {
   async cancelReservation(
     @Args({ name: 'reservationId', description: '예약 UUID' })
     reservationId: string,
-    @Args({ name: 'status', description: '예약 상태' }) status: string,
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<Reservation> {
@@ -112,17 +111,6 @@ export class ReservationResolver {
       paymentInput,
       currentUser,
     });
-    if (cancel)
-      return this.reservationService.update({ reservationId, status });
-  }
-
-  @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Reservation, { description: '예약 상태 업데이트' })
-  updateReservationStatus(
-    @Args({ name: 'reservationId', description: '예약 UUID' })
-    reservationId: string,
-    @Args({ name: 'status', description: '예약 상태' }) status: string,
-  ): Promise<Reservation> {
-    return this.reservationService.update({ reservationId, status });
+    if (cancel) return this.reservationService.update({ reservationId });
   }
 }

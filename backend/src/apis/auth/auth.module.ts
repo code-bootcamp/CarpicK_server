@@ -13,14 +13,22 @@ import { AuthService } from './auth.service';
 import { ImageStart } from '../imagesStart/entities/imageStart.entity';
 import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import { Car } from '../cars/entities/car.entity';
+import { Reservation } from '../reservations/entities/reservation.entity';
 
 @Module({
   imports: [
-    JwtModule.register({}), //
-    TypeOrmModule.forFeature([User, Administrator, ImageStart, ImageEnd, Car]),
+    JwtModule.register({}),
+    TypeOrmModule.forFeature([
+      User,
+      Administrator,
+      ImageStart,
+      ImageEnd,
+      Car,
+      Reservation,
+    ]),
   ],
   providers: [
-    JwtGoogleStrategy, //
+    JwtGoogleStrategy,
     JwtRefreshStrategy,
     AuthResolver,
     AuthService,

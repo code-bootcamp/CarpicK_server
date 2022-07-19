@@ -32,9 +32,11 @@ export class CarService {
       .where('car.id = :id', { id: carId })
       .andWhere(
         'IF(reservation.id is null, reservation.id is null, reservation.endTime > :now)',
-        {
-          now,
-        },
+        { now },
+      )
+      .orWhere(
+        'IF(reservation.endTime > :now is null, reservation.endTime > :now is null, reservation.endTime > :now)',
+        { now },
       )
       .getOne();
   }
