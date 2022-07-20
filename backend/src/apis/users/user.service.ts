@@ -64,6 +64,7 @@ export class UserService {
         'car.carLocation',
         'car.imageCar',
         'carRegistration',
+        'carRegistration.imageCar',
       ],
     });
   }
