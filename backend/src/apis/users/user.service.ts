@@ -58,7 +58,13 @@ export class UserService {
   async findOwner({ email }: { email: string }): Promise<User> {
     return await this.userRepository.findOne({
       where: { email },
-      relations: ['car', 'car.carModel', 'car.carLocation', 'car.imageCar'],
+      relations: [
+        'car',
+        'car.carModel',
+        'car.carLocation',
+        'car.imageCar',
+        'carRegistration',
+      ],
     });
   }
 
