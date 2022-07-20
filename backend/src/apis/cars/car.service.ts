@@ -77,7 +77,7 @@ export class CarService {
       .getRawMany();
     const popularCar = await Promise.all(
       avg.map((el) => {
-        const car = this.carRepository.findOne({
+        const car = this.carRepository.find({
           where: { id: el.car_id },
           relations: ['carModel', 'carLocation', 'reservation', 'imageCar'],
         });
