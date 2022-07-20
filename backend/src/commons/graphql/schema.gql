@@ -196,8 +196,14 @@ type Car {
   """유종"""
   oil: String!
 
-  """계약기간"""
-  contractPeriod: String!
+  """계약시작 시간"""
+  contractStart: DateTime!
+
+  """계약종료 시간"""
+  contractEnd: DateTime!
+
+  """계약 상태"""
+  status: String
 
   """키 사용가능 여부"""
   isAvailable: Boolean
@@ -254,37 +260,14 @@ type User {
 
 """인기차 OUTPUT"""
 type PopularCarOutput {
-  """UUID"""
-  id: String
-
-  """차량번호"""
-  carNumber: String
-
-  """하이패스 여부"""
-  isHipass: Boolean
-
-  """시간당 가격"""
-  price: Int
-
-  """유종"""
-  oil: String
-
-  """계약기간"""
-  contractPeriod: String
-
-  """키 사용가능 여부"""
-  isAvailable: Boolean
-  carModel: CarModel
-  carLocation: CarLocation
-  reservation: [Reservation!]
-  imageCar: [ImageCar!]
-  imageRegistration: ImageRegistration
-  imageStart: [ImageStart!]
-  imageEnd: [ImageEnd!]
-  review: [Review!]
-  user: User
-
-  """평균 평점"""
+  id: String!
+  ownerName: String!
+  carNumber: String!
+  price: Int!
+  oil: String!
+  carModel: String!
+  addressDetail: String!
+  num: Int!
   rating: Float!
 }
 
@@ -471,14 +454,8 @@ type Mutation {
     SpecialNumber: String!
   ): String!
 
-  """리뷰 생성"""
-  createReview(
-    """차량 UUID"""
-    carId: String!
-
-    """평점"""
-    rating: Int!
-  ): Review!
+  """패널티 결제"""
+  createPenaltyPayment(reservationId: String!, paymentInput: PaymentInput!): Payment!
 
   """예약 생성"""
   createReservation(createReservationInput: CreateReservationInput!, paymentInput: PaymentInput!): Reservation!
@@ -489,6 +466,15 @@ type Mutation {
     reservationId: String!
     paymentInput: PaymentInput!
   ): Reservation!
+
+  """리뷰 생성"""
+  createReview(
+    """차량 UUID"""
+    carId: String!
+
+    """평점"""
+    rating: Int!
+  ): Review!
 
   """이메일 확인"""
   isValidEmail(
@@ -571,8 +557,11 @@ input CreateCarInput {
   """유종"""
   oil: String!
 
-  """계약기간"""
-  contractPeriod: String!
+  """계약시작 시간"""
+  contractStart: DateTime!
+
+  """계약종료 시간"""
+  contractEnd: DateTime!
 
   """유저 UUID"""
   userId: String!
@@ -641,6 +630,18 @@ input CreateCarRegistrationInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
+"""결제 생성 INPUT"""
+input PaymentInput {
+  """IMPUID"""
+  impUid: String!
+
+  """결제 금액"""
+  amount: Int!
+
+  """결제 방식"""
+  paymentMethod: String!
+}
+
 """예약 생성 INPUT"""
 input CreateReservationInput {
   """시작 시간"""
@@ -654,18 +655,6 @@ input CreateReservationInput {
 
   """차량 UUID"""
   carId: String!
-}
-
-"""결제 생성 INPUT"""
-input PaymentInput {
-  """IMPUID"""
-  impUid: String!
-
-  """결제 금액"""
-  amount: Int!
-
-  """결제 방식"""
-  paymentMethod: String!
 }
 
 """유저 생성 INPUT"""
