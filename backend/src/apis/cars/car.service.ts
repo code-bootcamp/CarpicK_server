@@ -5,7 +5,9 @@ import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
 import { ImageCar } from '../imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from '../imagesRegistration/entities/imageRegistration.entity';
+import { Review } from '../review/entities/review.entity';
 import { CreateCarInput } from './dto/createCar.input';
+import { PopularCarOutput } from './dto/popularCar.output';
 import { Car } from './entities/car.entity';
 
 @Injectable()
@@ -65,27 +67,38 @@ export class CarService {
       .getMany();
   }
 
-  async findPopularAll(): Promise<any[]> {
-    const avg = await getRepository(Car)
+  async findPopularAll(): Promise<PopularCarOutput[]> {
+    const review = getRepository(Review)
+      .createQueryBuilder()
+      .subQuery()
+      .select([
+        'review.carId AS carId',
+        'COUNT(review.id) AS reviewNum',
+        'ROUND(AVG(review.rating),2) AS avg',
+      ])
+      .from(Review, 'review')
+      .groupBy('review.carId')
+      .getQuery();
+    return await getRepository(Car)
       .createQueryBuilder('car')
-      .leftJoinAndSelect('car.review', 'review')
-      .select('car.id')
-      .addSelect('AVG(review.rating)', 'avg')
-      .groupBy('car.id')
+      .leftJoin(review, 'review', 'review.carId = car.id')
+      .leftJoinAndSelect('car.user', 'user')
+      .leftJoinAndSelect('car.carModel', 'carModel')
+      .leftJoinAndSelect('car.carLocation', 'carLocation')
+      .select([
+        'car.id AS id',
+        'user.name AS ownerName',
+        'car.carNumber AS carNumber',
+        'car.price AS price',
+        'car.oil AS oil',
+        'carModel.name AS carModel',
+        'carLocation.addressDetail AS addressDetail',
+        'IFNULL(review.reviewNum,0) AS num',
+        'IFNULL(review.avg,0) AS rating',
+      ])
       .take(10)
       .orderBy('avg', 'DESC')
       .getRawMany();
-    const popularCar = await Promise.all(
-      avg.map((el) => {
-        const car = this.carRepository.findOne({
-          where: { id: el.car_id },
-          relations: ['carModel', 'carLocation', 'reservation', 'imageCar'],
-        });
-        car['rating'] = el.avg;
-        return car;
-      }),
-    );
-    return popularCar;
   }
 
   async create({
