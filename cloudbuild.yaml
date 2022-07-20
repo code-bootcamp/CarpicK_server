@@ -13,8 +13,8 @@ steps:
     args:
       - set
       - image
-      - deployment/carp
-      - carpick-sha256-1=asia.gcr.io/carpick-355305/carpick:3.9
+      - deployment/carpick
+      - carpick-sha256-1=asia.gcr.io/carpick-356706/carpick:4.0
     env:
       - CLOUDSDK_COMPUTE_ZONE=asia-northeast3
       - CLOUDSDK_CONTAINER_CLUSTER=autopilot-cluster-1
