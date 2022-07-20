@@ -249,6 +249,7 @@ type User {
   imageEnd: [ImageEnd!]!
   reservation: [Reservation!]!
   car: Car
+  carRegistration: CarRegistration
 }
 
 """인기차 OUTPUT"""

@@ -14,6 +14,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Car } from 'src/apis/cars/entities/car.entity';
+import { CarRegistration } from 'src/apis/carsRegistration/entities/carRegistration.entity';
 
 @Entity()
 @ObjectType({ description: '유저 TYPE' })
@@ -71,4 +72,10 @@ export class User {
   @OneToOne(() => Car, (car) => car.user, { nullable: true })
   @Field(() => Car, { nullable: true })
   car: Car;
+
+  @OneToOne(() => CarRegistration, (carRegistration) => carRegistration.user, {
+    nullable: true,
+  })
+  @Field(() => CarRegistration, { nullable: true })
+  carRegistration: CarRegistration;
 }
