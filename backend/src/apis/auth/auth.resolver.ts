@@ -62,8 +62,6 @@ export class AuthResolver {
   restoreAccessToken(
     @CurrentAdmin() currentAdmin: ICurrentAdmin, //
   ): string {
-    console.log('11111111111111111111111111');
-    console.log(currentAdmin);
     return this.authService.getAccessToken({ admin: currentAdmin });
   }
 

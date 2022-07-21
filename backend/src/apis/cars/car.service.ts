@@ -86,6 +86,7 @@ export class CarService {
       .leftJoinAndSelect('car.user', 'user')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
+      // .leftJoinAndSelect('car.imageCar', 'imageCar')
       .select([
         'car.id AS id',
         'user.name AS ownerName',
@@ -93,6 +94,7 @@ export class CarService {
         'car.price AS price',
         'car.oil AS oil',
         'carModel.name AS carModel',
+        // 'imageCar.url AS url',
         'carLocation.addressDetail AS addressDetail',
         'IFNULL(review.reviewNum,0) AS num',
         'IFNULL(review.avg,0) AS rating',
@@ -190,6 +192,37 @@ export class CarService {
     return result.affected ? true : false;
   }
 
+  async softDelete(carId: string) {
+    const result = await this.carRepository.softDelete({
+      id: carId,
+    });
+
+    return result.affected ? true : false;
+  }
+
+  async restore({ carId }: { carId: string }): Promise<boolean> {
+    const result = await this.carRepository.restore({
+      id: carId,
+    });
+
+    return result.affected ? true : false;
+  }
+
+  async findOneWithDeleted({ carId }: { carId: string }): Promise<Car> {
+    return await this.carRepository.findOne({
+      where: { id: carId },
+      withDeleted: true,
+      relations: ['carModel', 'carLocation', 'imageCar', 'user'],
+    });
+  }
+
+  async findAllWithDeleted(): Promise<Car[]> {
+    return await this.carRepository.find({
+      withDeleted: true,
+      relations: ['carModel', 'carLocation', 'imageCar', 'user'],
+    });
+  }
+  
   async update({
     carId,
     isAvailable,
@@ -203,4 +236,5 @@ export class CarService {
     );
     return result.affected ? true : false;
   }
+
 }
