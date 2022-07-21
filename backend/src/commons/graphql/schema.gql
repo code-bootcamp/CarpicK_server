@@ -270,7 +270,6 @@ type PopularCarOutput {
   addressDetail: String!
   num: Int!
   rating: Float!
-  url: [String!]!
 }
 
 """유효이메일 OUTPUT"""

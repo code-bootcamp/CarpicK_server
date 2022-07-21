@@ -56,7 +56,12 @@ export class UserService {
         .leftJoinAndSelect('car.imageCar', 'imageCar')
         .leftJoinAndSelect('car.carModel', 'carModel')
         .where('user.email = :email', { email })
-        .andWhere('reservation.status = :status', { status: 'RESERVATION' })
+        .andWhere(
+          'reservation.status IS NULL OR reservation.status = :status',
+          {
+            status: 'RESERVATION',
+          },
+        )
         .getOne();
     }
   }
