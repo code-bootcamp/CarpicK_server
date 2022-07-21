@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
+import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
@@ -51,4 +52,8 @@ export class Payment {
   @ManyToOne(() => User)
   @Field(() => User)
   user: User;
+
+  @ManyToOne(() => Reservation)
+  @Field(() => Reservation)
+  rervation: Reservation;
 }

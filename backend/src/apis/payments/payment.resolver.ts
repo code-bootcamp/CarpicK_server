@@ -25,6 +25,7 @@ export class PaymentResolver {
       reservationId,
     });
     return await this.paymentService.create({
+      reservationId,
       carId: reservation.car.id,
       paymentInput,
       currentUser,
