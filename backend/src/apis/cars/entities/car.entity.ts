@@ -54,9 +54,9 @@ export class Car {
   @Field(() => Date, { description: '계약종료 시간' })
   contractEnd: Date;
 
-  @Column({ default: 'IN_CONTRACT' })
-  @Field(() => String, { description: '계약 상태', nullable: true })
-  status?: string;
+  @Column()
+  @Field(() => Boolean, { description: '계약 여부', nullable: true })
+  isVaild?: boolean;
 
   @Column({ default: false })
   @Field(() => Boolean, { description: '키 사용가능 여부', nullable: true })

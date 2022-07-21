@@ -71,27 +71,27 @@ export class ReservationResolver {
       impUid: paymentInput.impUid,
     });
     if (isAuth) throw new ConflictException('이미 처리된 결제입니다');
-    const payment = await this.paymentService.create({
+    const resevation = await this.reservationService.create({
+      currentUser,
+      createReservationInput,
+    });
+    await this.paymentService.create({
+      reservationId: resevation.id,
       carId: createReservationInput.carId,
       paymentInput,
       currentUser,
     });
-    if (payment)
-      return this.reservationService.create({
-        payment,
-        currentUser,
-        createReservationInput,
-      });
+    return resevation;
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Reservation, { description: '예약 취소' })
+  @Mutation(() => String, { description: '예약 취소' })
   async cancelReservation(
     @Args({ name: 'reservationId', description: '예약 UUID' })
     reservationId: string,
     @Args('paymentInput') paymentInput: PaymentInput,
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<Reservation> {
+  ): Promise<string> {
     const payment = await this.paymentService.findAll({
       impUid: paymentInput.impUid,
     });
@@ -111,6 +111,13 @@ export class ReservationResolver {
       paymentInput,
       currentUser,
     });
-    if (cancel) return this.reservationService.update({ reservationId });
+    if (cancel) {
+      const result = await this.reservationService.update({
+        reservationId,
+        status: 'CANCEL',
+      });
+      if (result) return '취소되었습니다';
+      else return '취소를 실패하였습니다';
+    }
   }
 }

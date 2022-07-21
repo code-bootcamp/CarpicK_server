@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ICurrentUser } from 'src/commons/auth/gql-user.param';
 import { Repository } from 'typeorm';
-import { Payment } from '../payments/entities/payment.entity';
 import { CreateReservationInput } from './dto/createReservation';
 import { Reservation } from './entities/reservation.entity';
 
@@ -70,11 +69,9 @@ export class ReservationService {
   }
 
   async create({
-    payment,
     currentUser,
     createReservationInput,
   }: {
-    payment: Payment;
     currentUser: ICurrentUser;
     createReservationInput: CreateReservationInput;
   }): Promise<Reservation> {
@@ -82,22 +79,21 @@ export class ReservationService {
     return await this.reservationRepository.save({
       user: { id: currentUser.id },
       car: { id: carId },
-      payment,
       ...reservation,
     });
   }
 
   async update({
     reservationId,
+    status,
   }: {
     reservationId: string;
-  }): Promise<Reservation> {
-    const savedReservation = await this.reservationRepository.findOne({
-      where: { id: reservationId },
-    });
-    return await this.reservationRepository.save({
-      id: savedReservation.id,
-      status: 'CANCLE',
-    });
+    status: string;
+  }): Promise<boolean> {
+    const result = await this.reservationRepository.update(
+      { id: reservationId },
+      { status },
+    );
+    return result.affected ? true : false;
   }
 }

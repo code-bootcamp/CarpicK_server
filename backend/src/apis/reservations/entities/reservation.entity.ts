@@ -6,9 +6,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -50,8 +49,7 @@ export class Reservation {
   @Field(() => User)
   user: User;
 
-  @JoinColumn()
-  @OneToOne(() => Payment)
+  @OneToMany(() => Payment, (payment) => payment.rervation)
   @Field(() => Payment)
   payment: Payment;
 }

@@ -1,5 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as moment from 'moment';
 import { Connection, getRepository, Repository } from 'typeorm';
 import { CarLocation } from '../carsLocation/entities/carLocation.entity';
 import { CarModel } from '../carsModel/entities/carModel.entity';
@@ -116,6 +117,7 @@ export class CarService {
         carModelName,
         carUrl,
         registrationUrl,
+        contractStart,
         ...car
       } = createCarInput;
       let location: CarLocation;
@@ -147,11 +149,15 @@ export class CarService {
         throw new UnprocessableEntityException(
           '사용자가 등록한 이미지와 다릅니다',
         );
+      const now = moment(new Date());
+      const start = moment(contractStart);
       const CarInfo = this.carRepository.create({
         carLocation: { id: location.id },
         imageRegistration: { id: saveRegistrationUrl.id },
         carModel: { id: carModel.id },
         user: { id: userId },
+        isVaild: moment.duration(now.diff(start)).asHours() > 0 ? true : false,
+        contractStart,
         ...car,
       });
       await queryRunner.manager.save(CarInfo);
@@ -214,4 +220,19 @@ export class CarService {
       relations: ['carModel', 'carLocation', 'imageCar', 'user'],
     });
   }
+  
+  async update({
+    carId,
+    isAvailable,
+  }: {
+    carId: string;
+    isAvailable: boolean;
+  }): Promise<boolean> {
+    const result = await this.carRepository.update(
+      { id: carId },
+      { isAvailable },
+    );
+    return result.affected ? true : false;
+  }
+
 }
