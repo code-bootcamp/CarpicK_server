@@ -222,7 +222,7 @@ export class CarService {
       relations: ['carModel', 'carLocation', 'imageCar', 'user'],
     });
   }
-  
+
   async update({
     carId,
     isAvailable,
@@ -236,5 +236,4 @@ export class CarService {
     );
     return result.affected ? true : false;
   }
-
 }
