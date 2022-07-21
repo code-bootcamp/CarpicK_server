@@ -17,6 +17,8 @@ import { LicenTruthModule } from './apis/licenTruth/licenTruth.module';
 import { AdministratorModule } from './apis/administrator/administrator.module';
 import { CarLocationModule } from './apis/carsLocation/carLocation.module';
 import { ReviewModule } from './apis/review/review.module';
+import { TasksModule } from './apis/tasks/tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -30,8 +32,9 @@ import { ReviewModule } from './apis/review/review.module';
     FileModule,
     LicenTruthModule,
     PaymentModule,
-    ReviewModule,
     ReservationModule,
+    ReviewModule,
+    TasksModule,
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -58,6 +61,7 @@ import { ReviewModule } from './apis/review/review.module';
       url: 'redis://my-redis:6379',
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppLocalModule {}

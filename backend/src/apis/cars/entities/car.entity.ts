@@ -47,8 +47,16 @@ export class Car {
   oil: string;
 
   @Column()
-  @Field(() => String, { description: '계약기간' })
-  contractPeriod: string;
+  @Field(() => Date, { description: '계약시작 시간' })
+  contractStart: Date;
+
+  @Column()
+  @Field(() => Date, { description: '계약종료 시간' })
+  contractEnd: Date;
+
+  @Column({ default: 'IN_CONTRACT' })
+  @Field(() => String, { description: '계약 상태', nullable: true })
+  status?: string;
 
   @Column({ default: false })
   @Field(() => Boolean, { description: '키 사용가능 여부', nullable: true })

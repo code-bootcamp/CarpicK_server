@@ -1,8 +1,31 @@
-import { Field, Float, ObjectType, PartialType } from '@nestjs/graphql';
-import { Car } from '../entities/car.entity';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({ description: '인기차 OUTPUT' })
-export class PopularCarOutput extends PartialType(Car, ObjectType) {
-  @Field(() => Float, { description: '평균 평점', defaultValue: 0 })
+export class PopularCarOutput {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  ownerName: string;
+
+  @Field(() => String)
+  carNumber: string;
+
+  @Field(() => Int)
+  price: number;
+
+  @Field(() => String)
+  oil: string;
+
+  @Field(() => String)
+  carModel: string;
+
+  @Field(() => String)
+  addressDetail: string;
+
+  @Field(() => Int)
+  num: number;
+
+  @Field(() => Float)
   rating: number;
 }
