@@ -9,7 +9,7 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_5_SECONDS)
   async runEveryMinute() {
-    console.log('every 5 seconds');
+    // console.log('every 5 seconds');
     // const now = new Date();
     // const reservation = await getRepository(Reservation)
     //   .createQueryBuilder('reservation')
