@@ -1,6 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { json } from 'express';
 import { graphqlUploadExpress } from 'graphql-upload';
 // import { AppModule } from './app.module';
 import { AppLocalModule } from './appLocal.module';
@@ -9,7 +8,6 @@ import { HttpExcptionFilter } from './commons/filter/http-exception.filter';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppLocalModule);
   app.useGlobalPipes(new ValidationPipe());
-  app.use(json({ limit: '50mb' }));
   app.useGlobalFilters(new HttpExcptionFilter());
   app.use(graphqlUploadExpress());
   app.enableCors({
