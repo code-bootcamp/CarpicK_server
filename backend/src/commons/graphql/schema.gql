@@ -296,6 +296,12 @@ type Query {
     carLocationId: String!
   ): [Car!]!
 
+  """차량 조회 (관리자)"""
+  fetchCarWithDeleted(carId: String!): Car!
+
+  """차량 리스트 조회 (관리자)"""
+  fetchCarsWithDeleted: [Car!]!
+
   """인기 차량 조회"""
   fetchPopularCars: [PopularCarOutput!]!
 
@@ -402,6 +408,9 @@ type Mutation {
     """차량 UUID"""
     carId: String!
   ): String!
+
+  """계약 기간 연장"""
+  restoreCar(carId: String!): Boolean!
 
   """차종 생성"""
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!

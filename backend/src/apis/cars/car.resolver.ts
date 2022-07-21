@@ -32,6 +32,18 @@ export class CarResolver {
     return this.carService.findAll({ carLocationId, page });
   }
 
+  @Query(() => Car, { description: '차량 조회 (관리자)' })
+  fetchCarWithDeleted(
+    @Args('carId') carId: string, //
+  ): Promise<Car> {
+    return this.carService.findOneWithDeleted({ carId });
+  }
+
+  @Query(() => [Car], { description: '차량 리스트 조회 (관리자)' })
+  fetchCarsWithDeleted(): Promise<Car[]> {
+    return this.carService.findAllWithDeleted();
+  }
+
   @Query(() => [PopularCarOutput], { description: '인기 차량 조회' })
   fetchPopularCars(): Promise<PopularCarOutput[]> {
     return this.carService.findPopularAll();
@@ -53,5 +65,10 @@ export class CarResolver {
     const result = await this.carService.delete({ carId });
     if (result) return '차량이 삭제되었습니다';
     else return '삭제를 실패하였습니다';
+  }
+
+  @Mutation(() => Boolean, { description: '계약 기간 연장' })
+  restoreCar(@Args('carId') carId: string): Promise<boolean> {
+    return this.carService.restore({ carId });
   }
 }

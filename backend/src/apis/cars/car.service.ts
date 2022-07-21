@@ -183,4 +183,35 @@ export class CarService {
     const result = await this.carRepository.softDelete({ id: carId });
     return result.affected ? true : false;
   }
+
+  async softDelete(carId: string) {
+    const result = await this.carRepository.softDelete({
+      id: carId,
+    });
+
+    return result.affected ? true : false;
+  }
+
+  async restore({ carId }: { carId: string }): Promise<boolean> {
+    const result = await this.carRepository.restore({
+      id: carId,
+    });
+
+    return result.affected ? true : false;
+  }
+
+  async findOneWithDeleted({ carId }: { carId: string }): Promise<Car> {
+    return await this.carRepository.findOne({
+      where: { id: carId },
+      withDeleted: true,
+      relations: ['carModel', 'carLocation', 'imageCar', 'user'],
+    });
+  }
+
+  async findAllWithDeleted(): Promise<Car[]> {
+    return await this.carRepository.find({
+      withDeleted: true,
+      relations: ['carModel', 'carLocation', 'imageCar', 'user'],
+    });
+  }
 }
