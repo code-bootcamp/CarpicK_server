@@ -1,31 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, getRepository, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ImageStart } from '../imagesStart/entities/imageStart.entity';
 import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
 import * as coolsms from 'coolsms-node-sdk';
 import { IsVaildEmail } from './dto/isValid.output';
 import { ICurrentUser } from 'src/commons/auth/gql-user.param';
-import { StartCarInput } from './dto/startCar.input';
-import { Car } from '../cars/entities/car.entity';
-import { EndCarInput } from './dto/endCar.input';
-import { Reservation } from '../reservations/entities/reservation.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Car)
-    private readonly carRepository: Repository<Car>,
+
     @InjectRepository(ImageStart)
     private readonly imageStartRepository: Repository<ImageStart>,
     @InjectRepository(ImageEnd)
     private readonly imageEndRepository: Repository<ImageEnd>,
-    @InjectRepository(Reservation)
-    private readonly reservationRepository: Repository<Reservation>,
-    private readonly connection: Connection,
   ) {}
 
   async findEmail({ phone }: { phone: string }): Promise<User> {
@@ -37,22 +29,35 @@ export class UserService {
   }
 
   async findUser({ email }: { email: string }): Promise<User> {
-    const now = new Date();
-    return await getRepository(User)
+    const usingUser = await getRepository(User)
       .createQueryBuilder('user')
-      .leftJoinAndMapMany(
-        'user.reservation',
-        'user.reservation',
-        'reservation',
-        'reservation.endTime > :now',
-        { now },
-      )
+      .leftJoinAndSelect('user.reservation', 'reservation')
       .leftJoinAndSelect('reservation.car', 'car')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .where('user.email = :email', { email })
+      .andWhere('reservation.status = :status', { status: 'USING' })
       .getOne();
+    if (usingUser) return usingUser;
+    else {
+      const now = new Date();
+      return await getRepository(User)
+        .createQueryBuilder('user')
+        .leftJoinAndMapMany(
+          'user.reservation',
+          'user.reservation',
+          'reservation',
+          'reservation.endTime > :now',
+          { now },
+        )
+        .leftJoinAndSelect('reservation.car', 'car')
+        .leftJoinAndSelect('car.carLocation', 'carLocation')
+        .leftJoinAndSelect('car.imageCar', 'imageCar')
+        .leftJoinAndSelect('car.carModel', 'carModel')
+        .where('user.email = :email', { email })
+        .getOne();
+    }
   }
 
   async findOwner({ email }: { email: string }): Promise<User> {
@@ -188,106 +193,43 @@ export class UserService {
   }
 
   async start({
-    startCarInput,
+    carId,
+    urls,
     currentUser,
   }: {
-    startCarInput: StartCarInput;
+    carId: string;
+    urls: string[];
     currentUser: ICurrentUser;
   }): Promise<ImageStart[]> {
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction('SERIALIZABLE');
-    try {
-      const { urls, carId, reservationId } = startCarInput;
-      const carFound = await queryRunner.manager.findOne(
-        Car,
-        { id: carId },
-        { lock: { mode: 'pessimistic_write' } },
-      );
-      const car = this.carRepository.create({
-        id: carFound.id,
-        isAvailable: true,
-      });
-      await queryRunner.manager.save(car);
-      const reservationFound = await queryRunner.manager.findOne(
-        Reservation,
-        { id: reservationId },
-        { lock: { mode: 'pessimistic_write' } },
-      );
-      const reservation = this.reservationRepository.create({
-        id: reservationFound.id,
-        status: 'USING',
-      });
-      await queryRunner.manager.save(reservation);
-      const startImage = await Promise.all(
-        urls.map((url: string) => {
-          const startUrl = this.imageStartRepository.create({
-            url,
-            car: { id: carId },
-            user: { id: currentUser.id },
-          });
-          return queryRunner.manager.save(startUrl);
-        }),
-      );
-      await queryRunner.commitTransaction();
-      return startImage;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      return error;
-    } finally {
-      await queryRunner.release();
-    }
+    const startImage = await Promise.all(
+      urls.map((url: string) => {
+        return this.imageStartRepository.save({
+          url,
+          car: { id: carId },
+          user: { id: currentUser.id },
+        });
+      }),
+    );
+    return startImage;
   }
 
   async end({
-    endCarInput,
+    carId,
+    urls,
     currentUser,
   }: {
-    endCarInput: EndCarInput;
+    carId: string;
+    urls: string[];
     currentUser: ICurrentUser;
   }): Promise<ImageEnd[]> {
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction('SERIALIZABLE');
-    try {
-      const { urls, carId, reservationId } = endCarInput;
-      const carFound = await queryRunner.manager.findOne(
-        Car,
-        { id: carId },
-        { lock: { mode: 'pessimistic_write' } },
-      );
-      const car = this.carRepository.create({
-        id: carFound.id,
-        isAvailable: false,
-      });
-      await queryRunner.manager.save(car);
-      const reservationFound = await queryRunner.manager.findOne(
-        Reservation,
-        { id: reservationId },
-        { lock: { mode: 'pessimistic_write' } },
-      );
-      const reservation = this.reservationRepository.create({
-        id: reservationFound.id,
-        status: 'RETURN',
-      });
-      await queryRunner.manager.save(reservation);
-      const endImage = await Promise.all(
-        urls.map((url: string) => {
-          const endUrl = this.imageEndRepository.create({
-            url,
-            car: { id: carId },
-            user: { id: currentUser.id },
-          });
-          return queryRunner.manager.save(endUrl);
-        }),
-      );
-      await queryRunner.commitTransaction();
-      return endImage;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      return error;
-    } finally {
-      await queryRunner.release();
-    }
+    return await Promise.all(
+      urls.map((url: string) => {
+        return this.imageEndRepository.save({
+          url,
+          car: { id: carId },
+          user: { id: currentUser.id },
+        });
+      }),
+    );
   }
 }

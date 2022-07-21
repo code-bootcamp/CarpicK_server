@@ -15,13 +15,17 @@ import { Cache } from 'cache-manager';
 import { IsVaildEmail } from './dto/isValid.output';
 import { StartCarInput } from './dto/startCar.input';
 import { EndCarInput } from './dto/endCar.input';
+import { CarService } from '../cars/car.service';
+import { ReservationService } from '../reservations/reservation.service';
 
 @Resolver()
 export class UserResolver {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
-    private readonly userService: UserService, //
+    private readonly userService: UserService,
+    private readonly carService: CarService,
+    private readonly reservationService: ReservationService,
   ) {}
 
   @Query(() => String, { description: '유저 이메일 조회' })
@@ -176,8 +180,12 @@ export class UserResolver {
     @Args('startCarInput') startCarInput: StartCarInput,
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
+    const { urls, carId, reservationId } = startCarInput;
+    await this.carService.update({ carId, isAvailable: true });
+    await this.reservationService.update({ reservationId, status: 'USING' });
     const result = await this.userService.start({
-      startCarInput,
+      carId,
+      urls,
       currentUser,
     });
     if (result) return '차량 이용이 시작되었습니다';
@@ -190,8 +198,19 @@ export class UserResolver {
     @Args('endCarInput') endCarInput: EndCarInput,
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
-    const result = await this.userService.end({
-      endCarInput,
+    const { urls, carId, reservationId } = endCarInput;
+    await this.carService.update({ carId, isAvailable: false });
+    const reservation = await this.reservationService.findOne({
+      reservationId,
+    });
+    const now = new Date();
+    if (reservation.endTime < now)
+      await this.reservationService.update({ reservationId, status: 'DELAY' });
+    else
+      await this.reservationService.update({ reservationId, status: 'RETURN' });
+    const result = await this.userService.start({
+      carId,
+      urls,
       currentUser,
     });
     if (result) return '차량 이용이 종료되었습니다';

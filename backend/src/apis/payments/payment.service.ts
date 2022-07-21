@@ -30,10 +30,12 @@ export class PaymentService {
   }
 
   async create({
+    reservationId,
     carId,
     paymentInput,
     currentUser,
   }: {
+    reservationId: string;
     carId: string;
     paymentInput: PaymentInput;
     currentUser: ICurrentUser;
@@ -44,6 +46,7 @@ export class PaymentService {
     try {
       const payment = this.paymentRepository.create({
         ...paymentInput,
+        rervation: { id: reservationId },
         user: { id: currentUser.id },
         status: PAYMENT_STATUS_ENUM.PAYMENT,
       });

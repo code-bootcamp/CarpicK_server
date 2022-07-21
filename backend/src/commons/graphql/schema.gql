@@ -140,6 +140,7 @@ type Payment {
   """결제 상태"""
   status: PAYMENT_STATUS_ENUM
   user: User!
+  rervation: Reservation!
 }
 
 enum PAYMENT_STATUS_ENUM {
@@ -202,8 +203,8 @@ type Car {
   """계약종료 시간"""
   contractEnd: DateTime!
 
-  """계약 상태"""
-  status: String
+  """계약 여부"""
+  isVaild: Boolean
 
   """키 사용가능 여부"""
   isAvailable: Boolean
@@ -465,7 +466,7 @@ type Mutation {
     """예약 UUID"""
     reservationId: String!
     paymentInput: PaymentInput!
-  ): Reservation!
+  ): String!
 
   """리뷰 생성"""
   createReview(
