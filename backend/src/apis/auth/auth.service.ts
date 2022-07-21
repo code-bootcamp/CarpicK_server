@@ -45,7 +45,7 @@ export class AuthService {
     );
     res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken}; path=/; domain=.carpick.shop; SameSite=None; Secure; httpOnly;`,
+      `refreshToken=${refreshToken}; path=/; domain=.car-pick.shop; SameSite=None; Secure; httpOnly;`,
     );
   }
 
