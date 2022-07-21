@@ -28,4 +28,7 @@ export class PopularCarOutput {
 
   @Field(() => Float)
   rating: number;
+
+  // @Field(() => [String])
+  // url: string[];
 }
