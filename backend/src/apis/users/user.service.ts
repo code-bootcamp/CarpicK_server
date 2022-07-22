@@ -13,7 +13,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     @InjectRepository(ImageStart)
     private readonly imageStartRepository: Repository<ImageStart>,
     @InjectRepository(ImageEnd)
