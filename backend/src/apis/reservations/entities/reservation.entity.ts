@@ -49,7 +49,7 @@ export class Reservation {
   @Field(() => User)
   user: User;
 
-  @OneToMany(() => Payment, (payment) => payment.rervation)
-  @Field(() => Payment)
-  payment: Payment;
+  @OneToMany(() => Payment, (payment) => payment.reservation)
+  @Field(() => [Payment])
+  payment: Payment[];
 }

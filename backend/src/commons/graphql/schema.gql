@@ -143,7 +143,7 @@ type Payment {
   """결제 상태"""
   status: PAYMENT_STATUS_ENUM
   user: User!
-  rervation: Reservation!
+  reservation: Reservation!
 }
 
 enum PAYMENT_STATUS_ENUM {
@@ -169,7 +169,7 @@ type Reservation {
   status: String
   car: Car!
   user: User!
-  payment: Payment!
+  payment: [Payment!]!
 }
 
 """리뷰 TYPE"""

@@ -46,7 +46,7 @@ export class PaymentService {
     try {
       const payment = this.paymentRepository.create({
         ...paymentInput,
-        rervation: { id: reservationId },
+        reservation: { id: reservationId },
         user: { id: currentUser.id },
         status: PAYMENT_STATUS_ENUM.PAYMENT,
       });
@@ -77,10 +77,12 @@ export class PaymentService {
   }
 
   async cancel({
+    reservationId,
     carId,
     paymentInput,
     currentUser,
   }: {
+    reservationId: string;
     carId: string;
     paymentInput: PaymentInput;
     currentUser: ICurrentUser;
@@ -91,6 +93,7 @@ export class PaymentService {
     try {
       const canceledPayment = this.paymentRepository.create({
         user: { id: currentUser.id },
+        reservation: { id: reservationId },
         impUid: paymentInput.impUid,
         amount: -paymentInput.amount,
         paymentMethod: paymentInput.paymentMethod,

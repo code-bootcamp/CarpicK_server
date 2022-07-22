@@ -107,6 +107,7 @@ export class ReservationResolver {
       reservationId,
     });
     const cancel = await this.paymentService.cancel({
+      reservationId,
       carId: reservation.car.id,
       paymentInput,
       currentUser,
