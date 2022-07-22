@@ -55,5 +55,5 @@ export class Payment {
 
   @ManyToOne(() => Reservation)
   @Field(() => Reservation)
-  rervation: Reservation;
+  reservation: Reservation;
 }
