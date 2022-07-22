@@ -51,17 +51,18 @@ export class UserService {
           'reservation.endTime > :now',
           { now },
         )
+        .leftJoinAndMapMany(
+          'user.reservations',
+          'user.reservation',
+          'reservations',
+          'reservations.status = :status',
+          { status: 'RESERVATION' },
+        )
         .leftJoinAndSelect('reservation.car', 'car')
         .leftJoinAndSelect('car.carLocation', 'carLocation')
         .leftJoinAndSelect('car.imageCar', 'imageCar')
         .leftJoinAndSelect('car.carModel', 'carModel')
         .where('user.email = :email', { email })
-        .andWhere(
-          'reservation.status IS NULL OR reservation.status = :status',
-          {
-            status: 'RESERVATION',
-          },
-        )
         .getOne();
     }
   }
