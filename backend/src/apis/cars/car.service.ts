@@ -62,6 +62,7 @@ export class CarService {
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .where('carLocation.id = :id', { id: carLocationId })
+      .andWhere('car.isValid = :isValid', { isValid: true })
       .orderBy('car.createdAt', 'DESC')
       .take(10)
       .skip(page ? (page - 1) * 10 : 0)
@@ -69,7 +70,7 @@ export class CarService {
   }
 
   async findPopularAll(): Promise<PopularCarOutput[]> {
-    const review = getRepository(Review)
+    const reviewQb = getRepository(Review)
       .createQueryBuilder()
       .subQuery()
       .select([
@@ -82,11 +83,13 @@ export class CarService {
       .getQuery();
     return await getRepository(Car)
       .createQueryBuilder('car')
-      .leftJoin(review, 'review', 'review.carId = car.id')
+      .leftJoin(reviewQb, 'review', 'review.carId = car.id')
       .leftJoinAndSelect('car.user', 'user')
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
-      // .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .leftJoinAndSelect('car.imageCar', 'imageCar')
+      .limit(1)
+      .where('car.isValid = :isValid', { isValid: true })
       .select([
         'car.id AS id',
         'user.name AS ownerName',
@@ -94,7 +97,7 @@ export class CarService {
         'car.price AS price',
         'car.oil AS oil',
         'carModel.name AS carModel',
-        // 'imageCar.url AS url',
+        'imageCar.url AS url',
         'carLocation.addressDetail AS addressDetail',
         'IFNULL(review.reviewNum,0) AS num',
         'IFNULL(review.avg,0) AS rating',
@@ -158,7 +161,7 @@ export class CarService {
         imageRegistration: { id: saveRegistrationUrl.id },
         carModel: { id: carModel.id },
         user: { id: userId },
-        isVaild: moment.duration(now.diff(start)).asHours() > 0 ? true : false,
+        isValid: moment.duration(now.diff(start)).asHours() > 0 ? true : false,
         contractStart,
         ...car,
       });

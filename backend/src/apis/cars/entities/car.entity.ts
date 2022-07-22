@@ -56,7 +56,7 @@ export class Car {
 
   @Column()
   @Field(() => Boolean, { description: '계약 여부', nullable: true })
-  isVaild?: boolean;
+  isValid?: boolean;
 
   @Column({ default: false })
   @Field(() => Boolean, { description: '키 사용가능 여부', nullable: true })
