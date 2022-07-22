@@ -204,7 +204,7 @@ type Car {
   contractEnd: DateTime!
 
   """계약 여부"""
-  isVaild: Boolean
+  isValid: Boolean
 
   """키 사용가능 여부"""
   isAvailable: Boolean
@@ -270,6 +270,7 @@ type PopularCarOutput {
   addressDetail: String!
   num: Int!
   rating: Float!
+  url: String!
 }
 
 """유효이메일 OUTPUT"""
