@@ -58,17 +58,34 @@ export class CarResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String, { description: '차량 삭제' })
+  @Mutation(() => String, { description: '계약 중지' })
   async deleteCar(
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
   ): Promise<string> {
     const result = await this.carService.delete({ carId });
-    if (result) return '차량이 삭제되었습니다';
-    else return '삭제를 실패하였습니다';
+    if (result) return '계약이 중지되었습니다';
+    else return '계약 중지를 실패하였습니다';
   }
 
-  @Mutation(() => Boolean, { description: '계약 기간 연장' })
-  restoreCar(@Args('carId') carId: string): Promise<boolean> {
-    return this.carService.restore({ carId });
+  @Mutation(() => String, { description: '계약 재시작' })
+  async restoreCar(@Args('carId') carId: string): Promise<string> {
+    const result = await this.carService.restore({ carId });
+    if (result) return '계약이 재시작되었습니다';
+    else return '계약 재시작을 실패하였습니다';
+  }
+
+  @Mutation(() => String, { description: '기간 재계약' })
+  async refreshContract(
+    @Args('contractStart') contractStart: Date,
+    @Args('contractEnd') contractEnd: Date,
+    @Args('carId') carId: string,
+  ): Promise<string> {
+    const result = await this.carService.updateContract({
+      carId,
+      contractStart,
+      contractEnd,
+    });
+    if (result) return '재계약 되었습니다';
+    else return '재계약을 실패하였습니다';
   }
 }
