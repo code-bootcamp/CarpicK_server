@@ -14,6 +14,10 @@ export class ImageCar {
   @Field(() => String, { description: 'URL' })
   url: string;
 
+  @Column()
+  @Field(() => Boolean, { description: '메인여부' })
+  isMain: boolean;
+
   @ManyToOne(() => Car)
   @Field(() => Car)
   car: Car;

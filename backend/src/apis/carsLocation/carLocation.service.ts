@@ -20,7 +20,8 @@ export class CarLocationService {
         'car_model',
         'car_model.id = car.carModelId',
       )
-      .where(`lat BETWEEN ${southWestLat} AND ${northEastLat}`)
+      .where('car.isValid = :isValid', { isValid: true })
+      .andWhere(`lat BETWEEN ${southWestLat} AND ${northEastLat}`)
       .andWhere(`lng BETWEEN ${southWestLng} AND ${northEastLng}`);
     if (filter) {
       return await location

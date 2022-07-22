@@ -108,6 +108,9 @@ type ImageCar {
 
   """URL"""
   url: String!
+
+  """메인여부"""
+  isMain: Boolean!
   car: Car!
   carRegistration: CarRegistration!
 }

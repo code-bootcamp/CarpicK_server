@@ -88,8 +88,8 @@ export class CarService {
       .leftJoinAndSelect('car.carModel', 'carModel')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
-      .limit(1)
-      .where('car.isValid = :isValid', { isValid: true })
+      .where('imageCar.isMain = :isMain', { isMain: true })
+      .andWhere('car.isValid = :isValid', { isValid: true })
       .select([
         'car.id AS id',
         'user.name AS ownerName',
