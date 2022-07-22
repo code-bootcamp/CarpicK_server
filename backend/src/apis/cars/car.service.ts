@@ -195,11 +195,11 @@ export class CarService {
     return result.affected ? true : false;
   }
 
-  async softDelete(carId: string) {
+  async softDelete(carId: string): Promise<boolean> {
     const result = await this.carRepository.softDelete({
       id: carId,
     });
-
+    await this.carRepository.update({ id: carId }, { isValid: false });
     return result.affected ? true : false;
   }
 
@@ -207,7 +207,7 @@ export class CarService {
     const result = await this.carRepository.restore({
       id: carId,
     });
-
+    await this.carRepository.update({ id: carId }, { isValid: true });
     return result.affected ? true : false;
   }
 
@@ -236,6 +236,22 @@ export class CarService {
     const result = await this.carRepository.update(
       { id: carId },
       { isAvailable },
+    );
+    return result.affected ? true : false;
+  }
+
+  async updateContract({
+    carId,
+    contractStart,
+    contractEnd,
+  }: {
+    carId: string;
+    contractStart: Date;
+    contractEnd: Date;
+  }): Promise<boolean> {
+    const result = await this.carRepository.update(
+      { id: carId },
+      { contractStart, contractEnd },
     );
     return result.affected ? true : false;
   }
