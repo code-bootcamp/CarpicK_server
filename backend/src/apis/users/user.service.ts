@@ -33,6 +33,7 @@ export class UserService {
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.reservation', 'reservation')
       .leftJoinAndSelect('reservation.car', 'car')
+      .leftJoinAndSelect('reservation.payment', 'payment')
       .leftJoinAndSelect('car.carLocation', 'carLocation')
       .leftJoinAndSelect('car.imageCar', 'imageCar')
       .leftJoinAndSelect('car.carModel', 'carModel')
@@ -59,6 +60,7 @@ export class UserService {
           { status: 'RESERVATION' },
         )
         .leftJoinAndSelect('reservation.car', 'car')
+        .leftJoinAndSelect('reservation.payment', 'payment')
         .leftJoinAndSelect('car.carLocation', 'carLocation')
         .leftJoinAndSelect('car.imageCar', 'imageCar')
         .leftJoinAndSelect('car.carModel', 'carModel')
