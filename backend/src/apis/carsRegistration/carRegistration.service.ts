@@ -67,9 +67,10 @@ export class CarRegistrationService {
       });
       const registration = await queryRunner.manager.save(saveCarRegistration);
       await Promise.allSettled(
-        carUrl.map((address: string) => {
+        carUrl.map((address: string, idx: number) => {
           const url = this.imageCarRepository.create({
             url: address,
+            isMain: idx === 0 ? true : false,
             carRegistration: { id: registration.id },
           });
           return queryRunner.manager.save(url);
