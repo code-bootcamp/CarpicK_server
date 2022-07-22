@@ -211,6 +211,9 @@ type Car {
 
   """키 사용가능 여부"""
   isAvailable: Boolean
+
+  """계약종료 시간"""
+  updatedAt: DateTime!
   carModel: CarModel!
   carLocation: CarLocation!
   reservation: [Reservation!]!
@@ -305,7 +308,10 @@ type Query {
   fetchCarWithDeleted(carId: String!): Car!
 
   """차량 리스트 조회 (관리자)"""
-  fetchCarsWithDeleted: [Car!]!
+  fetchCarsWithDeleted(
+    """페이지 넘버"""
+    page: Int
+  ): [Car!]!
 
   """인기 차량 조회"""
   fetchPopularCars: [PopularCarOutput!]!
@@ -408,14 +414,29 @@ type Mutation {
   """차량 생성"""
   createCar(createCarInput: CreateCarInput!): Car!
 
-  """차량 삭제"""
-  deleteCar(
+  """계약 중지"""
+  stopContract(
     """차량 UUID"""
     carId: String!
   ): String!
 
-  """계약 기간 연장"""
-  restoreCar(carId: String!): Boolean!
+  """계약 재시작"""
+  restartContract(
+    """차량 UUID"""
+    carId: String!
+  ): String!
+
+  """기간 재계약"""
+  refreshContract(
+    """계약시작 시간"""
+    contractStart: DateTime!
+
+    """계약종료 시간"""
+    contractEnd: DateTime!
+
+    """차량 UUID"""
+    carId: String!
+  ): String!
 
   """차종 생성"""
   createCarCategory(createCarCategoryInput: CreateCarCategoryInput!): CarCategory!

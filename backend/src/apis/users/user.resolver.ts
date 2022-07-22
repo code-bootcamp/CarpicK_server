@@ -181,7 +181,7 @@ export class UserResolver {
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
     const { urls, carId, reservationId } = startCarInput;
-    await this.carService.update({ carId, isAvailable: true });
+    await this.carService.updateIsAvailable({ carId, isAvailable: true });
     await this.reservationService.update({ reservationId, status: 'USING' });
     const result = await this.userService.start({
       carId,
@@ -199,7 +199,7 @@ export class UserResolver {
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
     const { urls, carId, reservationId } = endCarInput;
-    await this.carService.update({ carId, isAvailable: false });
+    await this.carService.updateIsAvailable({ carId, isAvailable: false });
     const reservation = await this.reservationService.findOne({
       reservationId,
     });

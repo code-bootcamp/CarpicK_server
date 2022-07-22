@@ -190,27 +190,6 @@ export class CarService {
     }
   }
 
-  async delete({ carId }: { carId: string }): Promise<boolean> {
-    const result = await this.carRepository.softDelete({ id: carId });
-    return result.affected ? true : false;
-  }
-
-  async softDelete(carId: string) {
-    const result = await this.carRepository.softDelete({
-      id: carId,
-    });
-
-    return result.affected ? true : false;
-  }
-
-  async restore({ carId }: { carId: string }): Promise<boolean> {
-    const result = await this.carRepository.restore({
-      id: carId,
-    });
-
-    return result.affected ? true : false;
-  }
-
   async findOneWithDeleted({ carId }: { carId: string }): Promise<Car> {
     return await this.carRepository.findOne({
       where: { id: carId },
@@ -219,14 +198,17 @@ export class CarService {
     });
   }
 
-  async findAllWithDeleted(): Promise<Car[]> {
+  async findAllWithDeleted({ page }): Promise<Car[]> {
     return await this.carRepository.find({
       withDeleted: true,
       relations: ['carModel', 'carLocation', 'imageCar', 'user'],
+      order: { createdAt: 'DESC' },
+      take: 10,
+      skip: page ? (page - 1) * 10 : 0,
     });
   }
 
-  async update({
+  async updateIsAvailable({
     carId,
     isAvailable,
   }: {
@@ -236,6 +218,40 @@ export class CarService {
     const result = await this.carRepository.update(
       { id: carId },
       { isAvailable },
+    );
+    return result.affected ? true : false;
+  }
+
+  async updateIsValid({
+    carId,
+    isValid,
+  }: {
+    carId: string;
+    isValid: boolean;
+  }): Promise<boolean> {
+    const result = await this.carRepository.update({ id: carId }, { isValid });
+    return result.affected ? true : false;
+  }
+
+  async updateContract({
+    carId,
+    contractStart,
+    contractEnd,
+  }: {
+    carId: string;
+    contractStart: Date;
+    contractEnd: Date;
+  }): Promise<boolean> {
+    await this.carRepository.restore({ id: carId });
+    const now = moment(new Date());
+    const start = moment(contractStart);
+    const result = await this.carRepository.update(
+      { id: carId },
+      {
+        contractStart,
+        contractEnd,
+        isValid: moment.duration(now.diff(start)).asHours() > 0 ? true : false,
+      },
     );
     return result.affected ? true : false;
   }
