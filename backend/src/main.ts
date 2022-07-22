@@ -6,7 +6,7 @@ import { AppLocalModule } from './appLocal.module';
 import { HttpExcptionFilter } from './commons/filter/http-exception.filter';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppLocalModule);
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExcptionFilter());
   app.use(graphqlUploadExpress());
