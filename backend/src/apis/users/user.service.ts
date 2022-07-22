@@ -49,15 +49,8 @@ export class UserService {
           'user.reservation',
           'user.reservation',
           'reservation',
-          'reservation.endTime > :now',
-          { now },
-        )
-        .leftJoinAndMapMany(
-          'user.reservations',
-          'user.reservation',
-          'reservations',
-          'reservations.status = :status',
-          { status: 'RESERVATION' },
+          'reservation.endTime > :now AND reservation.status = :status',
+          { now, status: 'RESERVATION' },
         )
         .leftJoinAndSelect('reservation.car', 'car')
         .leftJoinAndSelect('reservation.payment', 'payment')
