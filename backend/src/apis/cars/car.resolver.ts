@@ -55,6 +55,11 @@ export class CarResolver {
     return this.carService.findPopularAll();
   }
 
+  @Query(() => Int, { description: '차량 수' })
+  fetchCarCount(): Promise<number> {
+    return this.carService.count();
+  }
+
   @Mutation(() => Car, { description: '차량 생성' })
   createCar(
     @Args('createCarInput')
