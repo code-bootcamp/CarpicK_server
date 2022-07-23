@@ -107,6 +107,12 @@ export class CarService {
       .getRawMany();
   }
 
+  async count(): Promise<number> {
+    return await this.carRepository.count({
+      withDeleted: true,
+    });
+  }
+
   async create({
     createCarInput,
   }: {
