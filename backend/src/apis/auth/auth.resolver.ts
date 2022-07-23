@@ -57,6 +57,20 @@ export class AuthResolver {
     return this.authService.getAccessToken({ admin });
   }
 
+  @Mutation(() => String, { description: '구글 로그인' })
+  async googleLogin(@Context() context: any): Promise<string> {
+    const accessToken = context.req.headers.authorization.replace(
+      'Bearer ',
+      '',
+    );
+    console.log('accessToken=', accessToken);
+    const gUser = await this.authService.getGoogleUser({ accessToken });
+    console.log('gUser===', gUser);
+    const user = await this.authService.socialLogin({ gUser });
+    console.log('user===', user);
+    return this.authService.getAppAccessToken({ user });
+  }
+
   @UseGuards(GqlAuthRefreshGuard)
   @Mutation(() => String, { description: '엑세스 토큰 재발급' })
   restoreAccessToken(

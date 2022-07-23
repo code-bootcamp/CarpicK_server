@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/user.service';
+import axios from 'axios';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 import { User } from '../users/entities/user.entity';
@@ -49,17 +50,30 @@ export class AuthService {
     );
   }
 
-  async socialLogin(req: any): Promise<void> {
-    let user = await this.userService.findOne({ email: req.user.email });
-    const hashedPassword = await bcrypt.hash(req.user.password, 10);
-    if (!user) {
-      user = await this.userService.create({
-        email: req.user.email,
+  async getGoogleUser({ accessToken }: { accessToken: string }): Promise<any> {
+    const userReq = await axios({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log('userData==', userReq.data);
+    return userReq.data;
+  }
+
+  async socialLogin({ gUser }): Promise<User> {
+    let userFound = await this.userService.findOne({ email: gUser.email });
+    const hashedPassword = await bcrypt.hash(gUser.id, 10);
+    if (!userFound) {
+      userFound = await this.userService.create({
+        email: gUser.email,
         hashedPassword,
-        name: req.user.name,
-        phone: req.user.phone,
+        name: gUser.name,
+        phone: '01012341234',
         isAuth: false,
       });
     }
+    return userFound;
   }
 }
