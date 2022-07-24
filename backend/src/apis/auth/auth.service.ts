@@ -58,6 +58,14 @@ export class AuthService {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    const userPone = await axios({
+      url: 'https://www.googleapis.com/auth/user.phonenumbers.read',
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log('userPone==', userPone);
     console.log('userData==', userReq.data);
     return userReq.data;
   }
@@ -70,7 +78,7 @@ export class AuthService {
         email: gUser.email,
         hashedPassword,
         name: gUser.name,
-        phone: '01012341234',
+        phone: gUser.id,
         isAuth: false,
       });
     }
