@@ -64,17 +64,21 @@ export class ReservationResolver {
       access_token,
       impUid: paymentInput.impUid,
     });
+
     const { amount } = paymentData;
     if (amount !== paymentInput.amount)
       throw new UnprocessableEntityException('유효하지 않은 결제입니다');
+
     const isAuth = await this.paymentService.findOne({
       impUid: paymentInput.impUid,
     });
     if (isAuth) throw new ConflictException('이미 처리된 결제입니다');
+
     const resevation = await this.reservationService.create({
       currentUser,
       createReservationInput,
     });
+
     await this.paymentService.create({
       reservationId: resevation.id,
       carId: createReservationInput.carId,
@@ -95,30 +99,35 @@ export class ReservationResolver {
     const payment = await this.paymentService.findAll({
       impUid: paymentInput.impUid,
     });
+
     if (payment.length === 2)
       throw new UnprocessableEntityException('이미 취소된 결제입니다');
+
     const access_token = await this.iamportService.getToken();
+
     await this.iamportService.cancel({
       access_token,
       impUid: paymentInput.impUid,
       amount: paymentInput.amount,
     });
+
     const reservation = await this.reservationService.findOne({
       reservationId,
     });
-    const cancel = await this.paymentService.cancel({
+
+    await this.paymentService.cancel({
       reservationId,
       carId: reservation.car.id,
       paymentInput,
       currentUser,
     });
-    if (cancel) {
-      const result = await this.reservationService.update({
-        reservationId,
-        status: 'CANCEL',
-      });
-      if (result) return '취소되었습니다';
-      else return '취소를 실패하였습니다';
-    }
+
+    const result = await this.reservationService.update({
+      reservationId,
+      status: 'CANCEL',
+    });
+
+    if (result) return '취소되었습니다';
+    else return '취소를 실패하였습니다';
   }
 }

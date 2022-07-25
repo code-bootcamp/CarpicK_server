@@ -11,6 +11,7 @@ export class CarModelResolver {
     private readonly carModelService: CarModelService, //
   ) {}
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => CarModel, { description: '모델 생성' })
   createCarModel(
     @Args('createCarModelInput') createCarModelInput: CreateCarModelInput, //

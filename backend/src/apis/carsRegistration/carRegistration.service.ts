@@ -53,19 +53,23 @@ export class CarRegistrationService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
+
     try {
       const { carUrl, registrationUrl, ...carRegistration } =
         createCarRegistrationInput;
+
       const saveRegistrationUrl = this.imageRegistrationRepository.create({
         url: registrationUrl,
       });
       await queryRunner.manager.save(saveRegistrationUrl);
+
       const saveCarRegistration = this.carRegistrationRepository.create({
         user: { id: currentUser.id },
         imageRegistration: { id: saveRegistrationUrl.id },
         ...carRegistration,
       });
       const registration = await queryRunner.manager.save(saveCarRegistration);
+
       await Promise.allSettled(
         carUrl.map((address: string, idx: number) => {
           const url = this.imageCarRepository.create({
@@ -76,6 +80,7 @@ export class CarRegistrationService {
           return queryRunner.manager.save(url);
         }),
       );
+
       await queryRunner.commitTransaction();
       return saveCarRegistration;
     } catch (error) {
@@ -96,7 +101,6 @@ export class CarRegistrationService {
     const savedCarRegistration = await this.carRegistrationRepository.findOne({
       where: { id: carRegistrationId },
     });
-
     return await this.carRegistrationRepository.save({
       ...savedCarRegistration,
       status,

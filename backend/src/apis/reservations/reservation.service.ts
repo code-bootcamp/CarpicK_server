@@ -77,6 +77,7 @@ export class ReservationService {
     createReservationInput: CreateReservationInput;
   }): Promise<Reservation> {
     const { carId, ...reservation } = createReservationInput;
+
     return await this.reservationRepository.save({
       user: { id: currentUser.id },
       car: { id: carId },

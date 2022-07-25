@@ -36,8 +36,10 @@ export class AuthResolver {
     const user = await this.userService.findOne({ email });
     if (!user)
       throw new UnprocessableEntityException('존재하지 않는 이메일입니다');
+
     const isAuth = await bcrpypt.compare(password, user.password);
     if (!isAuth) throw new UnprocessableEntityException('암호가 틀렸습니다');
+
     return this.authService.getAppAccessToken({ user });
   }
 
@@ -51,9 +53,12 @@ export class AuthResolver {
     const admin = await this.administratorService.findOne({ adminId });
     if (!admin)
       throw new UnprocessableEntityException('존재하지 않는 아이디입니다');
+
     const isAuth = await bcrpypt.compare(password, admin.password);
     if (!isAuth) throw new UnprocessableEntityException('암호가 틀렸습니다');
+
     this.authService.setRefreshToken({ admin, res: context.req.res });
+
     return this.authService.getAccessToken({ admin });
   }
 
@@ -63,11 +68,10 @@ export class AuthResolver {
       'Bearer ',
       '',
     );
-    console.log('accessToken=', accessToken);
     const gUser = await this.authService.getGoogleUser({ accessToken });
-    console.log('gUser===', gUser);
+
     const user = await this.authService.socialLogin({ gUser });
-    console.log('user===', user);
+
     return this.authService.getAppAccessToken({ user });
   }
 
@@ -88,6 +92,7 @@ export class AuthResolver {
       'Bearer ',
       '',
     );
+
     try {
       const verifiedAccessToken = jwt.verify(
         accessToken,
@@ -99,6 +104,7 @@ export class AuthResolver {
     } catch {
       throw new UnauthorizedException();
     }
+
     return '로그아웃 되었습니다';
   }
 
@@ -115,6 +121,7 @@ export class AuthResolver {
       'refreshToken=',
       '',
     );
+
     try {
       const verifiedAccessToken = jwt.verify(
         accessToken,
@@ -133,6 +140,7 @@ export class AuthResolver {
     } catch {
       throw new UnauthorizedException();
     }
+
     return '로그아웃 되었습니다';
   }
 }

@@ -24,6 +24,7 @@ export class CarCategoryService {
       relations: ['carModel'],
     });
   }
+
   async delete({ carCategoryId }: { carCategoryId: string }): Promise<boolean> {
     const result = await this.carCategoryRepository.delete({
       id: carCategoryId,

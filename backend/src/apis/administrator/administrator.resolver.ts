@@ -17,6 +17,7 @@ export class AdministratorResolver {
   ): Promise<Administrator> {
     const { password, adminId } = createAdministratorInput;
     const hashedPassword = await bcrypt.hash(password, 10);
+
     return this.administratorService.create({ hashedPassword, adminId });
   }
 }

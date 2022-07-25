@@ -81,6 +81,7 @@ export class CarService {
       .from(Review, 'review')
       .groupBy('review.carId')
       .getQuery();
+
     return await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoin(reviewQb, 'review', 'review.carId = car.id')
@@ -121,6 +122,7 @@ export class CarService {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('SERIALIZABLE');
+
     try {
       const {
         userId,
@@ -131,17 +133,14 @@ export class CarService {
         contractStart,
         ...car
       } = createCarInput;
+
       let location: CarLocation;
       const saveLocation = await queryRunner.manager.findOne(
         CarLocation,
         { address: carLocation.address },
         { lock: { mode: 'pessimistic_write' } },
       );
-      const carModel = await queryRunner.manager.findOne(
-        CarModel,
-        { name: carModelName },
-        { lock: { mode: 'pessimistic_write' } },
-      );
+
       if (!saveLocation) {
         const newlocation = this.carLocationRepository.create({
           ...carLocation,
@@ -151,17 +150,27 @@ export class CarService {
         location = saveLocation;
       }
       await queryRunner.manager.save(location);
+
       const saveRegistrationUrl = await queryRunner.manager.findOne(
         ImageRegistration,
         { url: registrationUrl },
         { lock: { mode: 'pessimistic_write' } },
       );
+
       if (!saveRegistrationUrl)
         throw new UnprocessableEntityException(
           '사용자가 등록한 이미지와 다릅니다',
         );
+
+      const carModel = await queryRunner.manager.findOne(
+        CarModel,
+        { name: carModelName },
+        { lock: { mode: 'pessimistic_write' } },
+      );
+
       const now = moment(new Date());
       const start = moment(contractStart);
+
       const CarInfo = this.carRepository.create({
         carLocation: { id: location.id },
         imageRegistration: { id: saveRegistrationUrl.id },
@@ -172,6 +181,7 @@ export class CarService {
         ...car,
       });
       await queryRunner.manager.save(CarInfo);
+
       await Promise.all(
         carUrl.map(async (address: string) => {
           const savedUrl = await queryRunner.manager.findOne(
