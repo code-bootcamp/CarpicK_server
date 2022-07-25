@@ -42,7 +42,15 @@ import { TasksModule } from './apis/tasks/tasks.module';
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
       cors: {
-        origin: '*',
+        origin: [process.env.CORS_ORIGIN_DEV, process.env.CORS_ORIGIN_PROD],
+        methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+        allowedHeaders: [
+          'Access-Control-Allow-Headers',
+          'Authorization',
+          'X-Requested-With',
+          'Content-Type',
+          'Accept',
+        ],
         credentials: true,
       },
     }),
