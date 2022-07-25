@@ -11,7 +11,15 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExcptionFilter());
   app.use(graphqlUploadExpress());
   app.enableCors({
-    origin: '*',
+    origin: [process.env.CORS_ORIGIN_DEV, process.env.CORS_ORIGIN_PROD],
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: [
+      'Access-Control-Allow-Headers',
+      'Authorization',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+    ],
     credentials: true,
   });
   await app.listen(3000);
