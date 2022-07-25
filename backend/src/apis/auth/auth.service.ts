@@ -34,7 +34,7 @@ export class AuthService {
       { email: admin.adminId, id: admin.id },
       { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
     );
-
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader(
       'Set-Cookie',
       `refreshToken=${refreshToken}; path=/; domain=.car-pick.shop; SameSite=None; Secure; httpOnly;`,
