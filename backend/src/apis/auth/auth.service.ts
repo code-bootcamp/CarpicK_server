@@ -34,10 +34,7 @@ export class AuthService {
       { email: admin.adminId, id: admin.id },
       { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
     );
-    // dev
-    // res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/`);
-    // deploy
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
     res.setHeader(
@@ -58,15 +55,6 @@ export class AuthService {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const userPone = await axios({
-      url: 'https://www.googleapis.com/auth/user.phonenumbers.read',
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    console.log('userPone==', userPone);
-    console.log('userData==', userReq.data);
     return userReq.data;
   }
 

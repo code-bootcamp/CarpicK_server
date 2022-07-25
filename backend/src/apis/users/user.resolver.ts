@@ -64,9 +64,11 @@ export class UserResolver {
   ): Promise<string> {
     const token = this.userService.getToken();
     // const req = await this.userService.sendToken({ phone, token });
+
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
+
     return `{phone:${phone},token:${token}}`;
     // else return '토큰 전송을 실패하였습니다';
   }
@@ -76,6 +78,7 @@ export class UserResolver {
     @Args({ name: 'token', description: '토큰' }) token: string,
   ): Promise<boolean> {
     const tokenCache = await this.cacheManager.get(token);
+
     return tokenCache ? true : false;
   }
 
@@ -84,16 +87,21 @@ export class UserResolver {
     @Args('createUserInput') createUserInput: CreateUserInput, //
   ): Promise<User> {
     const { email, password, ...info } = createUserInput;
+
     const emailRegExp =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+
     if (!emailRegExp.test(email))
       throw new UnprocessableEntityException('이메일 형식에 맞게 입력해주세요');
+
     if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     return this.userService.create({ email, hashedPassword, ...info });
   }
 
@@ -103,15 +111,20 @@ export class UserResolver {
     @Args({ name: 'password', description: '비밀번호' }) password: string,
   ): Promise<string> {
     const user = await this.userService.findOne({ email });
+
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
+
     const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
     if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await this.userService.reset({ hashedPassword, user });
+
     if (result) return '비밀번호가 재설정되었습니다';
     else return '재설정을 실패하였습니다';
   }
@@ -123,18 +136,23 @@ export class UserResolver {
     @Args({ name: 'password', description: '비밀번호' }) password: string,
   ): Promise<string> {
     const user = await this.userService.findOne({ email: currentUser.email });
+
     const isAuth = await bcrypt.compare(password, user.password);
     if (isAuth) throw new UnprocessableEntityException('기존 비밀번호 입니다');
+
     const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
     if (!passwordRegExp.test(password))
       throw new UnprocessableEntityException(
         '비밀번호는 8-16자이고, 영문, 숫자가 포함되어야 합니다',
       );
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await this.userService.updatePwd({
       hashedPassword,
       currentUser,
     });
+
     if (result) return '비밀번호가 변경되었습니다';
     else return '변경을 실패하였습니다.';
   }
@@ -146,9 +164,12 @@ export class UserResolver {
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
   ): Promise<string> {
     const user = await this.userService.findOne({ email: currentUser.email });
+
     if (phone === user.phone)
       throw new UnprocessableEntityException('기존 전화번호 입니다');
+
     const result = await this.userService.updatePhone({ phone, currentUser });
+
     if (result) return '핸드폰 번호가 변경되었습니다';
     else return '변경을 실패하였습니다';
   }
@@ -160,6 +181,7 @@ export class UserResolver {
     @Args({ name: 'isAuth', description: '면허인증 여부' }) isAuth: boolean,
   ): Promise<string> {
     const result = await this.userService.updateIsAuth({ isAuth, currentUser });
+
     if (result) return '면허증이 등록되었습니다';
     else return '등록을 실패하였습니다';
   }
@@ -170,6 +192,7 @@ export class UserResolver {
     @CurrentUser() currentUser: any, //
   ): Promise<string> {
     const result = await this.userService.deleteUser({ currentUser });
+
     if (result) return '로그인한 계정이 삭제되었습니다';
     else return '삭제에 실패하였습니다.';
   }
@@ -181,13 +204,17 @@ export class UserResolver {
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
     const { urls, carId, reservationId } = startCarInput;
+
     await this.carService.updateIsAvailable({ carId, isAvailable: true });
+
     await this.reservationService.update({ reservationId, status: 'USING' });
+
     const result = await this.userService.start({
       carId,
       urls,
       currentUser,
     });
+
     if (result) return '차량 이용이 시작되었습니다';
     else return '키 발급을 실패하였습니다';
   }
@@ -199,20 +226,26 @@ export class UserResolver {
     @CurrentUser() currentUser: ICurrentUser,
   ): Promise<string> {
     const { urls, carId, reservationId } = endCarInput;
+
     await this.carService.updateIsAvailable({ carId, isAvailable: false });
+
     const reservation = await this.reservationService.findOne({
       reservationId,
     });
+
     const now = new Date();
+
     if (reservation.endTime < now)
       await this.reservationService.update({ reservationId, status: 'DELAY' });
     else
       await this.reservationService.update({ reservationId, status: 'RETURN' });
+
     const result = await this.userService.start({
       carId,
       urls,
       currentUser,
     });
+
     if (result) return '차량 이용이 종료되었습니다';
     else return '키 반납을 실패하였습니다';
   }
