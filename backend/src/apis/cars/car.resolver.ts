@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CarService } from './car.service';
 import { CreateCarInput } from './dto/createCar.input';
 import { PopularCarOutput } from './dto/popularCar.output';
@@ -30,6 +32,7 @@ export class CarResolver {
     return this.carService.findAll({ carLocationId, page });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => Car, { description: '차량 조회 (관리자)' })
   fetchCarWithDeleted(
     @Args('carId') carId: string, //
@@ -37,6 +40,7 @@ export class CarResolver {
     return this.carService.findOneWithDeleted({ carId });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Car], { description: '차량 리스트 조회 (관리자)' })
   fetchCarsWithDeleted(
     @Args({
@@ -55,11 +59,13 @@ export class CarResolver {
     return this.carService.findPopularAll();
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => Int, { description: '차량 수' })
   fetchCarCount(): Promise<number> {
     return this.carService.count();
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Car, { description: '차량 생성' })
   createCar(
     @Args('createCarInput')
@@ -68,6 +74,7 @@ export class CarResolver {
     return this.carService.create({ createCarInput });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '계약 중지' })
   async stopContract(
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
@@ -76,10 +83,12 @@ export class CarResolver {
       carId,
       isValid: false,
     });
+
     if (result) return '계약이 중지되었습니다';
     else return '계약 중지를 실패하였습니다';
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '계약 재시작' })
   async restartContract(
     @Args({ name: 'carId', description: '차량 UUID' }) carId: string,
@@ -88,10 +97,12 @@ export class CarResolver {
       carId,
       isValid: true,
     });
+
     if (result) return '계약이 재시작되었습니다';
     else return '계약 재시작을 실패하였습니다';
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '기간 재계약' })
   async refreshContract(
     @Args({ name: 'contractStart', description: '계약시작 시간' })
@@ -105,6 +116,7 @@ export class CarResolver {
       contractStart,
       contractEnd,
     });
+
     if (result) return '재계약 되었습니다';
     else return '재계약을 실패하였습니다';
   }

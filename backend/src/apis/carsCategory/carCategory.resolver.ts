@@ -11,11 +11,13 @@ export class CarCategoryResolver {
     private readonly carCategoryService: CarCategoryService, //
   ) {}
 
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [CarCategory], { description: '차종 조회' })
   fetchCarCategory(): Promise<CarCategory[]> {
     return this.carCategoryService.findAll();
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => CarCategory, { description: '차종 생성' })
   createCarCategory(
     @Args('createCarCategoryInput')

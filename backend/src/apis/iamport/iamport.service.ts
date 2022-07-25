@@ -17,6 +17,7 @@ export class IamportService {
         imp_secret: IMP_API_SECRET,
       },
     });
+
     const { access_token } = token.data.response;
     return access_token;
   }
@@ -43,6 +44,7 @@ export class IamportService {
         amount,
       },
     });
+
     const { response } = getCancelData.data;
     return response;
   }

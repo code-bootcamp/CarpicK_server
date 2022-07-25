@@ -11,10 +11,12 @@ interface IFile {
 export class FileService {
   async upload({ files }: IFile): Promise<unknown[]> {
     const waitedFiles = await Promise.all(files);
+
     const storage = new Storage({
       projectId: process.env.STORAGE_PROJECT_ID,
       keyFilename: process.env.STORAGE_KEY_FILENAME,
     }).bucket(process.env.STORAGE_BUCKET);
+
     const url = await Promise.all(
       waitedFiles.map((file) => {
         return new Promise((resolve, reject) => {

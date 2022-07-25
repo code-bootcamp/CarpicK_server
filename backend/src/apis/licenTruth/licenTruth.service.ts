@@ -20,6 +20,7 @@ export class LicenTruthService {
     const key = new NodeRSA(
       '-----BEGIN PUBLIC KEY-----\n' + publicKey + '\n-----END PUBLIC KEY-----',
     );
+
     key.setOptions({ encryptionScheme: 'pkcs1' });
     return key.encrypt(aesKey, 'base64', 'utf8');
   }
@@ -32,6 +33,7 @@ export class LicenTruthService {
     const options = {
       json: true,
     };
+
     const response = Request('GET', uri, options);
     const rsaPublicKey = JSON.parse(response.getBody('utf8')).PublicKey;
     return rsaPublicKey;

@@ -24,7 +24,9 @@ export class PaymentResolver {
     const reservation = await this.reservationService.findOne({
       reservationId,
     });
+
     await this.reservationService.update({ reservationId, status: 'RETURN' });
+
     return await this.paymentService.create({
       reservationId,
       carId: reservation.car.id,
