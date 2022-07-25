@@ -17,6 +17,7 @@ export class TasksService {
   })
   async runEveryMinute(): Promise<void> {
     const now = moment(new Date()).format('YYYY-MM-DD');
+
     const startQb = getRepository(Car)
       .createQueryBuilder()
       .subQuery()
@@ -27,6 +28,7 @@ export class TasksService {
       .from(Car, 'car')
       .groupBy('car.id')
       .getQuery();
+
     const endQb = getRepository(Car)
       .createQueryBuilder()
       .subQuery()
@@ -34,21 +36,25 @@ export class TasksService {
       .from(Car, 'car')
       .groupBy('car.id')
       .getQuery();
+
     const startCars = await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoinAndSelect(startQb, 'start', 'start.carId = car.id')
       .where('start.contractStart = :now', { now })
       .getMany();
+
     const endCars = await getRepository(Car)
       .createQueryBuilder('car')
       .leftJoinAndSelect(endQb, 'end', 'end.carId = car.id')
       .where('end.contractEnd = :now', { now })
       .getMany();
+
     await Promise.all(
       startCars.map((car) => {
         return this.carRepository.update({ id: car.id }, { isValid: true });
       }),
     );
+
     await Promise.all(
       endCars.map(async (car) => {
         await this.carRepository.update({ id: car.id }, { isValid: false });
