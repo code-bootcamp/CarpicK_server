@@ -66,7 +66,6 @@ export class Car {
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field(() => Date, { description: '계약종료 시간' })
   updatedAt: Date;
 
   @DeleteDateColumn()

@@ -12,7 +12,7 @@ export class CarModelResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => CarModel, { description: '모델 생성' })
+  @Mutation(() => CarModel, { description: '모델 생성 (관리자)' })
   createCarModel(
     @Args('createCarModelInput') createCarModelInput: CreateCarModelInput, //
   ): Promise<CarModel> {
@@ -20,7 +20,7 @@ export class CarModelResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Boolean, { description: '모델 삭제' })
+  @Mutation(() => Boolean, { description: '모델 삭제 (관리자)' })
   deleteCarModel(
     @Args({ name: 'carModelId', description: '모델 UUID' }) carModelId: string, //
   ): Promise<boolean> {

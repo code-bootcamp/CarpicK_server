@@ -13,7 +13,7 @@ export class CarRegistrationResolver {
   ) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => CarRegistration, { description: '등록 차량 조회' })
+  @Query(() => CarRegistration, { description: '등록 차량 조회 (관리자)' })
   fetchCarRegistration(
     @Args({ name: 'carRegistrationId', description: '등록 차량 UUID' })
     carRegistrationId: string,
@@ -22,7 +22,9 @@ export class CarRegistrationResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => [CarRegistration], { description: '등록 차량 리스트 조회' })
+  @Query(() => [CarRegistration], {
+    description: '등록 차량 리스트 조회 (관리자)',
+  })
   fetchCarRegistrations(
     @Args({
       name: 'page',
@@ -36,7 +38,7 @@ export class CarRegistrationResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => Int, { description: '등록 차량 수' })
+  @Query(() => Int, { description: '등록 차량 수 (관리자)' })
   fetchCarRegistrationCount(): Promise<number> {
     return this.carRegistrationService.count();
   }

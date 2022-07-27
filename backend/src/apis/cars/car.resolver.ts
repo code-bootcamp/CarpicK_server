@@ -60,7 +60,7 @@ export class CarResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => Int, { description: '차량 수' })
+  @Query(() => Int, { description: '차량 수 조회 (관리자)' })
   fetchCarCount(): Promise<number> {
     return this.carService.count();
   }

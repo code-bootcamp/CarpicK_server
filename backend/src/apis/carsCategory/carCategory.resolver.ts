@@ -18,7 +18,7 @@ export class CarCategoryResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => CarCategory, { description: '차종 생성' })
+  @Mutation(() => CarCategory, { description: '차종 생성 (관리자)' })
   createCarCategory(
     @Args('createCarCategoryInput')
     createCarCategoryInput: CreateCarCategoryInput, //
@@ -27,7 +27,7 @@ export class CarCategoryResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Boolean, { description: '차종 삭제' })
+  @Mutation(() => Boolean, { description: '차종 삭제 (관리자)' })
   deleteCarCategory(
     @Args({ name: 'carCategoryId', description: '차종 UUID' })
     carCategoryId: string, //
