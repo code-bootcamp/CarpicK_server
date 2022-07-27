@@ -63,6 +63,7 @@ export class ReservationService {
         'user',
         'payment',
       ],
+      withDeleted: true,
       order: { createdAt: 'DESC' },
       take: 10,
       skip: page ? (page - 1) * 10 : 0,
