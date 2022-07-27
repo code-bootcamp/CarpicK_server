@@ -160,7 +160,7 @@ export class UserResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String, { description: '핸드폰번호 변경' })
   async updateUserPhone(
-    @CurrentUser() currentUser: ICurrentUser, //
+    @CurrentUser() currentUser: ICurrentUser,
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
   ): Promise<string> {
     const user = await this.userService.findOne({ email: currentUser.email });
