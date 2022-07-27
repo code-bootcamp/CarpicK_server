@@ -136,11 +136,12 @@ export class UserService {
   }: {
     hashedPassword: string;
     user: User;
-  }): Promise<User> {
-    return await this.userRepository.save({
-      id: user.id,
-      password,
-    });
+  }): Promise<boolean> {
+    const result = await this.userRepository.update(
+      { id: user.id },
+      { password },
+    );
+    return result.affected ? true : false;
   }
 
   async updatePwd({
@@ -149,11 +150,12 @@ export class UserService {
   }: {
     hashedPassword: string;
     currentUser: ICurrentUser;
-  }): Promise<User> {
-    return await this.userRepository.save({
-      password,
-      id: currentUser.id,
-    });
+  }): Promise<boolean> {
+    const result = await this.userRepository.update(
+      { id: currentUser.id },
+      { password },
+    );
+    return result.affected ? true : false;
   }
 
   async updatePhone({
@@ -162,11 +164,12 @@ export class UserService {
   }: {
     phone: string;
     currentUser: ICurrentUser;
-  }): Promise<User> {
-    return await this.userRepository.save({
-      phone,
-      id: currentUser.id,
-    });
+  }): Promise<boolean> {
+    const result = await this.userRepository.update(
+      { id: currentUser.id },
+      { phone },
+    );
+    return result.affected ? true : false;
   }
 
   async updateIsAuth({
@@ -175,11 +178,12 @@ export class UserService {
   }: {
     isAuth: boolean;
     currentUser: ICurrentUser;
-  }): Promise<User> {
-    return await this.userRepository.save({
-      isAuth,
-      id: currentUser.id,
-    });
+  }): Promise<boolean> {
+    const result = await this.userRepository.update(
+      { id: currentUser.id },
+      { isAuth },
+    );
+    return result.affected ? true : false;
   }
 
   async deleteUser({

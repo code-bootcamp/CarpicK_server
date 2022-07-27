@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as moment from 'moment';
@@ -11,6 +11,8 @@ export class TasksService {
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
   ) {}
+
+  private readonly logger = new Logger(TasksService.name);
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
     timeZone: 'Asia/Seoul',
@@ -50,15 +52,17 @@ export class TasksService {
       .getMany();
 
     await Promise.all(
-      startCars.map((car) => {
-        return this.carRepository.update({ id: car.id }, { isValid: true });
+      startCars.map(async (car) => {
+        await this.carRepository.update({ id: car.id }, { isValid: true });
+        return this.logger.log(`차량ID ${car.id}의 계약이 시작되었습니다`);
       }),
     );
 
     await Promise.all(
       endCars.map(async (car) => {
         await this.carRepository.update({ id: car.id }, { isValid: false });
-        return await this.carRepository.softDelete({ id: car.id });
+        await this.carRepository.softDelete({ id: car.id });
+        return this.logger.log(`차량ID ${car.id}의 계약이 종료되었습니다`);
       }),
     );
   }
