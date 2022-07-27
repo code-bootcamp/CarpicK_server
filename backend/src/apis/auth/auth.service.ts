@@ -29,12 +29,29 @@ export class AuthService {
     );
   }
 
-  setRefreshToken({ admin, res }: { admin: Administrator; res: any }): void {
+  setRefreshToken({
+    admin,
+    res,
+    req,
+  }: {
+    admin: Administrator;
+    res: any;
+    req: any;
+  }): void {
     const refreshToken = this.jwtService.sign(
       { email: admin.adminId, id: admin.id },
       { secret: process.env.REFRESH_TOKEN_KEY, expiresIn: '2w' },
     );
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+    const allowedOrigins = [
+      process.env.CORS_ORIGIN_DEV,
+      process.env.CORS_ORIGIN_PROD,
+    ];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
     res.setHeader(
       'Set-Cookie',
       `refreshToken=${refreshToken}; path=/; domain=.car-pick.shop; SameSite=None; Secure; httpOnly;`,

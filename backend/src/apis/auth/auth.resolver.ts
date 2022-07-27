@@ -57,7 +57,11 @@ export class AuthResolver {
     const isAuth = await bcrpypt.compare(password, admin.password);
     if (!isAuth) throw new UnprocessableEntityException('암호가 틀렸습니다');
 
-    this.authService.setRefreshToken({ admin, res: context.req.res });
+    this.authService.setRefreshToken({
+      admin,
+      res: context.req.res,
+      req: context.req,
+    });
 
     return this.authService.getAccessToken({ admin });
   }
