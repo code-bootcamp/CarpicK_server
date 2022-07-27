@@ -17,7 +17,7 @@ export class CarResolver {
     return this.carService.findOne({ carId });
   }
 
-  @Query(() => [Car], { description: '차량존 리스트 조회' })
+  @Query(() => [Car], { description: '차량 리스트 조회' })
   fetchCars(
     @Args({
       name: 'page',

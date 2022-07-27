@@ -39,6 +39,7 @@ export class UserService {
       .where('user.email = :email', { email })
       .andWhere('reservation.status = :status', { status: 'USING' })
       .getOne();
+
     if (usingUser) return usingUser;
     else {
       const now = new Date();
@@ -64,6 +65,7 @@ export class UserService {
   async findOwner({ email }: { email: string }): Promise<User> {
     return await this.userRepository.findOne({
       where: { email },
+      withDeleted: true,
       relations: [
         'car',
         'car.carModel',
