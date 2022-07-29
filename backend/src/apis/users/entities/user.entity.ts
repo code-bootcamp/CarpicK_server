@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
-import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
+import { ImageEnd } from 'src/apis/imagesEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import {
   Column,
