@@ -9,7 +9,7 @@ import { UserService } from '../users/user.service';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { ImageStart } from '../imagesStart/entities/imageStart.entity';
-import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
+import { ImageEnd } from '../imagesEnd/entities/imageEnd.entity';
 import { Car } from '../cars/entities/car.entity';
 import { Reservation } from '../reservations/entities/reservation.entity';
 
