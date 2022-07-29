@@ -108,8 +108,7 @@ export class UserService {
     return await messageService.sendOne({
       to: phone,
       from: process.env.SMS_SENDER,
-      text: `[CarpicK]
-      인증번호는 ${token}입니다`,
+      text: `[CarpicK] 인증번호는 ${token}입니다`,
       autoTypeDetect: true,
     });
   }

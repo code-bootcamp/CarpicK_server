@@ -38,7 +38,7 @@ export class CarRegistrationResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => Int, { description: '등록 차량 수 (관리자)' })
+  @Query(() => Int, { description: '등록 차량 수 조회(관리자)' })
   fetchCarRegistrationCount(): Promise<number> {
     return this.carRegistrationService.count();
   }

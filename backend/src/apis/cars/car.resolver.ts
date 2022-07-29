@@ -103,7 +103,7 @@ export class CarResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => String, { description: '기간 재계약' })
+  @Mutation(() => String, { description: '재계약' })
   async refreshContract(
     @Args({ name: 'contractStart', description: '계약시작 시간' })
     contractStart: Date,
