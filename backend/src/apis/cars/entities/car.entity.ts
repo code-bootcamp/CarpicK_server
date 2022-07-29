@@ -5,7 +5,7 @@ import { CarModel } from 'src/apis/carsModel/entities/carModel.entity';
 import { ImageCar } from 'src/apis/imagesCar/entities/imageCar.entity';
 import { ImageRegistration } from 'src/apis/imagesRegistration/entities/imageRegistration.entity';
 import { ImageStart } from 'src/apis/imagesStart/entities/imageStart.entity';
-import { ImageEnd } from 'src/apis/imageEnd/entities/imageEnd.entity';
+import { ImageEnd } from 'src/apis/imagesEnd/entities/imageEnd.entity';
 import { Reservation } from 'src/apis/reservations/entities/reservation.entity';
 import { Review } from 'src/apis/review/entities/review.entity';
 import { User } from 'src/apis/users/entities/user.entity';

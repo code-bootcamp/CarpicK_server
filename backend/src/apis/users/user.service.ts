@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ImageStart } from '../imagesStart/entities/imageStart.entity';
-import { ImageEnd } from '../imageEnd/entities/imageEnd.entity';
+import { ImageEnd } from '../imagesEnd/entities/imageEnd.entity';
 import * as coolsms from 'coolsms-node-sdk';
 import { IsVaildEmail } from './dto/isValid.output';
 import { ICurrentUser } from 'src/commons/auth/gql-user.param';
