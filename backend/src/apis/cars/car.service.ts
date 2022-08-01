@@ -103,7 +103,7 @@ export class CarService {
         'IFNULL(review.reviewNum,0) AS num',
         'IFNULL(review.avg,0) AS rating',
       ])
-      .take(10)
+      .limit(10)
       .orderBy('avg', 'DESC')
       .getRawMany();
   }
