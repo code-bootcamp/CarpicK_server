@@ -63,14 +63,14 @@ export class UserResolver {
     @Args({ name: 'phone', description: '전화번호' }) phone: string,
   ): Promise<string> {
     const token = this.userService.getToken();
-    // const req = await this.userService.sendToken({ phone, token });
+    const req = await this.userService.sendToken({ phone, token });
 
     await this.cacheManager.set(token, phone, {
       ttl: 180,
     });
 
-    return `{phone:${phone},token:${token}}`;
-    // else return '토큰 전송을 실패하였습니다';
+    if (req.statusCode === '2000') return `phone:${phone} token:${token}`;
+    else return `${req.statusCode}: ${req.statusMessage}`;
   }
 
   @Mutation(() => Boolean, { description: '토큰 확인' })
